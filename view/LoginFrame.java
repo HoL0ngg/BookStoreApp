@@ -7,11 +7,14 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import controller.LoginController;
 
 import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
@@ -40,14 +43,17 @@ public class LoginFrame extends JFrame {
         ImageIcon iconThuVien = new ImageIcon(
                 new ImageIcon("./img/library.png").getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
         JLabel ThuVien = new JLabel(iconThuVien, JLabel.CENTER);
-        ThuVien.setBounds(80, 90, 200, 200);
+        ThuVien.setBounds(80, 100, 200, 200);
         leftContent.add(ThuVien);
 
-        JLabel title = new JLabel("THƯ VIỆN L0NGG");
+        JLabel title = new JLabel("QUẢN LÝ THƯ VIỆN");
         title.setFont(new Font("Segoe UI", Font.BOLD, 26));
         title.setForeground(Color.white);
-        title.setBounds(70, 300, 300, 50);
+        title.setBounds(60, 330, 400, 50);
         leftContent.add(title);
+
+        // Them controller
+        LoginController controller = new LoginController(this);
 
         // Right content
         JPanel rightContent = new JPanel();
@@ -98,11 +104,14 @@ public class LoginFrame extends JFrame {
         DangNhapButton.setForeground(Color.white);
         DangNhapButton.setBackground(MainColor);
         DangNhapButton.setBounds(60, 330, 310, 50);
+        DangNhapButton.addMouseListener(controller);
         rightContent.add(DangNhapButton);
 
         JLabel TaoTaiKhoan = new JLabel("<html><u><i>Chưa có tài khoản ?</i></u></html>");
         TaoTaiKhoan.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         TaoTaiKhoan.setBounds(265, 385, 120, 20);
+        TaoTaiKhoan.addMouseListener(controller);
+        // TaoTaiKhoan.addMouseListener();
         rightContent.add(TaoTaiKhoan);
 
         this.add(leftContent);
@@ -152,5 +161,18 @@ public class LoginFrame extends JFrame {
         this.add(emptyJPanel);
         setVisible(true);
         emptyJPanel.requestFocusInWindow();
+    }
+
+    private class TaoTaiKhoanDialog extends JDialog {
+        public TaoTaiKhoanDialog(JFrame parent) {
+            super(parent, "Dang ky", true);
+            setSize(300, 400);
+            // setLocationRelativeTo(null);
+            this.init();
+        }
+
+        private void init() {
+
+        }
     }
 }
