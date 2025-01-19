@@ -20,6 +20,9 @@ import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
 
 public class LoginFrame extends JFrame {
+    private JButton DangNhapButton;
+    private JLabel TaoTaiKhoan;
+
     public LoginFrame() {
         this.setTitle("Quan ly thu vien");
         this.setSize(800, 600);
@@ -99,7 +102,7 @@ public class LoginFrame extends JFrame {
         HienMatKhau.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         rightContent.add(HienMatKhau);
 
-        JButton DangNhapButton = new JButton("ĐĂNG NHẬP");
+        DangNhapButton = new JButton("ĐĂNG NHẬP");
         DangNhapButton.setFont(new Font("Segoe UI", Font.BOLD, 20));
         DangNhapButton.setForeground(Color.white);
         DangNhapButton.setBackground(MainColor);
@@ -107,7 +110,7 @@ public class LoginFrame extends JFrame {
         DangNhapButton.addMouseListener(controller);
         rightContent.add(DangNhapButton);
 
-        JLabel TaoTaiKhoan = new JLabel("<html><u><i>Chưa có tài khoản ?</i></u></html>");
+        TaoTaiKhoan = new JLabel("<html><u><i>Chưa có tài khoản ?</i></u></html>");
         TaoTaiKhoan.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         TaoTaiKhoan.setBounds(265, 385, 120, 20);
         TaoTaiKhoan.addMouseListener(controller);
@@ -166,13 +169,63 @@ public class LoginFrame extends JFrame {
     private class TaoTaiKhoanDialog extends JDialog {
         public TaoTaiKhoanDialog(JFrame parent) {
             super(parent, "Dang ky", true);
-            setSize(300, 400);
+            setSize(500, 400);
+            setLocationRelativeTo(null);
             // setLocationRelativeTo(null);
             this.init();
         }
 
         private void init() {
+            JPanel contentPane = new JPanel();
+            contentPane.setLayout(null);
+            contentPane.setBackground(Color.white);
+            this.setContentPane(contentPane);
 
+            Color MainColor = Color.decode("#6096B4");
+
+            JLabel TaoTaiKhoanLabel = new JLabel("TẠO TÀI KHOẢN");
+            TaoTaiKhoanLabel.setBounds(170, 12, 200, 30);
+            TaoTaiKhoanLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+            contentPane.add(TaoTaiKhoanLabel);
+
+            JLabel SDTLabel = new JLabel("Số điện thoại:");
+            SDTLabel.setBounds(40, 70, 150, 20);
+            SDTLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            contentPane.add(SDTLabel);
+
+            JLabel EmailLabel = new JLabel("Email:");
+            EmailLabel.setBounds(40, 120, 150, 20);
+            EmailLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            contentPane.add(EmailLabel);
+
+            JLabel MatKhauLabel = new JLabel("Mật khẩu:");
+            MatKhauLabel.setBounds(40, 170, 150, 20);
+            MatKhauLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            contentPane.add(MatKhauLabel);
+
+            JLabel NhatLaiMatKhauLabel = new JLabel("Nhập lại mật khẩu:");
+            NhatLaiMatKhauLabel.setBounds(40, 220, 150, 20);
+            NhatLaiMatKhauLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            contentPane.add(NhatLaiMatKhauLabel);
+
+            JButton DangKyButton = new JButton("ĐĂNG KÝ");
+            DangKyButton.setBounds(170, 270, 160, 40);
+            DangKyButton.setFont(new Font("Segoe UI", Font.BOLD, 20));
+            DangKyButton.setForeground(Color.white);
+            DangKyButton.setBackground(MainColor);
+            contentPane.add(DangKyButton);
         }
+    }
+
+    public JButton getDangNhapButton() {
+        return DangNhapButton;
+    }
+
+    public JLabel getTaoTaiKhoan() {
+        return TaoTaiKhoan;
+    }
+
+    public void HienTaoTaiKhoan() {
+        new TaoTaiKhoanDialog(this).setVisible(true);
     }
 }
