@@ -22,6 +22,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 public class LoginFrame extends JFrame {
     private JButton DangNhapButton;
@@ -76,15 +77,15 @@ public class LoginFrame extends JFrame {
         leftContent.setBounds(0, 0, 350, 600);
         leftContent.setLayout(null);
 
-        FlatSVGIcon iconMetro = new FlatSVGIcon(getClass().getResource("/svg/metro_logo.svg")).derive(220, 220);
+        FlatSVGIcon iconMetro = new FlatSVGIcon(getClass().getResource("/svg/thuvien.svg")).derive(220, 220);
         JLabel Metro = new JLabel(iconMetro, JLabel.CENTER);
-        Metro.setBounds(70, 120, 220, 220);
+        Metro.setBounds(0, 120, 350, 220);
         leftContent.add(Metro);
 
-        JLabel title = new JLabel("<html><div style='text-align: center;'>QUẢN LÝ VẬN HÀNH<br>METRO</div></html>");
+        JLabel title = new JLabel("QUẢN LÝ THƯ VIỆN", JLabel.CENTER);
         title.setFont(new Font("Segoe UI", Font.BOLD, 26));
         title.setForeground(Color.white);
-        title.setBounds(50, 350, 400, 80);
+        title.setBounds(0, 350, 350, 80);
         leftContent.add(title);
 
         // Right content
@@ -133,14 +134,16 @@ public class LoginFrame extends JFrame {
         MatKhauField.setEchoChar((char) 0);
 
         // icon an hien
-        ImageIcon openEye = new ImageIcon(new ImageIcon("src/main/java/org/metro/assets/icons/view.png").getImage()
-                .getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        ImageIcon openEye = new ImageIcon(
+                new ImageIcon("bookstore/src/main/java/com/bookstore/assets/icons/view.png").getImage()
+                        .getScaledInstance(20, 20, Image.SCALE_SMOOTH));
         JLabel openEyeLabel = new JLabel(openEye);
         openEyeLabel.setVisible(true);
         openEyeLabel.setBounds(270, 5, 30, 30);
 
-        ImageIcon closeEye = new ImageIcon(new ImageIcon("src/main/java/org/metro/assets/icons/hide.png").getImage()
-                .getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        ImageIcon closeEye = new ImageIcon(
+                new ImageIcon("bookstore/src/main/java/com/bookstore/assets/icons/hide.png").getImage()
+                        .getScaledInstance(20, 20, Image.SCALE_SMOOTH));
         JLabel closeEyeLabel = new JLabel(closeEye);
         closeEyeLabel.setVisible(false);
         closeEyeLabel.setBounds(270, 5, 30, 30);
@@ -296,29 +299,30 @@ public class LoginFrame extends JFrame {
             DangKyButton.setBackground(MainColor);
             contentPane.add(DangKyButton);
 
-            DangKyButton.addActionListener(e -> {
-                String sodienthoai = SDTField.getText();
-                String tenDangNhap = TenDangNhapField.getText();
-                String matKhau = String.valueOf(MatKhauField.getPassword());
-                String nhaplaimatkhau = String.valueOf(NhapLaiMatKhauField.getPassword());
+            // DangKyButton.addActionListener(e -> {
+            // String sodienthoai = SDTField.getText();
+            // String tenDangNhap = TenDangNhapField.getText();
+            // String matKhau = String.valueOf(MatKhauField.getPassword());
+            // String nhaplaimatkhau = String.valueOf(NhapLaiMatKhauField.getPassword());
 
-                if (!matKhau.equals(nhaplaimatkhau)) {
-                    JOptionPane.showMessageDialog(this, "mật khẩu không khớp", "Thông báo", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+            // if (!matKhau.equals(nhaplaimatkhau)) {
+            // JOptionPane.showMessageDialog(this, "mật khẩu không khớp", "Thông báo",
+            // JOptionPane.ERROR_MESSAGE);
+            // return;
+            // }
 
-                DangkyDao user = new DangkyDao();
-                boolean check = user.DangKy(tenDangNhap, matKhau, sodienthoai);
+            // DangkyDao user = new DangkyDao();
+            // boolean check = user.DangKy(tenDangNhap, matKhau, sodienthoai);
 
-                if (check) {
-                    JOptionPane.showMessageDialog(this, "Đăng ký thành công ", "thông báo",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    this.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Đăng ký không thành công", "thông báo",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            });
+            // if (check) {
+            // JOptionPane.showMessageDialog(this, "Đăng ký thành công ", "thông báo",
+            // JOptionPane.INFORMATION_MESSAGE);
+            // this.dispose();
+            // } else {
+            // JOptionPane.showMessageDialog(this, "Đăng ký không thành công", "thông báo",
+            // JOptionPane.ERROR_MESSAGE);
+            // }
+            // });
 
             SDTField.addFocusListener(new FocusListener() {
                 @Override

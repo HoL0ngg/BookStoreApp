@@ -1,5 +1,7 @@
 package com.bookstore.views;
 
-public class MainFrame {
+import javax.swing.JFrame;
+
+public class MainFrame extends JFrame {
 
 }

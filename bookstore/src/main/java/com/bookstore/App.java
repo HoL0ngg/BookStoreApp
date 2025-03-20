@@ -1,5 +1,31 @@
 package com.bookstore;
 
-public class App {
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
+import com.bookstore.views.LoginFrame;
+
+import mdlaf.MaterialLookAndFeel;
+
+public class App {
+    public static void main(String[] args) {
+        // Đặt encoding toàn cục cho ứng dụng
+        System.setProperty("file.encoding", "UTF-8");
+
+        // try {
+        // // Thiết lập Material Look and Feel
+        // UIManager.setLookAndFeel(new MaterialLookAndFeel());
+
+        // } catch (UnsupportedLookAndFeelException e) {
+        // e.printStackTrace();
+        // }
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new LoginFrame();
+            }
+        });
+    }
 }
