@@ -5,25 +5,24 @@ import com.bookstore.views.Panel.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MenuTaskbar extends JPanel {
 
     private MainFrame mainFrame;
     String[][] getSt = {
-            { "Tàu", "train.svg", "tau" },
-            { "Trạm", "station.svg", "tram" },
-            { "Tuyến đường", "route.svg", "tuyenduong" },
-            { "Lịch trình", "schedule.svg", "lichtrinh" },
-            { "Vé tàu", "ticket.svg", "vetau" },
-            { "Bảo trì", "maintenance.svg", "baotri" },
-            { "Khách hàng", "customer.svg", "khachhang" },
-            { "Nhân viên", "staff.svg", "nhanvien" },
+            { "Trang chủ", "homepage.svg", "trangchu" },
+            { "Sách", "book.svg", "tau" },
+            { "Thể loại", "theloai.svg", "theloai" },
+            { "Tác giả", "author.svg", "tram" },
+            { "Độc giả", "docgia.svg", "docgia" },
+            { "Nhà cung cấp", "supplier.svg", "ncc" },
+            { "Phiếu nhập", "import.svg", "nhap" },
+            { "Phiếu mượn", "loan.svg", "loan" },
+            { "Phiếu trả", "payment.svg", "tra" },
+            { "Phiếu hủy", "phieuhuy.svg", "huy" },
+            { "Phân quyền", "permission.svg", "phanquyen" },
             { "Tài khoản", "account.svg", "taikhoan" },
-            { "Phân quyền", "permission.svg", "nhomquyen" },
-            { "Thống kê", "statistics.svg", "thongke" },
-
     };
     public itemTaskbar[] listItem;
     JPanel pnCenter;

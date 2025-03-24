@@ -71,7 +71,7 @@ public class MainFrame extends JFrame {
         // LogoPanel.add(LogoLabel);
 
         JLabel TitleLabel = new JLabel("Quản lý thư viện");
-        TitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        TitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         TitleLabel.setForeground(Color.black);
         LogoPanel.add(TitleLabel);
 
@@ -174,7 +174,7 @@ public class MainFrame extends JFrame {
         TrangChuPanel.setSize(900, 760);
 
         JLabel TrangChuLabel = new JLabel(
-                "<html><div style='text-align: center; font-weight: 700;'>HỆ THỐNG QUẢN LÝ VẬN HÀNH METRO</div><div style='text-align: center; font-weight: 400; font-size: smaller;'>- Metro đưa bạn tới bất cứ đâu -</div></html>",
+                "<html><div style='text-align: center; font-weight: 700; font-size: larger;'>HỆ THỐNG QUẢN LÝ THƯ VIỆN</div><div style='text-align: center; font-weight: 400; font-size: smaller; margin-top: 4px;'>- SÁCH LÀ NGUỒN KIẾN THỨC VÔ TẬN -</div></html>",
                 JLabel.CENTER);
         TrangChuLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         TrangChuLabel.setForeground(Color.black);
@@ -206,13 +206,13 @@ public class MainFrame extends JFrame {
         SoNguoiSuDungPanel.setBorder(new LineBorder(Color.black, 2));
         ThongKePanel.add(SoNguoiSuDungPanel);
 
-        JLabel SoNguoiSuDungLabel = new JLabel("696 HÀNH KHÁCH", JLabel.CENTER);
+        JLabel SoNguoiSuDungLabel = new JLabel("696 ĐẦU SÁCH", JLabel.CENTER);
         SoNguoiSuDungLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         SoNguoiSuDungLabel.setBounds(0, 200, 250, 50);
         SoNguoiSuDungLabel.setForeground(Color.black);
         SoNguoiSuDungPanel.add(SoNguoiSuDungLabel);
 
-        FlatSVGIcon SoNugoiSuDungIcon = new FlatSVGIcon(getClass().getResource("/svg/teamwork.svg")).derive(150, 150);
+        FlatSVGIcon SoNugoiSuDungIcon = new FlatSVGIcon(getClass().getResource("/svg/book2.svg")).derive(150, 150);
         JLabel NguoiSuDungIcon = new JLabel(SoNugoiSuDungIcon, JLabel.CENTER);
         NguoiSuDungIcon.setBounds(50, 30, 150, 150);
         SoNguoiSuDungPanel.add(NguoiSuDungIcon);
