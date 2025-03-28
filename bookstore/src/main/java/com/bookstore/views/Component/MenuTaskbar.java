@@ -5,6 +5,7 @@ import com.bookstore.views.Panel.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MenuTaskbar extends JPanel {
@@ -55,97 +56,105 @@ public class MenuTaskbar extends JPanel {
         }
 
         // Thêm MouseListener cho từng mục
-        // listItem[0].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // Tau tau = new Tau();
-        // mainFrame.setPanel(tau);
-        // }
-        // });
-        // listItem[1].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // Tram tram = new Tram();
-        // mainFrame.setPanel(tram);
-        // }
-        // });
-        // listItem[2].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // TuyenDuong tuyenDuong = new TuyenDuong();
-        // mainFrame.setPanel(tuyenDuong);
-        // }
-        // });
-        // listItem[3].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // LichTrinh lichTrinh = new LichTrinh();
-        // mainFrame.setPanel(lichTrinh);
-        // }
-        // });
-        // listItem[4].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // VeTau veTau = new VeTau();
-        // mainFrame.setPanel(veTau);
-        // }
-        // });
-        // listItem[5].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // LichBaoTri lichBaoTri = new LichBaoTri();
-        // mainFrame.setPanel(lichBaoTri);
-        // }
-        // });
-        // listItem[6].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // KhachHang khachHang = new KhachHang();
-        // mainFrame.setPanel(khachHang);
-        // }
-        // });
+        listItem[0].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                TrangChu trangchu = new TrangChu();
+                mainFrame.setPanel(trangchu);
+            }
+        });
+        listItem[1].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                Sach Sach = new Sach();
+                mainFrame.setPanel(Sach);
+            }
+        });
+        listItem[2].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                TheLoai TheLoai = new TheLoai();
+                mainFrame.setPanel(TheLoai);
+            }
+        });
+        listItem[3].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                TacGia TacGia = new TacGia();
+                mainFrame.setPanel(TacGia);
+            }
+        });
+        listItem[4].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                DocGia DocGia = new DocGia();
+                mainFrame.setPanel(DocGia);
+            }
+        });
+        listItem[5].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                NhaCungCap NhaCungCap = new NhaCungCap();
+                mainFrame.setPanel(NhaCungCap);
+            }
+        });
+        listItem[6].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                PhieuNhap PhieuNhap = new PhieuNhap();
+                mainFrame.setPanel(PhieuNhap);
+            }
+        });
 
-        // listItem[7].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // NhanVien nhanVien = new NhanVien();
-        // mainFrame.setPanel(nhanVien); // Hiển thị panel Nhân viên
-        // }
-        // });
+        listItem[7].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                PhieuMuon PhieuMuon = new PhieuMuon();
+                mainFrame.setPanel(PhieuMuon);
+            }
+        });
 
-        // listItem[8].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // TaiKhoan taiKhoan = new TaiKhoan();
-        // mainFrame.setPanel(taiKhoan); // Hiển thị panel Tài khoản
-        // }
-        // });
+        listItem[8].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                PhieuTra PhieuTra = new PhieuTra();
+                mainFrame.setPanel(PhieuTra);
+            }
+        });
 
-        // listItem[9].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // PhanQuyen phanQuyen = new PhanQuyen();
-        // mainFrame.setPanel(phanQuyen); // Hiển thị panel Phân quyền
-        // }
-        // });
-        // listItem[10].addMouseListener(new MouseAdapter() {
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // pnMenuTaskbarMousePress(e);
-        // ThongKe thongKe = new ThongKe();
-        // mainFrame.setPanel(thongKe); // Hiển thị panel Phân quyền
-        // }
-        // });
+        listItem[9].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                PhieuHuy PhieuHuy = new PhieuHuy();
+                mainFrame.setPanel(PhieuHuy);
+            }
+        });
+        listItem[10].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                PhanQuyen PhanQuyen = new PhanQuyen();
+                mainFrame.setPanel(PhanQuyen);
+            }
+        });
+        listItem[11].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
+                TaiKhoan TaiKhoan = new TaiKhoan();
+                mainFrame.setPanel(TaiKhoan);
+            }
+        });
     }
 
     public void pnMenuTaskbarMousePress(MouseEvent e) {

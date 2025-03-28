@@ -22,7 +22,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 
 public class LoginFrame extends JFrame {
     private JButton DangNhapButton;
@@ -33,7 +32,7 @@ public class LoginFrame extends JFrame {
     private JLabel MinimizeIcon;
 
     public LoginFrame() {
-        this.setTitle("Quan ly Metro");
+        this.setTitle("Quan ly Thu vien");
         this.setSize(800, 600);
         this.setLocationRelativeTo(null);
         this.setLayout(null);
