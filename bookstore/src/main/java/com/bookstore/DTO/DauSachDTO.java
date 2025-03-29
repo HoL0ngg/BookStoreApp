@@ -1,23 +1,23 @@
 package com.bookstore.DTO;
 
-public class DauSach {
+public class DauSachDTO {
     private int MaDauSach;
     private String TenDauSach;
     private String HinhAnh;
     private String NhaXuatBan;
     private int NamXuatBan;
     private String NgonNgu;
-    private int MaTheLoai;
+    private int SoTrang;
 
-    public DauSach(int maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan, String ngonNgu,
-            int maTheLoai) {
+    public DauSachDTO(int maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan,
+            String ngonNgu, int soTrang) {
         MaDauSach = maDauSach;
         TenDauSach = tenDauSach;
         HinhAnh = hinhAnh;
         NhaXuatBan = nhaXuatBan;
         NamXuatBan = namXuatBan;
         NgonNgu = ngonNgu;
-        MaTheLoai = maTheLoai;
+        SoTrang = soTrang;
     }
 
     public int getMaDauSach() {
@@ -68,12 +68,12 @@ public class DauSach {
         NgonNgu = ngonNgu;
     }
 
-    public int getMaTheLoai() {
-        return MaTheLoai;
+    public int getSoTrang() {
+        return SoTrang;
     }
 
-    public void setMaTheLoai(int maTheLoai) {
-        MaTheLoai = maTheLoai;
+    public void setSoTrang(int soTrang) {
+        SoTrang = soTrang;
     }
 
 }
