@@ -46,6 +46,32 @@ public class SachDAO implements IBaseDAO<SachDTO> {
         return list;
     }
 
+    public List<SachDTO> selectByDauSach(int MaDauSach) {
+        List<SachDTO> list = new ArrayList<>();
+        String query = "SELECT * " +
+                "FROM sach JOIN dausach ON sach.MaDauSach = dausach.MaDauSach " +
+                "WHERE sach.MaDauSach = ?";
+
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, MaDauSach); // Gán giá trị cho tham số ?
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    SachDTO sach = new SachDTO(rs.getInt("MaSach"),
+                            rs.getString("TrangThai"), rs.getDate("NgayNhap").toLocalDate());
+
+                    list.add(sach);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Hoặc log lỗi
+        }
+
+        return list;
+    }
+
     @Override
     public SachDTO selectById(int id) {
         return null;

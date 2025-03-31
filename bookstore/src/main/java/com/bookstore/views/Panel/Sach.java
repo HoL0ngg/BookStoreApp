@@ -102,13 +102,10 @@ public class Sach extends JPanel {
         SortComboBox.setBounds(760, 14, 100, 20);
         TongSoTauPanel.add(SortComboBox);
 
-        JPanel DSDauSach = new DSDauSach();
+        DSDauSach DSDauSach = new DSDauSach();
 
-        JScrollPane DanhSachTauScrollPane = new JScrollPane(DSDauSach, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        DanhSachTauScrollPane.setPreferredSize(new Dimension(900, 600));
         // DanhSachTauScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        this.add(DanhSachTauScrollPane);
+        this.add(DSDauSach);
 
     }
 

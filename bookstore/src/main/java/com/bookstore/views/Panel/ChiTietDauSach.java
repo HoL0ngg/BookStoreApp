@@ -4,24 +4,30 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.DTO.SachDTO;
 import com.bookstore.dao.SachDAO;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 public class ChiTietDauSach extends JPanel {
-    private JLabel backButton;
-    private int maDauSach;
+    private JLabel back;
+    private JTable table;
+    private DefaultTableModel tableModel;
 
     public ChiTietDauSach(int maDauSach) {
-        init();
-        this.maDauSach = maDauSach;
+        init(maDauSach);
     }
 
-    private void init() {
+    private void init(int maDauSach) {
         List<SachDTO> list = new SachDAO().selectAll();
         this.setLayout(new BorderLayout());
 
@@ -31,17 +37,40 @@ public class ChiTietDauSach extends JPanel {
         headerPanel.setPreferredSize(new Dimension(900, 50));
         this.add(headerPanel, BorderLayout.NORTH);
 
-        JPanel MainPanel = new JPanel();
-        MainPanel.setLayout(new FlowLayout(0, 32, 40));
-        MainPanel.setPreferredSize(new Dimension(900, ((list.size() + 5) / 3) * 300));
-        MainPanel.setBackground(Color.white);
+        FlatSVGIcon backIcon = new FlatSVGIcon(getClass().getResource("/svg/back-button.svg")).derive(30, 30);
+        back = new JLabel(backIcon);
+        back.setBounds(10, 10, 30, 30);
+        headerPanel.add(back);
 
-        ThongTinSach[] ThongTinSach = new ThongTinSach[list.size()];
+        JLabel backText = new JLabel("Quay lại");
+        backText.setFont(new Font("Tahoma", Font.PLAIN, 16));
+        backText.setBounds(50, 10, 100, 30);
+        headerPanel.add(backText);
 
-        for (int i = 0; i < list.size(); ++i) {
-            ThongTinSach[i] = new ThongTinSach(list.get(i));
-            MainPanel.add(ThongTinSach[i]);
+        String column[] = new String[] { "Mã sách", "Ngày nhập", "Trạng thái" };
+        tableModel = new DefaultTableModel(column, 0);
+        table = new JTable(tableModel);
+
+        // Định dạng ngày tháng
+        // SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        // Thêm dữ liệu từ list vào bảng
+        for (SachDTO sach : list) {
+            tableModel.addRow(new Object[] {
+                    sach.getMasach(),
+                    sach.getNgayNhap(),
+                    sach.getTrangThai()
+            });
+            System.out.println(sach.getMaSach());
         }
+
+        // Đưa bảng vào JScrollPane để có thanh cuộn
+        JScrollPane scrollPane = new JScrollPane(table);
+        this.add(scrollPane, BorderLayout.CENTER);
+    }
+
+    public JLabel getBack() {
+        return back;
     }
 
 }
