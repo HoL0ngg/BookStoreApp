@@ -36,8 +36,8 @@ public class SachDAO implements IBaseDAO<SachDTO> {
                 PreparedStatement stmt = conn.prepareStatement(query);
                 ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                SachDTO kh = new SachDTO(rs.getInt("MaSach"), rs.getString("TrangThai"),
-                        rs.getInt("MaDauSach"));
+                SachDTO kh = new SachDTO(rs.getString("MaSach"), rs.getString("TrangThai"),
+                        rs.getString("MaDauSach"));
                 list.add(kh);
             }
         } catch (SQLException e) {
@@ -46,7 +46,7 @@ public class SachDAO implements IBaseDAO<SachDTO> {
         return list;
     }
 
-    public List<SachDTO> selectByDauSach(int MaDauSach) {
+    public List<SachDTO> selectByDauSach(String MaDauSach) {
         List<SachDTO> list = new ArrayList<>();
         String query = "SELECT * " +
                 "FROM sach JOIN dausach ON sach.MaDauSach = dausach.MaDauSach " +
@@ -55,11 +55,11 @@ public class SachDAO implements IBaseDAO<SachDTO> {
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, MaDauSach); // Gán giá trị cho tham số ?
+            stmt.setString(1, MaDauSach); // Gán giá trị cho tham số ?
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    SachDTO sach = new SachDTO(rs.getInt("MaSach"),
+                    SachDTO sach = new SachDTO(rs.getString("MaSach"),
                             rs.getString("TrangThai"), rs.getDate("NgayNhap").toLocalDate());
 
                     list.add(sach);

@@ -3,35 +3,35 @@ package com.bookstore.DTO;
 import java.time.LocalDate;
 
 public class SachDTO {
-    private int MaSach;
+    private String MaSach;
     private String TrangThai;
-    private int MaDauSach;
+    private String MaDauSach;
     private LocalDate NgayNhap;
 
-    public SachDTO(int MaSach, String TrangThai, int MaDauSach) {
+    public SachDTO(String MaSach, String TrangThai, String MaDauSach) {
         this.MaSach = MaSach;
         this.TrangThai = TrangThai;
         this.MaDauSach = MaDauSach;
     }
 
-    public SachDTO(int maSach, String trangThai, int maDauSach, LocalDate ngayNhap) {
+    public SachDTO(String maSach, String trangThai, String maDauSach, LocalDate ngayNhap) {
         MaSach = maSach;
         TrangThai = trangThai;
         MaDauSach = maDauSach;
         NgayNhap = ngayNhap;
     }
 
-    public SachDTO(int maSach, String trangThai, LocalDate ngayNhap) {
+    public SachDTO(String maSach, String trangThai, LocalDate ngayNhap) {
         MaSach = maSach;
         TrangThai = trangThai;
         NgayNhap = ngayNhap;
     }
 
-    public int getMasach() {
+    public String getMasach() {
         return MaSach;
     }
 
-    public void setMasach(int MaSach) {
+    public void setMasach(String MaSach) {
         this.MaSach = MaSach;
     }
 
@@ -43,19 +43,19 @@ public class SachDTO {
         this.TrangThai = TrangThai;
     }
 
-    public int getMaDauSach() {
+    public String getMaDauSach() {
         return MaDauSach;
     }
 
-    public void setMaDauSach(int MaDauSach) {
+    public void setMaDauSach(String MaDauSach) {
         this.MaDauSach = MaDauSach;
     }
 
-    public int getMaSach() {
+    public String getMaSach() {
         return MaSach;
     }
 
-    public void setMaSach(int maSach) {
+    public void setMaSach(String maSach) {
         MaSach = maSach;
     }
 

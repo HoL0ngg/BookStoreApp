@@ -53,7 +53,7 @@ public class ThongTinDauSach extends RoundedPanel {
         this.add(NhaXuatBan);
     }
 
-    public int getMaDauSach() {
+    public String getMaDauSach() {
         return this.dausach.getMaDauSach();
     }
 }

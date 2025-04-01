@@ -35,7 +35,7 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
                 PreparedStatement stmt = conn.prepareStatement(query);
                 ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                DauSachDTO kh = new DauSachDTO(rs.getInt("MaDauSach"), rs.getString("TenDauSach"),
+                DauSachDTO kh = new DauSachDTO(rs.getString("MaDauSach"), rs.getString("TenDauSach"),
                         rs.getString("HinhAnh"),
                         rs.getString("NhaXuatBan"), rs.getInt("NamXuatBan"),
                         rs.getString("NgonNgu"), rs.getInt("SoTrang"));

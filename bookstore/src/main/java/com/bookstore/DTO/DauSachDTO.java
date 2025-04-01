@@ -1,7 +1,7 @@
 package com.bookstore.DTO;
 
 public class DauSachDTO {
-    private int MaDauSach;
+    private String MaDauSach;
     private String TenDauSach;
     private String HinhAnh;
     private String NhaXuatBan;
@@ -9,7 +9,7 @@ public class DauSachDTO {
     private String NgonNgu;
     private int SoTrang;
 
-    public DauSachDTO(int maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan,
+    public DauSachDTO(String maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan,
             String ngonNgu, int soTrang) {
         MaDauSach = maDauSach;
         TenDauSach = tenDauSach;
@@ -20,11 +20,11 @@ public class DauSachDTO {
         SoTrang = soTrang;
     }
 
-    public int getMaDauSach() {
+    public String getMaDauSach() {
         return MaDauSach;
     }
 
-    public void setMaDauSach(int maDauSach) {
+    public void setMaDauSach(String maDauSach) {
         MaDauSach = maDauSach;
     }
 

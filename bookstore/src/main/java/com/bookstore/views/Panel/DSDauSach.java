@@ -107,7 +107,7 @@ public class DSDauSach extends JPanel {
     }
 
     // Cập nhật dữ liệu bảng khi chọn đầu sách
-    private void updateTable(int MadauSach) {
+    private void updateTable(String MadauSach) {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         List<SachDTO> hihi = new SachDAO().selectByDauSach(MadauSach);
