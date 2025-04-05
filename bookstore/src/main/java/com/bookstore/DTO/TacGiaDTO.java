@@ -1,23 +1,18 @@
 package com.bookstore.DTO;
 
 public class TacGiaDTO {
-    private int MaTacGia;
+    private String MaTacGia;
     private String TenTacGia;
     private int NamSinh;
     private String QuocTich;
     
-    public TacGiaDTO(int maTacGia, String tenTacGia, int namSinh, String quocTich) {
+    public TacGiaDTO(String maTacGia, String tenTacGia, int namSinh, String quocTich) {
         MaTacGia = maTacGia;
         TenTacGia = tenTacGia;
         NamSinh = namSinh;
         QuocTich = quocTich;
     }
-    public int getMaTacGia() {
-        return MaTacGia;
-    }
-    public void setMaTacGia(int maTacGia) {
-        MaTacGia = maTacGia;
-    }
+    
     public String getTenTacGia() {
         return TenTacGia;
     }
@@ -35,6 +30,19 @@ public class TacGiaDTO {
     }
     public void setQuocTich(String quocTich) {
         QuocTich = quocTich;
+    }
+
+    public String getMaTacGia() {
+        return MaTacGia;
+    }
+
+    public void setMaTacGia(String maTacGia) {
+        MaTacGia = maTacGia;
+    }
+
+    @Override
+    public String toString() {
+        return "TacGia{" + "maTG=" + MaTacGia + ", tenTG=" + TenTacGia + ", namsinh=" + NamSinh + ", quoctich=" + QuocTich + '}';
     }
 }
 

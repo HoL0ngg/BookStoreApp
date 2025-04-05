@@ -9,20 +9,24 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
+
+    public static TacGiaDAO getInstance() {
+        return new TacGiaDAO();
+    }
+
 
     @Override
     public int insert(TacGiaDTO t) {
        int result = 0;
        try  {
         Connection con = (Connection) DatabaseUtils.getConnection();
-        String sql = "InSERT INTO `TacGia`(`MaTacGia`, `TenTacGia`, `NamSinh`, `QuocTich`) VALUES (?,?,?,?)";
+        String sql = "InSERT INTO `tacgia`(`MaTacGia`, `TenTacGia`, `NamSinh`, `QuocTich`, `Status`) VALUES (?,?,?,?,1)";
         PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql); 
-            pst.setInt(1, t.getMaTacGia());
+            pst.setString(1, t.getMaTacGia());
             pst.setString(2, t.getTenTacGia());
             pst.setInt(3, t.getNamSinh());
             pst.setString(4, t.getQuocTich());
@@ -32,16 +36,16 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
             Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
-       }
+    }
 
     @Override
     public int update(TacGiaDTO t) {
         int result = 0;
         try {
             Connection con = (Connection) DatabaseUtils.getConnection();
-            String sql = "UPDATE `TacGia` SET `MaTacGia`=?,`TenTacGia`=?,`NamSinh`=?,`QuocTich`=? WHERE MaTacGia=?";
+            String sql = "UPDATE `tacgia` SET `MaTacGia`=?,`TenTacGia`=?,`NamSinh`=?,`QuocTich`=? WHERE MaTacGia=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql); // Chuan bi du lieu 
-            pst.setInt(1, t.getMaTacGia());
+            pst.setString(1, t.getMaTacGia());
             pst.setString(2, t.getTenTacGia());
             pst.setInt(3, t.getNamSinh());
             pst.setString(4, t.getQuocTich());
@@ -59,7 +63,7 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
         int result = 0;
         try {
             Connection con = (Connection) DatabaseUtils.getConnection();
-            String sql = "UPDATE `TacGia` SET TrangThai= 0 WHERE `MaTacGia` = ?";
+            String sql = "UPDATE `tacgia` SET Status= 0 WHERE `MaTacGia` = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, id);
             
@@ -76,11 +80,11 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
         ArrayList<TacGiaDTO> result = new ArrayList<TacGiaDTO>();
         try {
             Connection con = (Connection) DatabaseUtils.getConnection();
-            String sql = "SELECT * FROM TacGia WHERE TrangThai = 1 ";
+            String sql = "SELECT * FROM tacgia WHERE Status = 1 ";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while(rs.next()){
-                int MaTacGia = rs.getInt("MaTacGia");
+                String MaTacGia = rs.getString("MaTacGia");
                 String TenTacGia = rs.getString("TenTacGia");
                 int NamSinh = rs.getInt("NamSinh");
                 String QuocTich = rs.getString("QuocTich");
@@ -100,12 +104,12 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
         TacGiaDTO result = null;
         try {
             Connection con = (Connection) DatabaseUtils.getConnection();
-            String sql = "SELECT * FROM TacGia WHERE MaTacGia=?";
+            String sql = "SELECT * FROM tacgia WHERE MaTacGia=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, id);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while(rs.next()){
-                int MaTacGia = rs.getInt("MaTacGia");
+                String MaTacGia = rs.getString("MaTacGia");
                 String TenTacGia = rs.getString("TenTacGia");
                 int NamSinh = rs.getInt("NamSinh");
                 String QuocTich = rs.getString("QuocTich");
