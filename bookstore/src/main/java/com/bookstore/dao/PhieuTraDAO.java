@@ -12,15 +12,15 @@ import com.bookstore.utils.DatabaseUtils;
 
 public class PhieuTraDAO {
 
-    // Thêm phiếu trả vào database
+    //Thêm phiếu trả
     public boolean themPhieuTra(PhieuTraDTO phieuTra) {
         String sql = "INSERT INTO PhieuTra (MaPhieuTra, NgayTra, MaNV, MaDocGia, MaPhieuMuon) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, phieuTra.getMaPhieuTra());
             stmt.setDate(2, new java.sql.Date(phieuTra.getNgayTra().getTime()));
-            stmt.setInt(3, phieuTra.getMaNV());
-            stmt.setInt(4, phieuTra.getMaDocGia());
+            stmt.setString(3, phieuTra.getMaNV());
+            stmt.setString(4, phieuTra.getMaDocGia());
             stmt.setInt(5, phieuTra.getMaPhieuMuon());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -35,8 +35,8 @@ public class PhieuTraDAO {
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, new java.sql.Date(phieuTra.getNgayTra().getTime()));
-            stmt.setInt(2, phieuTra.getMaNV());
-            stmt.setInt(3, phieuTra.getMaDocGia());
+            stmt.setString(2, phieuTra.getMaNV());
+            stmt.setString(3, phieuTra.getMaDocGia());
             stmt.setInt(4, phieuTra.getMaPhieuMuon());
             stmt.setInt(5, phieuTra.getMaPhieuTra());
             return stmt.executeUpdate() > 0;
@@ -47,11 +47,11 @@ public class PhieuTraDAO {
     }
 
     // Xóa phiếu trả
-    public boolean xoaPhieuTra(int maPhieuTra) {
+    public boolean xoaPhieuTra(String maPhieuTra) {
         String sql = "DELETE FROM PhieuTra WHERE MaPhieuTra = ?";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, maPhieuTra);
+            stmt.setString(1, maPhieuTra);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,19 +59,19 @@ public class PhieuTraDAO {
         }
     }
 
-    // Lấy danh sách tất cả phiếu trả
+    // Lấy danh sách tất cả phiếu trả -> list
     public List<PhieuTraDTO> layDanhSachPhieuTra() {
         List<PhieuTraDTO> danhSach = new ArrayList<>();
         String sql = "SELECT * FROM PhieuTra";
         try (Connection conn = DatabaseUtils.getConnection();
-            PreparedStatement stmt = (PreparedStatement) conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 danhSach.add(new PhieuTraDTO(
                     rs.getInt("MaPhieuTra"),
                     rs.getDate("NgayTra"),
-                    rs.getInt("MaNV"),
-                    rs.getInt("MaDocGia"),
+                    rs.getString("MaNhanVien"),
+                    rs.getString("MaDocGia"),
                     rs.getInt("MaPhieuMuon")
                 ));
             }
@@ -82,18 +82,18 @@ public class PhieuTraDAO {
     }
 
     // Tìm phiếu trả theo mã
-    public PhieuTraDTO timPhieuTra(int maPhieuTra) {
+    public PhieuTraDTO timPhieuTra(String maPhieuTra) {
         String sql = "SELECT * FROM PhieuTra WHERE MaPhieuTra = ?";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, maPhieuTra);
+            stmt.setString(1, maPhieuTra);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new PhieuTraDTO(
                         rs.getInt("MaPhieuTra"),
                         rs.getDate("NgayTra"),
-                        rs.getInt("MaNV"),
-                        rs.getInt("MaDocGia"),
+                        rs.getString("MaNV"),
+                        rs.getString("MaDocGia"),
                         rs.getInt("MaPhieuMuon")
                     );
                 }

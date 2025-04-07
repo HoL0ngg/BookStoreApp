@@ -5,12 +5,12 @@ import java.util.Date;
 public class PhieuTraDTO {
     private int MaPhieuTra;
     private Date NgayTra;
-    private int MaNV;
-    private int MaDocGia;
+    private String MaNV;
+    private String MaDocGia;
     private int MaPhieuMuon;
 
     // Constructor
-    public PhieuTraDTO(int MaPhieuTra, Date NgayTra, int MaNV, int MaDocGia, int MaPhieuMuon){
+    public PhieuTraDTO(int MaPhieuTra, Date NgayTra, String MaNV, String MaDocGia, int MaPhieuMuon){
         this.MaPhieuTra = MaPhieuTra;
         this.NgayTra = NgayTra;
         this.MaNV = MaNV;
@@ -19,6 +19,7 @@ public class PhieuTraDTO {
     }
 
     // Getters Setters
+
     public int getMaPhieuTra() {
         return MaPhieuTra;
     }
@@ -35,19 +36,19 @@ public class PhieuTraDTO {
         NgayTra = ngayTra;
     }
 
-    public int getMaNV() {
+    public String getMaNV() {
         return MaNV;
     }
 
-    public void setMaNV(int maNV) {
+    public void setMaNV(String maNV) {
         MaNV = maNV;
     }
 
-    public int getMaDocGia() {
+    public String getMaDocGia() {
         return MaDocGia;
     }
 
-    public void setMaDocGia(int maDocGia) {
+    public void setMaDocGia(String maDocGia) {
         MaDocGia = maDocGia;
     }
 
@@ -58,6 +59,5 @@ public class PhieuTraDTO {
     public void setMaPhieuMuon(int maPhieuMuon) {
         MaPhieuMuon = maPhieuMuon;
     }
-
     
 }

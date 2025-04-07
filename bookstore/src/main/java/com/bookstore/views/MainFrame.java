@@ -36,7 +36,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         setSize(1200, 800);
-        setTitle("Quan ly Metro");
+        setTitle("Quan ly thu vien");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
