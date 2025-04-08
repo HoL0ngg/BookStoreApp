@@ -20,6 +20,10 @@ public class PhieuTraDTO {
 
     // Getters Setters
 
+    public PhieuTraDTO() {
+        //TODO Auto-generated constructor stub
+    }
+
     public int getMaPhieuTra() {
         return MaPhieuTra;
     }

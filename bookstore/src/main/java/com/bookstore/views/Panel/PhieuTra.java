@@ -14,29 +14,35 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 
 import com.bookstore.DTO.PhieuTraDTO;
+import com.bookstore.controller.PhieuTraController;
 import com.bookstore.dao.PhieuTraDAO;
 
 public class PhieuTra extends JPanel {
     
-    List<PhieuTraDTO> listpt = new PhieuTraDAO().layDanhSachPhieuTra();
+    private List<PhieuTraDTO> listpt = new PhieuTraDAO().layDanhSachPhieuTra();
     private JPanel search;
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField txtMaPhieuTra, txtNgayTra, txtMaNV, txtMaDocGia, txtMaPhieuMuon;
-    
+    public JButton btnTimKiem = new JButton("Tìm");
+    public JComboBox<String> cbLuaChonTK;
+    public JComboBox<String> cbSapXep;
+    public JTextField txtTimKiem;
+    private PhieuTraController phieuTraController;
+    public JButton sxtang, sxgiam;
+
     public PhieuTra(){
         System.out.println("da nhan vao phieu tra");
+        phieuTraController = new PhieuTraController(this);
         init();
     }
 
@@ -63,21 +69,37 @@ public class PhieuTra extends JPanel {
             "Mã phiếu mượn"
         };
 
-        JComboBox<String> cbLuaChonTK = new JComboBox<>(LuaChonTimKiem);
-        JTextField txtTimKiem = new JTextField(15);
-        JButton btnTimKiem = new JButton("Tìm");
+        cbLuaChonTK = new JComboBox<>(LuaChonTimKiem);
+        txtTimKiem = new JTextField(15);
         JLabel labeltk = new JLabel("Tìm kiếm theo ");
         search.add(labeltk);
         search.add(cbLuaChonTK);
         search.add(txtTimKiem);
         search.add(btnTimKiem);
 
-        search.add(Box.createHorizontalStrut(200));
+        search.add(Box.createHorizontalStrut(100));
 
-        JComboBox<String> cbSapXep = new JComboBox<>(LuaChonSapXep);
+        cbSapXep = new JComboBox<>(LuaChonSapXep);
         JLabel labelsapxep = new JLabel("Sắp xếp theo ");
         search.add(labelsapxep);
         search.add(cbSapXep);
+
+        btnTimKiem.addActionListener(phieuTraController);
+        cbSapXep.addItemListener(phieuTraController);
+
+        sxtang = new JButton("^");
+        sxgiam = new JButton("v");
+
+        sxtang.setPreferredSize(new Dimension(50, 30));
+        sxgiam.setPreferredSize(new Dimension(50,30));
+
+        sxtang.addActionListener(phieuTraController);
+        sxgiam.addActionListener(phieuTraController);
+
+        search.add(sxtang);
+        search.add(sxgiam);
+
+
 
         this.add(search, BorderLayout.NORTH);
 
@@ -101,7 +123,7 @@ public class PhieuTra extends JPanel {
         infoPanel.add(new JLabel("Mã nhân viên:"));
         infoPanel.add(Box.createHorizontalStrut(22));
         infoPanel.add(txtMaNV);
-        infoPanel.add(new JLabel("Mã độc giả:"));
+        infoPanel.add(new JLabel("Mã đọc giả:"));
         infoPanel.add(Box.createHorizontalStrut(35));
         infoPanel.add(txtMaDocGia);
         infoPanel.add(new JLabel("Mã phiếu mượn:"));
@@ -119,7 +141,7 @@ public class PhieuTra extends JPanel {
 
         // Sử dụng JSplitPane để chia không gian giữa bảng và thông tin
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, infoPanel);
-        splitPane.setDividerLocation(0.7);  // Đặt vị trí chia (600px cho bảng và phần còn lại cho thông tin)
+        splitPane.setDividerLocation(0.7);
         splitPane.setResizeWeight(0.7);
         splitPane.setOneTouchExpandable(true);
 
@@ -133,12 +155,12 @@ public class PhieuTra extends JPanel {
         topButtonPanel.setBackground(Color.WHITE);
 
         JButton btnThem = new JButton("Thêm");
-        btnThem.setPreferredSize(new Dimension(100, 30)); // Giảm chiều cao từ 80 xuống 30
+        btnThem.setPreferredSize(new Dimension(100, 30));
         topButtonPanel.add(btnThem);
 
         // Panel chứa nút Sửa/Xóa bên phải infoPanel
         JPanel rightButtonPanel = new JPanel();
-        rightButtonPanel.setLayout(new BoxLayout(rightButtonPanel, BoxLayout.Y_AXIS));
+        rightButtonPanel.setLayout(new FlowLayout(0,5,5));
         rightButtonPanel.setBackground(Color.WHITE);
         rightButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Thêm padding
 
@@ -189,4 +211,24 @@ public class PhieuTra extends JPanel {
             });
         }
     }
-}
+
+    public List<PhieuTraDTO> getListPhieuTra(){
+        return listpt;
+    }
+
+    public void updateTable(List<PhieuTraDTO> danhsach) {
+        tableModel.setRowCount(0); 
+    
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    
+        for (PhieuTraDTO pt : danhsach) {
+            tableModel.addRow(new Object[] {
+                pt.getMaPhieuTra(),
+                dateFormat.format(pt.getNgayTra()),
+                pt.getMaNV(),
+                pt.getMaDocGia(),
+                pt.getMaPhieuMuon()
+            });
+        }
+    }
+}    

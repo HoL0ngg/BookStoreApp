@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.utils.DatabaseUtils;
+import com.bookstore.views.Panel.PhieuTra;
 
 public class PhieuTraDAO {
 
@@ -102,5 +103,39 @@ public class PhieuTraDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public ArrayList<PhieuTraDTO> selectByMaPhieuTra(List<PhieuTraDTO> danhsach) {
+        ArrayList<PhieuTraDTO> list = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseUtils.getConnection();
+            String sql = "SELECT * FROM PhieuTra WHERE maPhieuTra LIKE ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, "%" + danhsach + "%");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                PhieuTraDTO pt = new PhieuTraDTO();
+                pt.setMaPhieuTra(rs.getInt("MaPhieuTra"));
+                pt.setMaNV(rs.getString("MaNhanVien"));
+                pt.setMaDocGia(rs.getString("maDocGia"));
+                pt.setMaPhieuMuon(rs.getInt("MaPhieuMuon"));
+                pt.setNgayTra(rs.getDate("ngayTra"));
+
+                list.add(pt);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (stmt != null) stmt.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+
+        return list;
     }
 }
