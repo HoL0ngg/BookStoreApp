@@ -15,7 +15,7 @@ public class PhieuTraDAO {
 
     //Thêm phiếu trả
     public boolean themPhieuTra(PhieuTraDTO phieuTra) {
-        String sql = "INSERT INTO PhieuTra (MaPhieuTra, NgayTra, MaNV, MaDocGia, MaPhieuMuon) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO PhieuTra (MaPhieuTra, NgayTra, MaNhanVien, MaDocGia, MaPhieuMuon) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, phieuTra.getMaPhieuTra());
@@ -32,7 +32,7 @@ public class PhieuTraDAO {
 
     // Cập nhật phiếu trả
     public boolean capNhatPhieuTra(PhieuTraDTO phieuTra) {
-        String sql = "UPDATE PhieuTra SET NgayTra = ?, MaNV = ?, MaDocGia = ?, MaPhieuMuon = ? WHERE MaPhieuTra = ?";
+        String sql = "UPDATE PhieuTra SET NgayTra = ?, MaNhanVien = ?, MaDocGia = ?, MaPhieuMuon = ? WHERE MaPhieuTra = ?";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setDate(1, new java.sql.Date(phieuTra.getNgayTra().getTime()));
@@ -48,11 +48,11 @@ public class PhieuTraDAO {
     }
 
     // Xóa phiếu trả
-    public boolean xoaPhieuTra(String maPhieuTra) {
+    public boolean xoaPhieuTra(int maPhieuTra) {
         String sql = "DELETE FROM PhieuTra WHERE MaPhieuTra = ?";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, maPhieuTra);
+            stmt.setInt(1, maPhieuTra);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

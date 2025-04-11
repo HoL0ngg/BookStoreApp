@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -33,12 +32,12 @@ public class PhieuTra extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField txtMaPhieuTra, txtNgayTra, txtMaNV, txtMaDocGia, txtMaPhieuMuon;
-    public JButton btnTimKiem = new JButton("Tìm");
-    public JComboBox<String> cbLuaChonTK;
-    public JComboBox<String> cbSapXep;
-    public JTextField txtTimKiem;
+    private JButton btnTimKiem = new JButton("Tìm");
+    private JComboBox<String> cbLuaChonTK;
+    private JComboBox<String> cbSapXep;
+    private JTextField txtTimKiem;
     private PhieuTraController phieuTraController;
-    public JButton sxtang, sxgiam;
+    private JButton sxtang, sxgiam, btnThem, btnSua, btnXoa;
 
     public PhieuTra(){
         System.out.println("da nhan vao phieu tra");
@@ -46,6 +45,8 @@ public class PhieuTra extends JPanel {
         init();
     }
 
+    
+    
     public void init() {
         this.setBackground(Color.WHITE);
         this.setLayout(new BorderLayout());
@@ -117,18 +118,27 @@ public class PhieuTra extends JPanel {
         infoPanel.add(new JLabel("Mã phiếu trả:"));
         infoPanel.add(Box.createHorizontalStrut(25));
         infoPanel.add(txtMaPhieuTra);
+        txtMaPhieuTra.setEditable(false);
+
         infoPanel.add(new JLabel("Ngày trả:"));
         infoPanel.add(Box.createHorizontalStrut(50));
         infoPanel.add(txtNgayTra);
+        txtNgayTra.setEditable(true);
+
         infoPanel.add(new JLabel("Mã nhân viên:"));
         infoPanel.add(Box.createHorizontalStrut(22));
         infoPanel.add(txtMaNV);
+        txtMaNV.setEditable(false);
+
         infoPanel.add(new JLabel("Mã đọc giả:"));
         infoPanel.add(Box.createHorizontalStrut(35));
         infoPanel.add(txtMaDocGia);
+        txtMaDocGia.setEditable(false);
+
         infoPanel.add(new JLabel("Mã phiếu mượn:"));
         infoPanel.add(Box.createHorizontalStrut(7));
         infoPanel.add(txtMaPhieuMuon);
+        txtMaPhieuMuon.setEditable(false);
 
         // Panel chứa bảng (bên trái)
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -154,9 +164,10 @@ public class PhieuTra extends JPanel {
         JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         topButtonPanel.setBackground(Color.WHITE);
 
-        JButton btnThem = new JButton("Thêm");
+        btnThem = new JButton("Thêm");
         btnThem.setPreferredSize(new Dimension(100, 30));
         topButtonPanel.add(btnThem);
+        btnThem.addActionListener(phieuTraController);
 
         // Panel chứa nút Sửa/Xóa bên phải infoPanel
         JPanel rightButtonPanel = new JPanel();
@@ -164,13 +175,15 @@ public class PhieuTra extends JPanel {
         rightButtonPanel.setBackground(Color.WHITE);
         rightButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Thêm padding
 
-        JButton btnSua = new JButton("Sửa");
+        btnSua = new JButton("Sửa");
         btnSua.setPreferredSize(new Dimension(100, 35));
         btnSua.setMaximumSize(new Dimension(100, 35));
+        btnSua.addActionListener(phieuTraController);
 
-        JButton btnXoa = new JButton("Xóa");
+        btnXoa = new JButton("Xóa");
         btnXoa.setPreferredSize(new Dimension(100, 35));
         btnXoa.setMaximumSize(new Dimension(100, 35));
+        btnXoa.addActionListener(phieuTraController);
 
         rightButtonPanel.add(btnSua);
         rightButtonPanel.add(Box.createVerticalStrut(10)); // Khoảng cách giữa 2 nút
@@ -198,10 +211,12 @@ public class PhieuTra extends JPanel {
         });
     }
     
-    private void loadTableData() {
+    public void loadTableData() {
         tableModel.setRowCount(0);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        for (PhieuTraDTO pt : listpt) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<PhieuTraDTO> tmplist = new PhieuTraDAO().layDanhSachPhieuTra();
+        setListpt(tmplist);
+        for (PhieuTraDTO pt : tmplist) {
             tableModel.addRow(new Object[] {
                 pt.getMaPhieuTra(),
                 sdf.format(pt.getNgayTra()),
@@ -212,14 +227,10 @@ public class PhieuTra extends JPanel {
         }
     }
 
-    public List<PhieuTraDTO> getListPhieuTra(){
-        return listpt;
-    }
-
     public void updateTable(List<PhieuTraDTO> danhsach) {
         tableModel.setRowCount(0); 
     
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     
         for (PhieuTraDTO pt : danhsach) {
             tableModel.addRow(new Object[] {
@@ -230,5 +241,103 @@ public class PhieuTra extends JPanel {
                 pt.getMaPhieuMuon()
             });
         }
+    }
+
+
+
+    public List<PhieuTraDTO> getListpt() {
+        return listpt;
+    }
+
+    public void setListpt(List<PhieuTraDTO> listpt) {
+        this.listpt = listpt;
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+
+
+    public JTextField getTxtMaPhieuTra() {
+        return txtMaPhieuTra;
+    }
+
+
+
+    public JTextField getTxtNgayTra() {
+        return txtNgayTra;
+    }
+
+
+
+    public JTextField getTxtMaNV() {
+        return txtMaNV;
+    }
+
+
+
+    public JTextField getTxtMaDocGia() {
+        return txtMaDocGia;
+    }
+
+
+
+    public JTextField getTxtMaPhieuMuon() {
+        return txtMaPhieuMuon;
+    }
+
+
+
+    public JButton getBtnTimKiem() {
+        return btnTimKiem;
+    }
+
+
+
+    public JComboBox<String> getCbLuaChonTK() {
+        return cbLuaChonTK;
+    }
+
+
+
+    public JComboBox<String> getCbSapXep() {
+        return cbSapXep;
+    }
+
+
+
+    public JTextField getTxtTimKiem() {
+        return txtTimKiem;
+    }
+
+
+
+    public JButton getSxtang() {
+        return sxtang;
+    }
+
+
+
+    public JButton getSxgiam() {
+        return sxgiam;
+    }
+
+
+
+    public JButton getBtnThem() {
+        return btnThem;
+    }
+
+
+
+    public JButton getBtnSua() {
+        return btnSua;
+    }
+
+
+
+    public JButton getBtnXoa() {
+        return btnXoa;
     }
 }    
