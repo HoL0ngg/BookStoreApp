@@ -262,6 +262,15 @@ public class Sach extends JPanel {
         String column[] = new String[] { "Mã sách", "Ngày nhập", "Trạng thái" };
         tableModel = new DefaultTableModel(column, 0);
         table = new JTable(tableModel);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.getSelectedRow();
+                if (row != -1) {
+                    TrangthaiDauSachComboBox.setSelectedIndex(Integer.parseInt(table.getValueAt(row, 2).toString()));
+                }
+            }
+        });
         tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         mainPanel.add(DSDauSach, "DanhSach");
@@ -432,13 +441,13 @@ public class Sach extends JPanel {
     }
 
     private void setTextfieldDisable() {
-        this.MaDauSachTextfield.setEnabled(false);
         this.NgayNhapSachTextfield.setEnabled(false);
         this.TuaDeTextfield.setEnabled(false);
         this.TrangthaiDauSachComboBox.setEnabled(false);
     }
 
     private void setTextfieldEnable() {
+        this.MaDauSachTextfield.setEnabled(true);
         this.NgayNhapSachTextfield.setEnabled(true);
         this.TuaDeTextfield.setEnabled(true);
         this.TrangthaiDauSachComboBox.setEnabled(true);
