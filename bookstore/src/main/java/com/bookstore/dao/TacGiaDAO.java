@@ -13,7 +13,7 @@ import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
-
+  
     public static TacGiaDAO getInstance() {
         return new TacGiaDAO();
     }
