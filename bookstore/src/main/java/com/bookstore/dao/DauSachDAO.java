@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bookstore.DTO.DauSachDTO;
+import com.bookstore.DTO.TheLoaiDTO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class DauSachDAO implements IBaseDAO<DauSachDTO> {
@@ -35,10 +36,11 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
                 PreparedStatement stmt = conn.prepareStatement(query);
                 ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
+                TheLoaiDAO theloaiDAO = new TheLoaiDAO();
+                List<TheLoaiDTO> listTheLoai = theloaiDAO.getTheLoaiByMaSach(rs.getString("MaDauSach"));
                 DauSachDTO kh = new DauSachDTO(rs.getString("MaDauSach"), rs.getString("TenDauSach"),
-                        rs.getString("HinhAnh"),
-                        rs.getString("NhaXuatBan"), rs.getInt("NamXuatBan"),
-                        rs.getString("NgonNgu"), rs.getInt("SoTrang"));
+                        rs.getString("HinhAnh"), rs.getString("NhaXuatBan"), rs.getInt("NamXuatBan"),
+                        rs.getString("NgonNgu"), rs.getInt("SoTrang"), listTheLoai);
                 list.add(kh);
             }
         } catch (SQLException e) {

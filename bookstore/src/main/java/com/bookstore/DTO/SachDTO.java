@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class SachDTO {
     private String MaSach;
     private String TrangThai;
-    private String MaDauSach;   
+    private String MaDauSach;
     private LocalDate NgayNhap;
 
     public SachDTO(String MaSach, String TrangThai, String MaDauSach) {
