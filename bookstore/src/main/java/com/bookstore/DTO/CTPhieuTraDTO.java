@@ -4,10 +4,10 @@ public class CTPhieuTraDTO {
     private int MaCTPhieuTra;
     private int TrangThai;
     private int MaPhieuTra;
-    private int MaSach;
+    private String MaSach;
 
     // Constructor
-    public CTPhieuTraDTO(int MaCTPhieuTra, int TrangThai, int MaPhieuTra, int MaSach){
+    public CTPhieuTraDTO(int MaCTPhieuTra, int TrangThai, int MaPhieuTra, String MaSach){
         this.MaCTPhieuTra = MaCTPhieuTra;
         this.TrangThai = TrangThai;
         this.MaPhieuTra = MaPhieuTra;
@@ -39,11 +39,11 @@ public class CTPhieuTraDTO {
         MaPhieuTra = maPhieuTra;
     }
 
-    public int getMaSach() {
+    public String getMaSach() {
         return MaSach;
     }
 
-    public void setMaSach(int maSach) {
+    public void setMaSach(String maSach) {
         MaSach = maSach;
     }
 

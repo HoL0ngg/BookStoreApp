@@ -52,4 +52,16 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
         return null;
     }
 
+    public int delete(String id) {
+        String query = "DELETE FROM dausach WHERE MaDauSach = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, id);
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

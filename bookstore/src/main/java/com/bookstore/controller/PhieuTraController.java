@@ -5,11 +5,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,9 +32,10 @@ public class PhieuTraController implements ItemListener, ActionListener{
     private PhieuTra pt;
     private PhieuTraDAO ptdao = new PhieuTraDAO();
     private TaiKhoanDTO tkDTO = new TaiKhoanDTO();
-    private Comparator<PhieuTraDTO> comparator =  Comparator.comparing(PhieuTraDTO:: getMaPhieuTra);;
+    private Comparator<PhieuTraDTO> comparator =  Comparator.comparing(PhieuTraDTO:: getMaPhieuTra);
     private List<PhieuTraDTO> manggoc;
     List<PhieuTraDTO> mangtmp;
+    private boolean isAscending = true;
 
     public PhieuTraController(PhieuTra pt){
         this.pt = pt;
@@ -53,7 +58,7 @@ public class PhieuTraController implements ItemListener, ActionListener{
                         timMNV(key);
                         break;
                     
-                    case "Mã đọc giả":
+                    case "Mã độc giả":
                         timMDG(key);
                         break;
                     case "Mã phiếu mượn":
@@ -64,13 +69,19 @@ public class PhieuTraController implements ItemListener, ActionListener{
                 }
             }
         }
-        else if (e.getSource() == pt.getSxtang()){
-            Collections.sort(mangtmp, comparator);
+        else if (e.getSource() == pt.getBtnReverse()){
+            if (isAscending){
+                pt.getBtnReverse().setIcon(pt.upIcon);
+                Collections.sort(mangtmp, comparator);
+            }
+            else {
+                pt.getBtnReverse().setIcon(pt.downIcon);
+                Collections.sort(mangtmp, comparator.reversed());
+            }
+
+            isAscending = !isAscending;
             pt.updateTable(mangtmp);
-        }
-        else if (e.getSource() == pt.getSxgiam()){
-            Collections.sort(mangtmp, comparator.reversed());
-            pt.updateTable(mangtmp);
+
         }
         else if (e.getSource() == pt.getBtnSua()){
             int slt = pt.getTable().getSelectedRow();
@@ -110,21 +121,55 @@ public class PhieuTraController implements ItemListener, ActionListener{
             System.out.println("Da nhan vao btn Sua");
         }
         else if (e.getSource() == pt.getBtnXoa()){
+
+            if (pt.getTxtMaPhieuTra().getText().isEmpty()){
+                JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu trả", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             System.out.println("Da nhan vao btn Xoa");
-            JDialog dialog = new JDialog((JFrame) null, "Xóa phiếu trả");
-            dialog.setSize(400, 300);
-            dialog.setLayout(new GridLayout(6, 2));
+            JDialog dialog = new JDialog((JFrame) null, "Xóa phiếu trả", true);
+            dialog.setSize(400, 200);
+            dialog.setLayout(new BorderLayout());
+            dialog.setResizable(false);
 
             String mpt = pt.getTxtMaPhieuTra().getText();
 
-            JLabel message = new JLabel("Xác nhận xóa phiếu trả " + mpt);
+            // panel chính
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 
+            // panel nội dung
+            JPanel contentPanel = new JPanel();
+            contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
+            // panel thông báo
+            JLabel message = new JLabel("Bạn chắc chắn muốn xóa phiếu trả " + mpt);
+            message.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            message.setAlignmentX(Component.CENTER_ALIGNMENT);
+            message.setBorder(BorderFactory.createEmptyBorder( 0, 0, 30, 0));
+
+            //JPanel chứa button xác nhận và hủy
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
+
+            // button xác nhận
             JButton confirm = new JButton("Xác nhận");
-            JButton cancel = new JButton("Hủy");
+            styleButton(confirm, new Color(0, 120, 215));
 
-            dialog.add(message);
-            dialog.add(confirm);
-            dialog.add(cancel);
+            // button hủy
+            JButton cancel = new JButton("Hủy");
+            styleButton(cancel, new Color(100,100,100));
+
+            // add .
+            contentPanel.add(message);
+            buttonPanel.add(confirm);
+            buttonPanel.add(cancel);
+
+            mainPanel.add(contentPanel, BorderLayout.CENTER);
+            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+            dialog.add(mainPanel);
 
             confirm.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e){
@@ -134,23 +179,19 @@ public class PhieuTraController implements ItemListener, ActionListener{
                     if (ptdao.xoaPhieuTra(mpt)){
                         pt.setListpt(ptdao.layDanhSachPhieuTra());                    
                         pt.loadTableData();
-                        JOptionPane.showMessageDialog(null, "Xoá thành công");
-                        dialog.dispose();
+                        JOptionPane.showMessageDialog(null, "Xóa thành công phiếu trả " + mpt, "Thành công", JOptionPane.INFORMATION_MESSAGE);
                     }
                     else {
-                        JOptionPane.showMessageDialog(null, "Xóa thất bại");
-                        dialog.dispose();
+                        JOptionPane.showMessageDialog(null, "Xóa thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
                     }
+
+                    dialog.dispose();
                     manggoc = pt.getListpt();
                     mangtmp = pt.getListpt();
-
-                    cancel.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e){
-                            dialog.dispose();
-                        }
-                    });
                 }
             });
+            cancel.addActionListener(e1 -> dialog.dispose());
+
             dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
         }
@@ -242,33 +283,31 @@ public class PhieuTraController implements ItemListener, ActionListener{
     }
 
     public void timMPT(String MaPT){
-        List<PhieuTraDTO> listtmp = new ArrayList<>();
-        for (PhieuTraDTO i: pt.getListpt()){
-            if ((i.getMaPhieuTra() + "").contains(MaPT)){
-                listtmp.add(i);
-            }
-        }
-        mangtmp = listtmp;
+        mangtmp = manggoc.stream()
+                            .filter(i -> (i.getMaPhieuTra() + "").contains(MaPT))
+                            .collect(Collectors.toList());
         pt.updateTable(mangtmp);
     }   
 
     public void timMNV(String MaNV){
-        List<PhieuTraDTO> listtmp = new ArrayList<>();
-        for (PhieuTraDTO i: manggoc){
-            if ((i.getMaNV()+ "").contains(MaNV)){
-                listtmp.add(i);
-            }
-        }
-        mangtmp = listtmp;
+        mangtmp = manggoc.stream()
+                            .filter(i -> (i.getMaNV() + "").contains(MaNV))
+                            .collect(Collectors.toList());
         pt.updateTable(mangtmp);
     }
 
     public void timMDG(String MaDG){
-
+        mangtmp = manggoc.stream()
+                            .filter(i -> (i.getMaDocGia() + "").contains(MaDG))
+                            .collect(Collectors.toList());
+        pt.updateTable(mangtmp);
     }
 
     public void timMPM(String MaPhieuMuon){
-
+        mangtmp = manggoc.stream()
+                            .filter(i -> (i.getMaPhieuMuon() + "").contains(MaPhieuMuon))
+                            .collect(Collectors.toList());
+        pt.updateTable(mangtmp);
     }
 
     @Override
@@ -291,7 +330,7 @@ public class PhieuTraController implements ItemListener, ActionListener{
                         comparator = Comparator.comparing(PhieuTraDTO:: getMaNV);
                         break;
 
-                    case "Mã đọc giả":System.out.println("1231231");
+                    case "Mã độc giả":System.out.println("1231231");
                         comparator = Comparator.comparing(PhieuTraDTO:: getMaDocGia);
                         break;
 
@@ -307,5 +346,47 @@ public class PhieuTraController implements ItemListener, ActionListener{
                 pt.updateTable(mangtmp);
             }
         }
+    }
+
+    private void styleButton(JButton button, Color color){
+
+        button.setPreferredSize(new Dimension(120, 40));
+        button.setFont(new Font("Seogoe UI", Font.PLAIN, 14));
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(color.darker()),
+                        BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // hover
+        button.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e){
+                button.setBackground(color.darker());
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e){
+                button.setBackground(color);
+            }
+        });
+
+    }
+
+    public void hienthichitiettable(int mpt){
+
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Chi tiết phiếu trả");
+        dialog.setLayout(null);
+
+        JLabel lbMaPhieuTra = new JLabel("111");
+        dialog.add(lbMaPhieuTra);
+        dialog.setSize(400,300);
+        dialog.setLayout(new GridLayout(6, 2));
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+
     }
 }
