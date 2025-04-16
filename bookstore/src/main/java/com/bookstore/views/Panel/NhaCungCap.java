@@ -3,9 +3,16 @@ package com.bookstore.views.Panel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.bookstore.BUS.NCCBUS;
+import com.bookstore.DTO.NCCDTO;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.List;
 
 public class NhaCungCap extends JPanel {
 
@@ -14,6 +21,9 @@ public class NhaCungCap extends JPanel {
     private JTextField txtTimKiem;
     private JComboBox<String> cboFilter;
     private JPanel btnThem, btnSua, btnXoa, btnChiTiet, btnXuatExcel, btnLamMoi;
+    private Timer searchTimer;
+
+    private NCCBUS nccBUS = new NCCBUS();
 
     public NhaCungCap() {
         setLayout(new BorderLayout());
@@ -46,6 +56,21 @@ public class NhaCungCap extends JPanel {
         cboFilter = new JComboBox<>(
                 new String[] { "Tất cả", "Mã NCC", "Tên NCC", "Số điện thoại", "Email", "Địa chỉ" });
         txtTimKiem = new JTextField(15);
+        txtTimKiem.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (searchTimer != null) {
+                    searchTimer.cancel();
+                }
+                searchTimer = new Timer();
+                searchTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        SwingUtilities.invokeLater(() -> performSearch());
+                    }
+                }, 300);
+            }
+        });
 
         filterPanel.add(cboFilter);
         filterPanel.add(txtTimKiem);
@@ -57,18 +82,43 @@ public class NhaCungCap extends JPanel {
 
         // CENTER (table)
         String[] columns = {
-                "Mã NCC", "Tên NCC", "Số điện thoại", "Email", "Địa chỉ"
+                "Mã NCC", "Tên NCC", "Số điện thoại", "Email", "Địa chỉ", "Trạng thái"
         };
-        Object[][] data = {
-                { "NCC01", "Nhà sách Trẻ", "0901234567", "ncc1@mail.com", "Q1, TP.HCM" },
-                { "NCC02", "Alpha Books", "0912345678", "ncc2@mail.com", "Q3, TP.HCM" },
-                { "NCC03", "NXB Giáo Dục", "0923456789", "ncc3@mail.com", "Hà Nội" },
-        };
+        Object[][] data = new Object[nccBUS.getList().size()][columns.length];
+        for (int i = 0; i < nccBUS.getList().size(); i++) {
+            data[i][0] = nccBUS.getList().get(i).getMaNCC();
+            data[i][1] = nccBUS.getList().get(i).getTenNCC();
+            data[i][2] = nccBUS.getList().get(i).getSoDienThoai();
+            data[i][3] = nccBUS.getList().get(i).getEmail();
+            data[i][4] = nccBUS.getList().get(i).getDiaChi();
+        }
 
         tableModel = new DefaultTableModel(data, columns);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private void performSearch() {
+        String type = (String) this.cboFilter.getSelectedItem();
+        String txt = this.txtTimKiem.getText().trim();
+        System.out.println("Đang tìm kiếm: " + txt + " - Loại: " + type);
+        List<NCCDTO> result = nccBUS.search(txt, type);
+        updateData(result);
+    }
+
+    private void updateData(List<NCCDTO> result) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        for (NCCDTO ncc : result) {
+            Object[] row = new Object[6];
+            row[0] = ncc.getMaNCC();
+            row[1] = ncc.getTenNCC();
+            row[2] = ncc.getSoDienThoai();
+            row[3] = ncc.getEmail();
+            row[4] = ncc.getDiaChi();
+            row[5] = ncc.getStatus() == 1 ? "Hoạt động" : "Ngừng hoạt động";
+            tableModel.addRow(row);
+        }
     }
 
     private JPanel createPanel(String text, String iconName) {
