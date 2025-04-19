@@ -41,41 +41,40 @@ public class TacGia extends JPanel {
         add(Box.createVerticalStrut(15));
         add(header);
 
+        // Nút Thêm
         header.getBtnAdd().addActionListener(e -> {
-            new EventTacGia(null).setVisible(true);
+            new AddEditTacGiaDialog(null).setVisible(true); // ?? why setVible
+            loadData(currentSearchType, currentKeyword);
         });
 
+        // Nút Sửa
         header.getBtnEdit().addActionListener(e -> {
             if (selectedTacGia != null) {
-                new EventTacGia(selectedTacGia).setVisible(true);
+                new AddEditTacGiaDialog(selectedTacGia).setVisible(true);
+                loadData(currentSearchType, currentKeyword);
             } else {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn một tác giả để sửa.");
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn tác giả để sửa.");
             }
         });
 
+        // Nút Xóa
         header.getBtnDelete().addActionListener(e -> {
             if (selectedTacGia != null) {
-                int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Bạn có chắc chắn muốn xóa tác giả này?", "Xác nhận",
+                        JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    new TacGiaDAO().delete(Integer.parseInt(selectedTacGia.getMaTacGia()));
-                    JOptionPane.showMessageDialog(this, "Xóa thành công!");
-                    loadData("Tất cả", "");
+                    TacGiaDAO dao = new TacGiaDAO();
+                    int result = dao.delete(Integer.parseInt(selectedTacGia.getMaTacGia()));  // Chuyển MaTacGia thành int
+                    if (result > 0) {
+                        JOptionPane.showMessageDialog(this, "Xóa thành công!");
+                        loadData(currentSearchType, currentKeyword);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Xóa thất bại!");
+                    }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn một tác giả để xóa.");
-            }
-        });
-
-        header.getBtnDetail().addActionListener(e -> {
-            if (selectedTacGia != null) {
-                JOptionPane.showMessageDialog(this,
-                        "Mã: " + selectedTacGia.getMaTacGia() + "\n" +
-                        "Tên: " + selectedTacGia.getTenTacGia() + "\n" +
-                        "Năm sinh: " + selectedTacGia.getNamSinh() + "\n" +
-                        "Quốc tịch: " + selectedTacGia.getQuocTich(),
-                        "Chi tiết tác giả", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn một tác giả để xem chi tiết.");
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn tác giả để xóa.");
             }
         });
 
@@ -85,6 +84,14 @@ public class TacGia extends JPanel {
             currentSearchType = selectedSearchType;
             currentKeyword = inputKeyword;
             loadData(currentSearchType, currentKeyword);
+        });
+
+        header.getBtnDetail().addActionListener(e -> {
+            if (selectedTacGia != null) {
+                new Detail_TacGia(null, selectedTacGia.getMaTacGia(), selectedTacGia.getTenTacGia()).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this,"Vui lòng chọn một tác giả để xem chi tiết.");
+            }
         });
 
         // Tiêu đề
@@ -106,7 +113,11 @@ public class TacGia extends JPanel {
         contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(new Color(234, 237, 237));
-        add(contentPanel);
+
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setPreferredSize(new Dimension(900, 400));
+        add(scrollPane);
     }
 
     public void loadData(String searchType, String keyword) {
@@ -116,27 +127,14 @@ public class TacGia extends JPanel {
         List<TacGiaDTO> list = new TacGiaDAO().selectAll();
 
         if (!searchType.equals("Tất cả") && !keyword.isEmpty()) {
-            List<TacGiaDTO> filteredList = new ArrayList<>();
-            for (TacGiaDTO tg : list) {
-                if (searchType.equals("Tên TG") && tg.getTenTacGia().toLowerCase().contains(keyword.toLowerCase())) {
-                    filteredList.add(tg);
-                } else if (searchType.equals("Mã TG") && tg.getMaTacGia().toLowerCase().contains(keyword.toLowerCase())) {
-                    filteredList.add(tg);
-                } else if (searchType.equals("Ngày sinh") && String.valueOf(tg.getNamSinh()).contains(keyword)) {
-                    filteredList.add(tg);
-                } else if (searchType.equals("Quốc tịch") && tg.getQuocTich().toLowerCase().contains(keyword.toLowerCase())) {
-                    filteredList.add(tg);
-                }
-            }
-            list = filteredList;
-        }
+            list = filter(list, searchType, keyword);
+        }   
 
-        // Show data
         List<JPanel> rowPanels = new ArrayList<>();
         for (TacGiaDTO tg : list) {
             JPanel rowPanel = new JPanel(new GridLayout(1, 4, 10, 0));
-            rowPanel.setPreferredSize(new Dimension(900, 25));
-            rowPanel.setMaximumSize(new Dimension(900, 25));
+            rowPanel.setPreferredSize(new Dimension(900, 35));
+            rowPanel.setMaximumSize(new Dimension(900, 35));
             rowPanel.setBackground(Color.WHITE);
 
             JLabel lbl1 = createDataLabel(tg.getMaTacGia());
@@ -171,9 +169,9 @@ public class TacGia extends JPanel {
                             JLabel label = (JLabel) comp;
                             label.setFont(new Font("Arial", Font.BOLD, 14));
                             label.setBackground(new Color(234, 237, 237));
-                            selectedTacGia = tg;
                         }
                     }
+                    selectedTacGia = tg;
                 }
             });
 
@@ -183,6 +181,22 @@ public class TacGia extends JPanel {
 
         contentPanel.revalidate();
         contentPanel.repaint();
+    }
+
+    private List<TacGiaDTO> filter(List<TacGiaDTO> list, String searchType, String keyword) {
+        List<TacGiaDTO> filteredList = new ArrayList<>();
+        for (TacGiaDTO tg : list) {
+            if (searchType.equals("Tên TG") && tg.getTenTacGia().toLowerCase().contains(keyword.toLowerCase())) {
+                filteredList.add(tg);
+            } else if (searchType.equals("Mã TG") && tg.getMaTacGia().toLowerCase().contains(keyword.toLowerCase())) {
+                filteredList.add(tg);
+            } else if (searchType.equals("Ngày sinh") && String.valueOf(tg.getNamSinh()).contains(keyword)) {
+                filteredList.add(tg);
+            } else if (searchType.equals("Quốc tịch") && tg.getQuocTich().toLowerCase().contains(keyword.toLowerCase())) {
+                filteredList.add(tg);
+            }
+        }
+        return filteredList;
     }
 
     private JLabel createTitleLabel(String text) {
@@ -201,7 +215,3 @@ public class TacGia extends JPanel {
         return label;
     }
 }
-
-
-// PHAN CHI TIET LA PHAI HIEN THI THONG TIN CAC CUON SACHS DO CUA TAC GIA
-// CAC  NUT PHAI SAI DUOC

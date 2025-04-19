@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.bookstore.DTO.SachDTO;
 import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.utils.DatabaseUtils;
 
@@ -49,7 +50,7 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
             pst.setString(2, t.getTenTacGia());
             pst.setInt(3, t.getNamSinh());
             pst.setString(4, t.getQuocTich());
-
+            pst.setString(5, t.getMaTacGia());
             result = pst.executeUpdate();
             DatabaseUtils.closeConnection(con); // Ngac ket noi khi hanh dong ending
         } catch (Exception e) {
@@ -59,21 +60,25 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
     }
 
     @Override
-    public int delete(int id) {
-        int result = 0;
-        try {
-            Connection con = (Connection) DatabaseUtils.getConnection();
-            String sql = "UPDATE `tacgia` SET Status= 0 WHERE `MaTacGia` = ?";
-            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setInt(1, id);
-            
-            result = pst.executeUpdate();
-            DatabaseUtils.closeConnection(con);
-        } catch (Exception e) {
-            Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return result;
+public int delete(int id) {
+    int result = 0;
+    try {
+       // change dtype 
+        String maTacGia = String.valueOf(id);  
+
+        Connection con = (Connection) DatabaseUtils.getConnection();
+        String sql = "UPDATE `tacgia` SET Status= 0 WHERE `MaTacGia` = ?";
+        PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+        pst.setString(1, maTacGia);  // Sử dụng setString vì MaTacGia là String
+
+        result = pst.executeUpdate();
+        DatabaseUtils.closeConnection(con);
+    } catch (Exception e) {
+        Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
     }
+    return result;
+}
+
 
     @Override
     public List<TacGiaDTO> selectAll() {
@@ -121,5 +126,32 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
         }
         return result;
     }
+    
+    // Get data Sach and TacGia
+    public List<String> selectByMaTacGia(String maTacGia) {
+        List<String> listTenSach = new ArrayList<>();
+        String query = "SELECT ds.TenDauSach FROM tacgia_sach as tgs " +
+               "JOIN sach as s ON tgs.MaSach = s.MaSach " +
+               "JOIN dausach as ds ON s.MaDauSach = ds.MaDauSach " +
+               "WHERE tgs.MaTacGia = ? AND tgs.Status = 1";
+
+
+                   try (Connection conn = DatabaseUtils.getConnection();
+                   PreparedStatement stmt = conn.prepareStatement(query)) {
+                  stmt.setString(1, maTacGia);
+          
+                  try (ResultSet rs = stmt.executeQuery()) {
+                      while (rs.next()) {
+                          listTenSach.add(rs.getString("TenDauSach"));
+                      }
+                  }
+              } catch (SQLException e) {
+                  e.printStackTrace();
+              }
+          
+              return listTenSach;
+    }
+
+    
 }
 

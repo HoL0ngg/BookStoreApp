@@ -12,6 +12,11 @@ public class TacGiaDTO {
         NamSinh = namSinh;
         QuocTich = quocTich;
     }
+
+    public TacGiaDTO(String maTacGia, String tenTacGia){
+        MaTacGia = maTacGia;
+        TenTacGia = tenTacGia;
+    }
     
     public String getTenTacGia() {
         return TenTacGia;

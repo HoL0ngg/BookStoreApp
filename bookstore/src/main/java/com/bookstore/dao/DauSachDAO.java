@@ -66,4 +66,40 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
         return 0;
     }
 
+
+    // show books 
+    public List<DauSachDTO> selectDauSachByMaTacGia(String maTacGia) {
+        List<DauSachDTO> list = new ArrayList<>();
+        String query = "SELECT DISTINCT ds.* FROM tacgia_sach ts " +
+                       "JOIN sach s ON ts.MaSach = s.MaSach " +
+                       "JOIN dausach ds ON s.MaDauSach = ds.MaDauSach " +
+                       "WHERE ts.MaTacGia = ? AND ts.Status = 1";
+    
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, maTacGia);
+    
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    TheLoaiDAO theloaiDAO = new TheLoaiDAO();
+                    List<TheLoaiDTO> listTheLoai = theloaiDAO.getTheLoaiByMaSach(rs.getString("MaDauSach"));
+                    DauSachDTO ds = new DauSachDTO(
+                        rs.getString("MaDauSach"),
+                        rs.getString("TenDauSach"),
+                        rs.getString("HinhAnh"),
+                        rs.getString("NhaXuatBan"),
+                        rs.getInt("NamXuatBan"),
+                        rs.getString("NgonNgu"),
+                        rs.getInt("SoTrang"),
+                        listTheLoai
+                    );
+                    list.add(ds);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return list;
+    }
 }
