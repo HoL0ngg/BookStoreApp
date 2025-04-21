@@ -59,4 +59,29 @@ public class NCCBUS {
         }
         return result;
     }
+
+    public void add(NCCDTO ncc) {
+        listNCC.add(ncc);
+        new NCCDAO().insert(ncc);
+    }
+
+    public void update(NCCDTO ncc) {
+        for (int i = 0; i < listNCC.size(); i++) {
+            if (listNCC.get(i).getMaNCC() == ncc.getMaNCC()) {
+                listNCC.set(i, ncc);
+                break;
+            }
+        }
+        new NCCDAO().update(ncc);
+    }
+
+    public void delete(int id) {
+        for (int i = 0; i < listNCC.size(); i++) {
+            if (listNCC.get(i).getMaNCC() == id) {
+                listNCC.remove(i);
+                break;
+            }
+        }
+        new NCCDAO().delete(id);
+    }
 }

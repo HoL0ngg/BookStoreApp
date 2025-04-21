@@ -55,8 +55,41 @@ public class NCCDAO implements IBaseDAO<NCCDTO> {
 
     @Override
     public NCCDTO selectById(int id) {
-        // Implement the selectById logic here
-        return null;
+        NCCDTO ncc = null;
+        String sql = "SELECT * FROM NhaCungCap WHERE MaNCC = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    ncc = new NCCDTO();
+                    ncc.setMaNCC(rs.getInt("MaNCC"));
+                    ncc.setTenNCC(rs.getString("TenNhaCC"));
+                    ncc.setDiaChi(rs.getString("DiaChi"));
+                    ncc.setEmail(rs.getString("Email"));
+                    ncc.setSoDienThoai(rs.getString("SDT"));
+                    ncc.setStatus(rs.getInt("Status"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ncc;
+    }
+
+    public int getMaxId() {
+        int maxId = 0;
+        String sql = "SELECT MAX(MaNCC) AS MaxId FROM NhaCungCap";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                maxId = rs.getInt("MaxId");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return maxId;
     }
 
 }

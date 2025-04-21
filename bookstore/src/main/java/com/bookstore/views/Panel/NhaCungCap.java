@@ -5,6 +5,9 @@ import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.BUS.NCCBUS;
 import com.bookstore.DTO.NCCDTO;
+import com.bookstore.dao.NCCDAO;
+import com.bookstore.utils.ExcelExporter;
+import com.bookstore.views.Dialog.NCCDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import java.awt.*;
@@ -91,12 +94,107 @@ public class NhaCungCap extends JPanel {
             data[i][2] = nccBUS.getList().get(i).getSoDienThoai();
             data[i][3] = nccBUS.getList().get(i).getEmail();
             data[i][4] = nccBUS.getList().get(i).getDiaChi();
+            data[i][5] = nccBUS.getList().get(i).getStatus() == 1 ? "Hoạt động" : "Ngừng hoạt động";
         }
 
         tableModel = new DefaultTableModel(data, columns);
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
+
+        btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                NCCDialog dialog = new NCCDialog(((Frame) SwingUtilities.getWindowAncestor(NhaCungCap.this)),
+                        NCCDialog.Mode.ADD, null);
+                dialog.setVisible(true);
+                if (dialog.isSaved()) {
+                    NCCDTO ncc = new NCCDTO(dialog.getMaNCC(), dialog.getTenNCC(), dialog.getSoDienThoai(),
+                            dialog.getEmail(), dialog.getDiaChi(), dialog.getTrangThai() == "Hoạt động" ? 1 : 0);
+                    nccBUS.add(ncc);
+                    updateData(nccBUS.getList());
+                }
+            }
+        });
+
+        btnSua.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    int maNCC = (int) tableModel.getValueAt(selectedRow, 0);
+                    NCCDTO ncc = new NCCDAO().selectById(maNCC);
+                    NCCDialog dialog = new NCCDialog(((Frame) SwingUtilities.getWindowAncestor(NhaCungCap.this)),
+                            NCCDialog.Mode.EDIT, ncc);
+                    dialog.setVisible(true);
+                    if (dialog.isSaved()) {
+                        ncc.setTenNCC(dialog.getTenNCC());
+                        ncc.setSoDienThoai(dialog.getSoDienThoai());
+                        ncc.setEmail(dialog.getEmail());
+                        ncc.setDiaChi(dialog.getDiaChi());
+                        ncc.setStatus(dialog.getTrangThai() == "Hoạt động" ? 1 : 0);
+                        nccBUS.update(ncc);
+                        updateData(nccBUS.getList());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Vui lòng chọn nhà cung cấp để sửa.");
+                }
+            }
+        });
+
+        btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    int maNCC = (int) tableModel.getValueAt(selectedRow, 0);
+                    int confirm = JOptionPane.showConfirmDialog(NhaCungCap.this,
+                            "Bạn có chắc chắn muốn xóa nhà cung cấp này không?", "Xác nhận",
+                            JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        nccBUS.delete(maNCC);
+                        updateData(nccBUS.getList());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Vui lòng chọn nhà cung cấp để xóa.");
+                }
+            }
+        });
+
+        btnChiTiet.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    int maNCC = (int) tableModel.getValueAt(selectedRow, 0);
+                    NCCDTO ncc = new NCCDAO().selectById(maNCC);
+                    NCCDialog dialog = new NCCDialog(((Frame) SwingUtilities.getWindowAncestor(NhaCungCap.this)),
+                            NCCDialog.Mode.VIEW, ncc);
+                    dialog.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Vui lòng chọn nhà cung cấp để xem chi tiết.");
+                }
+            }
+        });
+
+        btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtTimKiem.setText("");
+                updateData(nccBUS.getList());
+            }
+        });
+        btnXuatExcel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JFileChooser fileChooser = new JFileChooser();
+                int result = fileChooser.showSaveDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = fileChooser.getSelectedFile().getAbsolutePath();
+                    if (!path.endsWith(".xlsx")) {
+                        path += ".xlsx";
+                    }
+                    ExcelExporter.exportToExcel(nccBUS.getList(), path);
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Xuất file thành công!", "Thông báo",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
     }
 
     private void performSearch() {
