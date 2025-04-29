@@ -70,7 +70,7 @@ import javax.swing.JPanel;
 
         public void initComponent() {
             // Tạo các nút JButton
-            btnAdd = createButton("THÊM", "resources/icons/add.png");
+            btnAdd = createButton("THÊM", "add.png");
              btnEdit = createButton("SỬA", "resources/icons/edit.png");
              btnDelete = createButton("XÓA", "resources/icons/delete.png");
              btnDetail = createButton("CHI TIẾT", "resources/icons/delete.png");
@@ -84,13 +84,13 @@ import javax.swing.JPanel;
            
             setLayout(new FlowLayout(FlowLayout.LEFT, 6, 0));  // can goc trai 20px và height 10px
 
-            ImageIcon icon = new ImageIcon("resources/svg/add.svg"); // link
+            // ImageIcon icon = new ImageIcon("resources/svg/add.svg"); // link
             
             // Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH); // edit size img
             // icon = new ImageIcon(img);
 
-            JLabel iconLabel = new JLabel(icon); // create iconLabel
-            add(iconLabel);
+            // JLabel iconLabel = new JLabel(icon); // create iconLabel
+            // add(iconLabel);
 
 
             //Sort and search
@@ -107,7 +107,7 @@ import javax.swing.JPanel;
             sortComboBox.setPreferredSize(new Dimension(135, 40));
             sortComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
             sortComboBox.setBackground(Color.WHITE);
-            sortComboBox.setFocusable(false);
+            sortComboBox.setFocusable(false); // close tab
             sortComboBox.setOpaque(false);
             sortComboBox.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
@@ -153,13 +153,7 @@ import javax.swing.JPanel;
             btnRefresh.setPreferredSize(new Dimension(100, 40));
 
             add(btnRefresh);
-
-
         }
-
-
-
-
 
         @Override
         protected void paintComponent(Graphics grphcs) {
@@ -187,3 +181,8 @@ import javax.swing.JPanel;
 
         
     }
+
+
+
+
+    // Check image

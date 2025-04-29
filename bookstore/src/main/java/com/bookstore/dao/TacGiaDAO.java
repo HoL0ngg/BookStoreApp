@@ -13,7 +13,7 @@ import com.bookstore.DTO.SachDTO;
 import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.utils.DatabaseUtils;
 
-public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
+public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
   
     public static TacGiaDAO getInstance() {
         return new TacGiaDAO();
@@ -59,25 +59,25 @@ public class TacGiaDAO implements IBaseDAO<TacGiaDTO>{
         return result;
     }
 
-    @Override
-public int delete(int id) {
-    int result = 0;
-    try {
-       // change dtype 
-        String maTacGia = String.valueOf(id);  
+//     @Override
+// public int delete(int id) {
+//     int result = 0;
+//     try {
+//        // change dtype 
+//         String maTacGia = String.valueOf(id);  
 
-        Connection con = (Connection) DatabaseUtils.getConnection();
-        String sql = "UPDATE `tacgia` SET Status= 0 WHERE `MaTacGia` = ?";
-        PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-        pst.setString(1, maTacGia);  // Sử dụng setString vì MaTacGia là String
+//         Connection con = (Connection) DatabaseUtils.getConnection();
+//         String sql = "UPDATE `tacgia` SET Status= 0 WHERE `MaTacGia` = ?";
+//         PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+//         pst.setString(1, maTacGia);  // Sử dụng setString vì MaTacGia là String
 
-        result = pst.executeUpdate();
-        DatabaseUtils.closeConnection(con);
-    } catch (Exception e) {
-        Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
-    }
-    return result;
-}
+//         result = pst.executeUpdate();
+//         DatabaseUtils.closeConnection(con);
+//     } catch (Exception e) {
+//         Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
+//     }
+//     return result;
+// }
 
 
     @Override
@@ -105,13 +105,13 @@ public int delete(int id) {
     }
 
     @Override
-    public TacGiaDTO selectById(int id) {
+    public TacGiaDTO selectById(String ma) {
         TacGiaDTO result = null;
         try {
             Connection con = (Connection) DatabaseUtils.getConnection();
             String sql = "SELECT * FROM tacgia WHERE MaTacGia=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setInt(1, id);
+            pst.setString(1, ma);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while(rs.next()){
                 String MaTacGia = rs.getString("MaTacGia");
@@ -152,6 +152,24 @@ public int delete(int id) {
               return listTenSach;
     }
 
-    
+
+    @Override
+    public int delete(String id) {
+        int result = 0;
+        try {
+            Connection con = DatabaseUtils.getConnection();
+            String sql = "UPDATE `tacgia` SET Status = 0 WHERE `MaTacGia` = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, id);  // Sử dụng setString vì MaTacGia là String
+
+            result = pst.executeUpdate();
+            DatabaseUtils.closeConnection(con);
+        } catch (Exception e) {
+            Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return result;
+    }
+
+
 }
 

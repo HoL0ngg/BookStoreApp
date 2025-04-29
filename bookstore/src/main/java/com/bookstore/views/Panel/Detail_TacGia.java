@@ -17,8 +17,8 @@ public class Detail_TacGia extends JDialog {
     
     public Detail_TacGia(Frame parent, String maTacGia, String tenTacGia) {
         super(parent, "Chi tiết tác giả", true);
-        setSize(600, 400);
-        setLocationRelativeTo(null);
+        setSize(700, 400);
+        setLocationRelativeTo(null);    
         setLayout(new BorderLayout());
 
         // Panel hiển thị thông tin tác giả 
@@ -53,3 +53,17 @@ public class Detail_TacGia extends JDialog {
         }
     }
 }
+
+
+
+
+// UI KHONG DEP CAN PHAI EDIT LAI
+// text 'detail' bi loi 
+// tt show of matg va tentg bi dai qua
+// THEM
+// -> CHUA SU XY RANG BUOC
+// xOA
+// -> xoa khong duoc
+
+// ERROR
+// Exception in thread "AWT-EventQueue-0" java.lang.NumberFormatException: For input string: "TG001"

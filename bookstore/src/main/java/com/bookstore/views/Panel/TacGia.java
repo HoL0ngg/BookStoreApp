@@ -43,7 +43,7 @@ public class TacGia extends JPanel {
 
         // Nút Thêm
         header.getBtnAdd().addActionListener(e -> {
-            new AddEditTacGiaDialog(null).setVisible(true); // ?? why setVible
+            new AddEditTacGiaDialog(null).setVisible(true); // Show Dialog
             loadData(currentSearchType, currentKeyword);
         });
 
@@ -65,7 +65,7 @@ public class TacGia extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     TacGiaDAO dao = new TacGiaDAO();
-                    int result = dao.delete(Integer.parseInt(selectedTacGia.getMaTacGia()));  // Chuyển MaTacGia thành int
+                    int result = dao.delete(selectedTacGia.getMaTacGia()); 
                     if (result > 0) {
                         JOptionPane.showMessageDialog(this, "Xóa thành công!");
                         loadData(currentSearchType, currentKeyword);
@@ -121,16 +121,16 @@ public class TacGia extends JPanel {
     }
 
     public void loadData(String searchType, String keyword) {
-        contentPanel.removeAll();
+        contentPanel.removeAll(); // ???
         selectedTacGia = null;
 
         List<TacGiaDTO> list = new TacGiaDAO().selectAll();
 
         if (!searchType.equals("Tất cả") && !keyword.isEmpty()) {
             list = filter(list, searchType, keyword);
-        }   
+        }   // ??
 
-        List<JPanel> rowPanels = new ArrayList<>();
+        List<JPanel> rowPanels = new ArrayList<>();   
         for (TacGiaDTO tg : list) {
             JPanel rowPanel = new JPanel(new GridLayout(1, 4, 10, 0));
             rowPanel.setPreferredSize(new Dimension(900, 35));
@@ -183,6 +183,7 @@ public class TacGia extends JPanel {
         contentPanel.repaint();
     }
 
+    // filter
     private List<TacGiaDTO> filter(List<TacGiaDTO> list, String searchType, String keyword) {
         List<TacGiaDTO> filteredList = new ArrayList<>();
         for (TacGiaDTO tg : list) {
@@ -215,3 +216,5 @@ public class TacGia extends JPanel {
         return label;
     }
 }
+
+
