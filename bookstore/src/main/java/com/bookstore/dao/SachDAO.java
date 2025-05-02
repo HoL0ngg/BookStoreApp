@@ -45,34 +45,33 @@ public class SachDAO implements IBaseDAO<SachDTO> {
         }
         return list;
     }
+
     // Get data Sach and TacGia
     public List<SachDTO> selectByMaTacGia(String maTacGia) {
         List<SachDTO> list = new ArrayList<>();
         String query = "SELECT s.* FROM tacgia_sach ts " +
-                   "JOIN sach s ON ts.MaSach = s.MaSach " +
-                   "WHERE ts.MaTacGia = ? AND ts.Status = 1";
-    
+                "JOIN sach s ON ts.MaSach = s.MaSach " +
+                "WHERE ts.MaTacGia = ? AND ts.Status = 1";
+
         try (Connection conn = DatabaseUtils.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, maTacGia);
-    
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     SachDTO sach = new SachDTO(
-                        rs.getString("MaSach"),
-                        rs.getString("TrangThai"),
-                        rs.getString("MaDauSach")
-                    );
+                            rs.getString("MaSach"),
+                            rs.getString("TrangThai"),
+                            rs.getString("MaDauSach"));
                     list.add(sach);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         return list;
     }
-    
 
     public List<SachDTO> selectByDauSach(String MaDauSach) {
         List<SachDTO> list = new ArrayList<>();
@@ -99,9 +98,6 @@ public class SachDAO implements IBaseDAO<SachDTO> {
 
         return list;
     }
-
-
-    
 
     @Override
     public SachDTO selectById(int id) {

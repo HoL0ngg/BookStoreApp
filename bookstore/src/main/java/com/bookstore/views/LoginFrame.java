@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.bookstore.BUS.TaiKhoanBUS;
 import com.bookstore.controller.LoginController;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
@@ -30,6 +31,7 @@ public class LoginFrame extends JFrame {
     private JLabel ExitIcon;
     private JPanel MinimizeButton;
     private JLabel MinimizeIcon;
+    private TaiKhoanBUS taiKhoanBUS = new TaiKhoanBUS();
 
     public LoginFrame() {
         this.setTitle("Quan ly Thu vien");
@@ -209,6 +211,22 @@ public class LoginFrame extends JFrame {
                 }
             }
 
+        });
+
+        DangNhapButton.addActionListener(e -> {
+            String tenDangNhap = TenDangNhapField.getText();
+            String matKhau = String.valueOf(MatKhauField.getPassword());
+
+            JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
+            this.dispose(); // Đóng cửa sổ đăng nhập
+            new MainFrame(); // Mở cửa sổ chính
+            // if (taiKhoanBUS.dangNhap(tenDangNhap, matKhau)) {
+            // } else {
+            // JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng",
+            // "Thông báo",
+            // JOptionPane.ERROR_MESSAGE);
+            // }
         });
 
         // Tranh focus vao JTextfield tu ban dau
