@@ -21,6 +21,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import com.bookstore.views.Component.MenuTaskbar;
 import com.bookstore.views.Component.RoundedPanel;
+import com.bookstore.views.Panel.TrangChu;
 
 public class MainFrame extends JFrame {
     private JPanel DangXuatPanel;
@@ -167,76 +168,7 @@ public class MainFrame extends JFrame {
         DangXuatPanel.add(DangXuatLabel);
         ChucNangPanel.add(DangXuatPanel, BorderLayout.SOUTH);
 
-        // Panel Trang chu
-        JPanel TrangChuPanel = new JPanel();
-        TrangChuPanel.setLayout(null);
-        TrangChuPanel.setBackground(Color.white);
-        TrangChuPanel.setSize(900, 760);
-
-        JLabel TrangChuLabel = new JLabel(
-                "<html><div style='text-align: center; font-weight: 700; font-size: larger;'>HỆ THỐNG QUẢN LÝ THƯ VIỆN</div><div style='text-align: center; font-weight: 400; font-size: smaller; margin-top: 4px;'>- SÁCH LÀ NGUỒN KIẾN THỨC VÔ TẬN -</div></html>",
-                JLabel.CENTER);
-        TrangChuLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        TrangChuLabel.setForeground(Color.black);
-        TrangChuLabel.setBounds(0, 0, 900, 140);
-        TrangChuPanel.add(TrangChuLabel);
-
-        JPanel ThongKePanel = new JPanel();
-        ThongKePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 50));
-        ThongKePanel.setBackground(Color.decode("#BDCDD6"));
-        ThongKePanel.setBounds(0, 140, 900, 620);
-        TrangChuPanel.add(ThongKePanel);
-
-        RoundedPanel SoTauPanel = new RoundedPanel(20);
-        SoTauPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        SoTauPanel.setBackground(Color.decode("#93BFCF"));
-        SoTauPanel.setPreferredSize(new Dimension(250, 350));
-        SoTauPanel.setBorder(new LineBorder(Color.black, 2));
-        ThongKePanel.add(SoTauPanel);
-
-        JLabel SoTauLabel = new JLabel("Số tàu", JLabel.CENTER);
-        SoTauLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        SoTauLabel.setForeground(Color.black);
-        SoTauPanel.add(SoTauLabel);
-
-        RoundedPanel SoNguoiSuDungPanel = new RoundedPanel(20);
-        SoNguoiSuDungPanel.setLayout(null);
-        SoNguoiSuDungPanel.setBackground(Color.decode("#93BFCF"));
-        SoNguoiSuDungPanel.setPreferredSize(new Dimension(250, 350));
-        SoNguoiSuDungPanel.setBorder(new LineBorder(Color.black, 2));
-        ThongKePanel.add(SoNguoiSuDungPanel);
-
-        JLabel SoNguoiSuDungLabel = new JLabel("696 ĐẦU SÁCH", JLabel.CENTER);
-        SoNguoiSuDungLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        SoNguoiSuDungLabel.setBounds(0, 200, 250, 50);
-        SoNguoiSuDungLabel.setForeground(Color.black);
-        SoNguoiSuDungPanel.add(SoNguoiSuDungLabel);
-
-        FlatSVGIcon SoNugoiSuDungIcon = new FlatSVGIcon(getClass().getResource("/svg/book2.svg")).derive(150, 150);
-        JLabel NguoiSuDungIcon = new JLabel(SoNugoiSuDungIcon, JLabel.CENTER);
-        NguoiSuDungIcon.setBounds(50, 30, 150, 150);
-        SoNguoiSuDungPanel.add(NguoiSuDungIcon);
-
-        RoundedPanel SoTuyenDuongPanel = new RoundedPanel(20);
-        SoTuyenDuongPanel.setLayout(null);
-        SoTuyenDuongPanel.setBackground(Color.decode("#93BFCF"));
-        SoTuyenDuongPanel.setPreferredSize(new Dimension(250, 350));
-        SoTuyenDuongPanel.setBorder(new LineBorder(Color.black, 2));
-        ThongKePanel.add(SoTuyenDuongPanel);
-
-        JLabel SoTuyenDuongLabel = new JLabel("7749 TUYẾN ĐƯỜNG", JLabel.CENTER);
-        SoTuyenDuongLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        SoTuyenDuongLabel.setBounds(0, 200, 250, 50);
-        SoTuyenDuongLabel.setForeground(Color.black);
-        SoTuyenDuongPanel.add(SoTuyenDuongLabel);
-
-        // FlatSVGIcon SoTuyenDuongIcon = new
-        // FlatSVGIcon(getClass().getResource("/svg/route2.svg")).derive(150, 150);
-        // JLabel TuyenDuongIcon = new JLabel(SoTuyenDuongIcon, JLabel.CENTER);
-        // TuyenDuongIcon.setBounds(50, 30, 150, 150);
-        // SoTuyenDuongPanel.add(TuyenDuongIcon);
-
-        this.setPanel(TrangChuPanel);
+        this.setPanel(new TrangChu());
     }
 
     public void setPanel(JPanel pn) {
