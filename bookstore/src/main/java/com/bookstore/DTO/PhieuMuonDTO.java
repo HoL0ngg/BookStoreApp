@@ -3,6 +3,8 @@ package com.bookstore.DTO;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 public class PhieuMuonDTO {
     
     private int MaPhieuMuon;
@@ -11,15 +13,17 @@ public class PhieuMuonDTO {
     private int TrangThai;
     private String MaDocGia;
     private String MaNhanVien;
+    private Boolean Status;
 
     public PhieuMuonDTO(int MaPhieuMuon, Date NgayMuon, Date NgayTraDuKien, int TrangThai,
-                    String MaDocGia, String MaNhanVien){
+                    String MaDocGia, String MaNhanVien, Boolean Status){
         this.MaPhieuMuon = MaPhieuMuon;
         this.NgayMuon = NgayMuon;
         this.NgayTraDuKien = NgayTraDuKien;
         this.TrangThai = TrangThai;
         this.MaDocGia = MaDocGia;
         this.MaNhanVien = MaNhanVien;
+        this.Status = Status;
 
     }
 
@@ -75,5 +79,12 @@ public class PhieuMuonDTO {
         MaNhanVien = maNhanVien;
     }
 
-    
+    public boolean getStatus(){
+        return Status;
+    }
+
+    public void setStatus(boolean status){
+        Status = status;
+    }
+
 }

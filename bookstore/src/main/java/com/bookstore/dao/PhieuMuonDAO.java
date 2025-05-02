@@ -25,7 +25,8 @@ public class PhieuMuonDAO{
                         rs.getDate("NgayTraDuKien"),
                         rs.getInt("TrangThai"),
                         rs.getString("MaDocGia"),
-                        rs.getString("MaNhanVien")
+                        rs.getString("MaNhanVien"),
+                        rs.getBoolean("Status")
                         ));
                 }
             }

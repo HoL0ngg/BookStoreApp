@@ -35,7 +35,8 @@ public class PhieuMuonBUS {
                         rs.getDate("NgayTraDuKien"),
                         rs.getInt("TrangThai"),
                         rs.getString("MaDocGia"),
-                        rs.getString("MaNhanVien")
+                        rs.getString("MaNhanVien"),
+                        rs.getBoolean("Status")
                     );
                 }
             }
@@ -86,7 +87,7 @@ public class PhieuMuonBUS {
 
     // Xóa phiếu mượn
     public boolean xoaPhieuMuon(int maPhieuMuon){
-        String sql = "DELETE DROM PhieuMuon WHERE MaPhieuMuon = ?";
+        String sql = "UPDATE PhieuMuon SET Status = 0 WHERE MaPhieuMuon = ?";
         try (Connection conn = DatabaseUtils.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)){
                 stmt.setInt(1, maPhieuMuon);

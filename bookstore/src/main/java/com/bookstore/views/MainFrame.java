@@ -30,6 +30,7 @@ public class MainFrame extends JFrame {
     private JPanel MinimizeButton;
     private JLabel ExitIcon;
     private JLabel MinimizeIcon;
+    
 
     public JPanel MainContent;
     private MenuTaskbar menuTaskbar;

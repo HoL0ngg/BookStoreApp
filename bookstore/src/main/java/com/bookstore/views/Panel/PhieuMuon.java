@@ -48,18 +48,18 @@ public class PhieuMuon extends JPanel {
     private JButton btnReverse, btnThem, btnSua, btnXoa, btnTimKiem;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
-  
-    public PhieuMuon(){
+
+    public PhieuMuon() {
         phieumuoncontroller = new PhieuMuonController(this);
         init();
     }
 
-    public void init(){
-        
+    public void init() {
+
         // sau khi hoàn chỉnh -> xóa
         try {
             UIManager.setLookAndFeel(new MaterialLookAndFeel());
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -67,27 +67,27 @@ public class PhieuMuon extends JPanel {
 
         // panel tìm kiếm và sắp xếp
         search = new JPanel();
-        search.setPreferredSize(new Dimension(900,50));
-        
-        //setBound cho thành phần
+        search.setPreferredSize(new Dimension(900, 50));
+
+        // setBound cho thành phần
         search.setLayout(null);
 
         String[] LuaChonTimKiem = {
-            "Mã phiếu mượn",
-            "Ngày mượn",
-            "Ngày trả dự kiến",
-            "Trạng thái",
-            "Mã độc giả",
-            "Mã nhân viên"
+                "Mã phiếu mượn",
+                "Ngày mượn",
+                "Ngày trả dự kiến",
+                "Trạng thái",
+                "Mã độc giả",
+                "Mã nhân viên"
         };
 
         String[] LuaChonSapXep = {
-            "Mã phiếu mượn",
-            "Ngày mượn",
-            "Ngày trả dự kiến",
-            "Trạng thái",
-            "Mã độc giả",
-            "Mã nhân viên"
+                "Mã phiếu mượn",
+                "Ngày mượn",
+                "Ngày trả dự kiến",
+                "Trạng thái",
+                "Mã độc giả",
+                "Mã nhân viên"
         };
 
         // phần tìm kiếm
@@ -96,7 +96,7 @@ public class PhieuMuon extends JPanel {
         JLabel lbtimkiem = new JLabel("Tìm kiếm theo ");
         btnTimKiem = new JButton("Tìm");
         lbtimkiem.setBounds(20, 10, 100, 30);
-        cbLuaChonTK.setBounds(120,10, 150, 30);
+        cbLuaChonTK.setBounds(120, 10, 150, 30);
         txtTimKiem.setBounds(280, 10, 150, 30);
         btnTimKiem.setBounds(440, 10, 80, 30);
 
@@ -105,7 +105,7 @@ public class PhieuMuon extends JPanel {
         JLabel lbSapXep = new JLabel("Sắp xếp theo ");
         lbSapXep.setBounds(590, 10, 100, 30);
         cbSapXep.setBounds(690, 10, 150, 30);
-        
+
         btnTimKiem.addActionListener(phieumuoncontroller);
         cbSapXep.addActionListener(phieumuoncontroller);
 
@@ -156,69 +156,78 @@ public class PhieuMuon extends JPanel {
 
         // panel chứa bảng
         JPanel tablePanel = new JPanel(new BorderLayout());
-        tableModel = new DefaultTableModel(new Object[]{
-            "Mã phiếu mượn", "Ngày mượn", "Ngày trả dự kiến", "Trạng thái", "Mã độc giả", "Mã nhân viên", "Thao tác"
-        }, 0);
+
+        tableModel = new DefaultTableModel(new Object[] {
+                "Mã phiếu mượn", "Ngày mượn", "Ngày trả dự kiến", "Trạng thái", "Mã độc giả", "Mã nhân viên", "Thao tác"
+        }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         // Jtable
         table = new JTable(tableModel);
         table.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 int row = table.rowAtPoint(e.getPoint());
                 int col = table.columnAtPoint(e.getPoint());
 
-                if (col == 6 && row >= 0){
+                if (col == 6 && row >= 0) {
                     int maPhieuMuon = (int) table.getValueAt(row, 0);
                     phieumuoncontroller.hienthichitiettable(maPhieuMuon);
                 }
             }
         });
 
-        // thanh scroll
-        JScrollPane scrollPane = new JScrollPane(table);
-        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        // // thanh scroll
+        // JScrollPane scrollPane = new JScrollPane(table);
+        // tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         // add thanh header + bảng
         this.add(headerPanel, BorderLayout.NORTH);
         this.add(new JScrollPane(table), BorderLayout.CENTER);
-        
+
         // tải dữ liệu vào bảng
         loadTableData();
 
     }
+
     public void loadTableData() {
         tableModel.setRowCount(0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<PhieuMuonDTO> tmplist = new PhieuMuonDAO().layDanhSachPhieuMuon();
         setListpm(tmplist);
         for (PhieuMuonDTO pm : tmplist) {
-            tableModel.addRow(new Object[] {
-                pm.getMaPhieuMuon(),
-                sdf.format(pm.getNgayMuon()),
-                sdf.format(pm.getNgayTraDuKien()),
-                pm.getTrangThai(),
-                pm.getMaDocGia(),
-                pm.getMaNhanVien(),
-                "Chi tiết"
-            });
+            if (pm.getStatus()) {
+                tableModel.addRow(new Object[] {
+                        pm.getMaPhieuMuon(),
+                        sdf.format(pm.getNgayMuon()),
+                        sdf.format(pm.getNgayTraDuKien()),
+                        pm.getTrangThai(),
+                        pm.getMaDocGia(),
+                        pm.getMaNhanVien(),
+                        "Chi tiết"
+                });
+            }
         }
     }
 
-    public void updateTable(List<PhieuMuonDTO> danhsach){
+    public void updateTable(List<PhieuMuonDTO> danhsach) {
         tableModel.setRowCount(0);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        for (PhieuMuonDTO pm: danhsach){
-            tableModel.addRow(new Object[]{
-                pm.getMaPhieuMuon(),
-                sdf.format(pm.getNgayMuon()),
-                sdf.format(pm.getNgayTraDuKien()),
-                pm.getTrangThai(),
-                pm.getMaDocGia(),
-                pm.getMaNhanVien(),
-                "Chi tiết"
+        for (PhieuMuonDTO pm : danhsach) {
+            tableModel.addRow(new Object[] {
+                    pm.getMaPhieuMuon(),
+                    sdf.format(pm.getNgayMuon()),
+                    sdf.format(pm.getNgayTraDuKien()),
+                    pm.getTrangThai(),
+                    pm.getMaDocGia(),
+                    pm.getMaNhanVien(),
+                    "Chi tiết"
             });
         }
     }
@@ -343,11 +352,11 @@ public class PhieuMuon extends JPanel {
         this.btnTimKiem = btnTimKiem;
     }
 
-    public JTextField getTxtTimKiem(){
+    public JTextField getTxtTimKiem() {
         return txtTimKiem;
     }
 
-    public void setTxtTimKiem(JTextField txtTimKiem){
+    public void setTxtTimKiem(JTextField txtTimKiem) {
         this.txtTimKiem = txtTimKiem;
     }
 }

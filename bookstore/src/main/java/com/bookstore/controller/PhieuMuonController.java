@@ -24,7 +24,9 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 
 import com.bookstore.BUS.PhieuMuonBUS;
+import com.bookstore.DTO.CTPhieuMuonDTO;
 import com.bookstore.DTO.PhieuMuonDTO;
+import com.bookstore.dao.CTPhieuMuonDAO;
 import com.bookstore.dao.PhieuMuonDAO;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.views.Panel.PhieuMuon;
@@ -40,7 +42,10 @@ public class PhieuMuonController implements ItemListener, ActionListener{
     private List<PhieuMuonDTO> manggoc;
     private List<PhieuMuonDTO> mangtmp;
     private boolean isAscending = true;
-    private FlatSVGIcon add_icon = new FlatSVGIcon(getClass().getResource("/svg/add_2.svg")).derive(25,25);
+    private CTPhieuMuonDAO ctpmdao = new CTPhieuMuonDAO();
+    private FlatSVGIcon add_icon = new FlatSVGIcon(getClass().getResource("/svg/add_2.svg")).derive(12, 12);
+    private FlatSVGIcon subtractIcon = new FlatSVGIcon(getClass().getResource("/svg/subtract.svg")).derive(25,25);
+
 
     public PhieuMuonController(PhieuMuon pm){
         this.pm = pm;
@@ -104,7 +109,7 @@ public class PhieuMuonController implements ItemListener, ActionListener{
 
         // xóa
         else if (e.getSource() == pm.getBtnXoa()){
-            if (pm.getBtnXoa().getText().isEmpty()){
+            if (pm.getTable().getSelectedRow() == -1){
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu mượn", "Phiếu mượn trống", 0);
                 return;
             }
@@ -186,11 +191,12 @@ public class PhieuMuonController implements ItemListener, ActionListener{
             JDialog dialog = new JDialog((JFrame) null, "Thêm phiếu mượn", true);
             dialog.setSize(450, 600);
             dialog.setLocationRelativeTo(null);
-            dialog.setLayout(new BorderLayout());
+            dialog.setLayout(null);
             
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
             mainPanel.setBorder(BorderFactory.createEmptyBorder(20,20,10,20));
+            mainPanel.setBounds(5,5,440,460);
         
             // Lấy dữ liệu mặc định
             // mã phiếu mượn
@@ -208,6 +214,7 @@ public class PhieuMuonController implements ItemListener, ActionListener{
             // Tạo panel cho thông tin cơ bản
             JPanel infoPanel = new JPanel(new GridLayout(0, 2, 10, 10));
             
+
             // Label + TextField
             JLabel lbphieumuon = new JLabel("Mã phiếu mượn: ");
             JTextField txtfmaphieumuon = new JTextField(String.valueOf(mpm));
@@ -246,19 +253,41 @@ public class PhieuMuonController implements ItemListener, ActionListener{
             // Panel chứa mã sách
             JPanel sachPanel = new JPanel();
             sachPanel.setLayout(new BoxLayout(sachPanel, BoxLayout.Y_AXIS));
-            sachPanel.setBorder(BorderFactory.createTitledBorder("Danh sách mã sách"));
-        
+
+            JPanel titlesach = new JPanel();
+            JLabel title = new JLabel("Danh sách mã sách");
+            JButton addbtn = new JButton(add_icon);
+
+            titlesach.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+            title.setPreferredSize(new Dimension(350, 30));
+            titlesach.add(title);
+
+            titlesach.add(addbtn);
+
+            mainPanel.add(titlesach);
+
             // Danh sách các dòng mã sách
             List<JPanel> bookRows = new ArrayList<>();
             List<JTextField> bookFields = new ArrayList<>();
         
             // Thêm dòng mã sách đầu tiên
-            addBookRow(sachPanel, bookRows, bookFields, true);
+            addBookRow(sachPanel, bookRows, bookFields);
         
             mainPanel.add(sachPanel);
-        
+            
+            addbtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    addBookRow(sachPanel, bookRows, bookFields);
+                }                
+            });
+
             // Panel nút
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+
+            buttonPanel.setBounds(5,490, 440, 80);
+
             JButton confirm = new JButton("Xác nhận");
             JButton cancel = new JButton("Hủy");
         
@@ -268,16 +297,18 @@ public class PhieuMuonController implements ItemListener, ActionListener{
             buttonPanel.add(confirm);
             buttonPanel.add(cancel);
         
-            //??
-            JScrollPane scrollPane = new JScrollPane(mainPanel);
-            dialog.add(scrollPane, BorderLayout.CENTER);
-            dialog.add(buttonPanel, BorderLayout.SOUTH);
+            JPanel rowsPanel = new JPanel();
+            rowsPanel.setLayout(new BoxLayout(rowsPanel, BoxLayout.Y_AXIS));
+            
+            dialog.add(mainPanel);
+            mainPanel.add(new JScrollPane(rowsPanel), BorderLayout.CENTER);
+            dialog.add(buttonPanel);
         
             // Sự kiện nút xác nhận
             confirm.addActionListener(e2 -> {
                 Date ngaymuon = Date.from(tmpday.atStartOfDay(ZoneId.systemDefault()).toInstant());
                 Date ngaytradukien = Date.from(tmpday.plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
-                PhieuMuonDTO newPM = new PhieuMuonDTO(mpm, ngaymuon, ngaytradukien, 0, txtfmadocgia.getText(), "nv001");
+                PhieuMuonDTO newPM = new PhieuMuonDTO(mpm, ngaymuon, ngaytradukien, 0, txtfmadocgia.getText(), "nv001", true);
         
                 // Lấy danh sách mã sách
                 List<String> maSachList = new ArrayList<>();
@@ -321,7 +352,102 @@ public class PhieuMuonController implements ItemListener, ActionListener{
     }
     
     public void hienthichitiettable(int maPhieuMuon){
+        JDialog dialog = new JDialog();
+        dialog.setTitle("Chi tiết phiếu mượn");
+        dialog.setLayout(new GridLayout(1,2, 10,10));
+        dialog.setSize(new Dimension(600, 400));
 
+        JPanel panelthongtin = new JPanel();
+        panelthongtin.setLayout(new GridLayout(6, 1,10, 10));
+        
+        Date ngaymuon = null;
+        Date ngaytradukien = null;
+        int trangthai = -1;
+        String madocgia = "";
+        String manhanvien = "";
+
+        //??
+
+        for (PhieuMuonDTO i: manggoc){
+            if (i.getMaPhieuMuon() == maPhieuMuon){
+                ngaymuon = i.getNgayMuon();
+                ngaytradukien = i.getNgayTraDuKien();
+                trangthai = i.getTrangThai();
+                madocgia = i.getMaDocGia();
+                manhanvien = i.getMaNhanVien();
+
+                break;
+            }
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        // các thành phần bên trái
+        JLabel lbmaphieumuon = new JLabel("Mã phiếu mượn: " + maPhieuMuon);
+        lbmaphieumuon.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+
+        JLabel lbngaymuon = new JLabel("Ngày mượn " + sdf.format(ngaymuon));
+        lbngaymuon.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        
+        JLabel lbngaytradukien = new JLabel("Ngày trả dự kiến: " + sdf.format(ngaytradukien));
+        lbngaytradukien.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+
+        JLabel lbtrangthai;
+        if (trangthai == 1){
+            lbtrangthai = new JLabel("Trạng thái: đã trả");
+            lbtrangthai.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        }
+        else {
+            lbtrangthai = new JLabel("Trạng thái: chưa trả");
+            lbtrangthai.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        }
+        JLabel lbmadocgia = new JLabel("Mã độc giả: " + madocgia);
+        lbmadocgia.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+
+        JLabel lbmanhanvien = new JLabel("Mã nhân viên: " + manhanvien);
+        lbmanhanvien.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        
+        panelthongtin.add(lbmaphieumuon);
+        panelthongtin.add(lbngaymuon);
+        panelthongtin.add(lbngaytradukien);
+        panelthongtin.add(lbtrangthai);
+        panelthongtin.add(lbmadocgia);
+        panelthongtin.add(lbmanhanvien);
+
+        // các thành phần bên phải
+        JPanel panelchitiet = new JPanel();
+        panelchitiet.setLayout(new GridLayout(6, 1, 10,10));
+
+        int count = 0;
+        List<String> tongHopMaSach = new ArrayList<>();        
+        List<CTPhieuMuonDTO> ctpmlist = ctpmdao.layDanhSachCTPhieuMuon();
+        for (CTPhieuMuonDTO i: ctpmlist){
+            if (i.getMaPhieuMuon() == maPhieuMuon){
+                tongHopMaSach.add(i.getMaSach());
+                count++;
+            }
+        }
+
+        JLabel lbsoluong = new JLabel("Tổng số sách đã mượn: " + count);
+        panelchitiet.add(lbsoluong);
+
+        for (int i = 1; i <= count; i++){
+            JPanel panelctsach = new JPanel();
+            panelctsach.setLayout(new GridLayout(1,2));
+            JLabel tmpLabel = new JLabel("Mã sách " + i + ": ");
+            JLabel masachlabel = new JLabel(tongHopMaSach.get(i-1));
+
+            panelctsach.add(tmpLabel);
+            panelctsach.add(masachlabel);
+
+            panelchitiet.add(panelctsach);
+        }
+
+        dialog.add(panelthongtin);
+        dialog.add(panelchitiet);
+
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 
     private void styleButton(JButton button, Color color){
@@ -393,84 +519,79 @@ public class PhieuMuonController implements ItemListener, ActionListener{
     }
 
     // Phương thức thêm dòng mã sách mới
-    private void addBookRow(JPanel parentPanel, List<JPanel> bookRows, List<JTextField> bookFields, boolean isFirstRow) {
-        if (bookRows.size() >= 5) return;
-
-        JPanel rowPanel = new JPanel(new BorderLayout(5, 0));
-        JLabel label = new JLabel("Mã sách " + (bookRows.size() + 1) + ": ");
-        JTextField textField = new JTextField();
-        bookFields.add(textField);
-
-        JButton actionButton;
-        if (isFirstRow || bookRows.size() == 4) {
-            actionButton = new JButton("+");
-            actionButton.addActionListener(e -> {
-                addBookRow(parentPanel, bookRows, bookFields, false);
-            });
-        } else {
-            actionButton = new JButton("-");
-            actionButton.addActionListener(e -> {
-                removeBookRow(parentPanel, bookRows, bookFields, rowPanel);
-            });
+    private void addBookRow(JPanel parentPanel, List<JPanel> bookRows, List<JTextField> bookFields) {
+        if (bookRows.size() >= 5) {
+            JOptionPane.showMessageDialog(null, "Chỉ được thêm tối đa 5 sách", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-
-        JPanel labelFieldPanel = new JPanel(new BorderLayout());
-        labelFieldPanel.add(label, BorderLayout.WEST);
-        labelFieldPanel.add(textField, BorderLayout.CENTER);
-
+    
+        // Tạo panel chứa dòng mới với BorderLayout
+        JPanel rowPanel = new JPanel(new BorderLayout(10, 0));
+        rowPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    
+        // Tạo label với style đồng nhất
+        JLabel label = new JLabel("Mã sách " + (bookRows.size() + 1) + ": ");
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setPreferredSize(new Dimension(80, 25)); // Cố định width cho label
+    
+        // Tạo text field với style đồng nhất
+        JTextField textField = new JTextField();
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        textField.setPreferredSize(new Dimension(200, 28));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(3, 5, 3, 5)));
+        bookFields.add(textField);
+    
+        // Nút xóa với style đồng nhất
+        JButton subtractButton = new JButton(subtractIcon);
+        subtractButton.setPreferredSize(new Dimension(30, 28));
+        subtractButton.setBorder(BorderFactory.createEmptyBorder());
+        subtractButton.setContentAreaFilled(false);
+        subtractButton.setToolTipText("Xóa dòng này");
+        subtractButton.addActionListener(e -> {
+            removeBookRow(parentPanel, bookRows, bookFields, rowPanel);
+        });
+    
+        // Panel chứa label và text field
+        JPanel labelFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        labelFieldPanel.add(label);
+        labelFieldPanel.add(textField);
+    
+        // Thêm các thành phần vào rowPanel
         rowPanel.add(labelFieldPanel, BorderLayout.CENTER);
-        rowPanel.add(actionButton, BorderLayout.EAST);
-
+        rowPanel.add(subtractButton, BorderLayout.EAST);
+    
+        // Thêm khoảng cách giữa các dòng (trừ dòng đầu tiên)
+        if (!bookRows.isEmpty()) {
+            parentPanel.add(Box.createVerticalStrut(5));
+        }
+    
         bookRows.add(rowPanel);
         parentPanel.add(rowPanel);
-
-        // Cập nhật lại giao diện
+    
         parentPanel.revalidate();
         parentPanel.repaint();
     }
-
-    // Phương thức xóa dòng mã sách
+    
+     
     private void removeBookRow(JPanel parentPanel, List<JPanel> bookRows, List<JTextField> bookFields, JPanel rowToRemove) {
         int index = bookRows.indexOf(rowToRemove);
         if (index >= 0) {
             parentPanel.remove(rowToRemove);
             bookRows.remove(rowToRemove);
             bookFields.remove(index);
-
-            // Cập nhật lại số thứ tự
+    
+            // Cập nhật lại số thứ tự label
             for (int i = 0; i < bookRows.size(); i++) {
                 JPanel panel = bookRows.get(i);
                 JLabel label = (JLabel) ((JPanel) panel.getComponent(0)).getComponent(0);
                 label.setText("Mã sách " + (i + 1) + ": ");
             }
-
-            // Cập nhật lại các nút
-            if (!bookRows.isEmpty()) {
-                JPanel lastPanel = bookRows.get(bookRows.size() - 1);
-                JButton lastButton = (JButton) lastPanel.getComponent(1);
-                
-                // Xóa tất cả ActionListener cũ
-                for (ActionListener al : lastButton.getActionListeners()) {
-                    lastButton.removeActionListener(al);
-                }
-                
-                // Thêm ActionListener mới
-                if (bookRows.size() < 5) {
-                    lastButton.setText("+");
-                    lastButton.addActionListener(e -> {
-                        addBookRow(parentPanel, bookRows, bookFields, false);
-                    });
-                } else {
-                    lastButton.setText("-");
-                    lastButton.addActionListener(e -> {
-                        removeBookRow(parentPanel, bookRows, bookFields, lastPanel);
-                    });
-                }
-            }
-
-            // Cập nhật lại giao diện
+    
             parentPanel.revalidate();
             parentPanel.repaint();
         }
     }
+    
 }
