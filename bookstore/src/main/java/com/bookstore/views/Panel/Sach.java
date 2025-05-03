@@ -8,10 +8,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -19,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -27,6 +30,7 @@ import java.awt.event.MouseEvent;
 import com.bookstore.BUS.DauSachBUS;
 import com.bookstore.DTO.DauSachDTO;
 import com.bookstore.DTO.SachDTO;
+import com.bookstore.DTO.TheLoaiDTO;
 import com.bookstore.controller.SachController;
 import com.bookstore.dao.DauSachDAO;
 import com.bookstore.dao.SachDAO;
@@ -64,35 +68,45 @@ public class Sach extends JPanel {
         this.setPreferredSize(new Dimension(900, 600));
 
         JPanel ThongTinDauSachPanel = new JPanel();
-        ThongTinDauSachPanel.setBackground(Color.pink);
+        ThongTinDauSachPanel.setBackground(Color.white);
         ThongTinDauSachPanel.setPreferredSize(new Dimension(900, 200));
         ThongTinDauSachPanel.setLayout(new FlowLayout(1, 0, 0));
 
         HinhAnhDauSach = new JLabel();
         HinhAnhDauSach.setPreferredSize(new Dimension(300, 200));
         HinhAnhDauSach.setOpaque(true);
+        HinhAnhDauSach.setBackground(Color.white);
         ThongTinDauSachPanel.add(HinhAnhDauSach);
 
         JPanel ThongTinChiTiet = new JPanel();
         ThongTinChiTiet.setPreferredSize(new Dimension(600, 200));
+        ThongTinChiTiet.setBackground(Color.white);
         ThongTinChiTiet.setLayout(new GridLayout(4, 3, 10, 10));
 
         JLabel MaTauLabel = new JLabel("Mã sách: ");
+        MaTauLabel.setHorizontalAlignment(SwingConstants.CENTER);
         MaDauSachTextfield = new JTextField();
         MaDauSachTextfield.setPreferredSize(new Dimension(200, 30));
+        MaDauSachTextfield.setEnabled(false);
 
         JLabel SoGheLabel = new JLabel("Tựa đề: ");
+        SoGheLabel.setHorizontalAlignment(SwingConstants.CENTER);
         TuaDeTextfield = new JTextField();
         TuaDeTextfield.setPreferredSize(new Dimension(200, 30));
+        TuaDeTextfield.setEnabled(false);
 
-        JLabel TrangThaiTauLabel = new JLabel("Trạng thái sách: ");
+        JLabel TrangThaiTauLabel = new JLabel("Trạng thái: ");
+        TrangThaiTauLabel.setHorizontalAlignment(SwingConstants.CENTER);
         TrangthaiDauSachComboBox = new JComboBox<String>(
                 new String[] { "", "Bình thường", "Đã mượn", "Bị hư", "Đã xóa" });
         TrangthaiDauSachComboBox.setPreferredSize(new Dimension(200, 30));
+        TrangthaiDauSachComboBox.setEnabled(false);
 
         JLabel NgayNhapTauLabel = new JLabel("Nhà xuất bản: ");
+        NgayNhapTauLabel.setHorizontalAlignment(SwingConstants.CENTER);
         NgayNhapSachTextfield = new JTextField();
         NgayNhapSachTextfield.setPreferredSize(new Dimension(200, 30));
+        NgayNhapSachTextfield.setEnabled(false);
 
         JButton ThemTauButton = new JButton("THÊM");
         JButton SuaTauButton = new JButton("SỬA");
@@ -222,7 +236,7 @@ public class Sach extends JPanel {
         SortSachCbx.addItem("Mã sách");
         SortSachCbx.addItem("Ngày nhập");
         SortSachCbx.addItem("Trạng thái");
-        SortSachCbx.setBounds(760, 15, 100, 20);
+        SortSachCbx.setBounds(760, 5, 100, 30);
         SortSachCbx.addItemListener(sachController);
         TongSachPanel.add(SortSachCbx);
 
@@ -280,7 +294,8 @@ public class Sach extends JPanel {
     }
 
     public Sach() {
-        listDauSach = new DauSachDAO().selectAll();
+        listDauSach = dauSachBUS.getListDauSach();
+
         initComponent();
     }
 
@@ -297,38 +312,49 @@ public class Sach extends JPanel {
 
     private RoundedPanel CreateDauSachPanel(DauSachDTO DauSach) {
         RoundedPanel panel = new RoundedPanel(20);
-        panel.setPreferredSize(new Dimension(240, 240));
+        panel.setPreferredSize(new Dimension(250, 250));
         panel.setBackground(Color.white);
         panel.setLayout(null);
         panel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
-        FlatSVGIcon icon = new FlatSVGIcon(getClass().getResource("/svg/book.svg")).derive(100, 100);
+        // icon an hien
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/img1.jpg"));
+        Image img = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
+
         JLabel HinhAnhSach = new JLabel(icon);
         HinhAnhSach.setBounds(75, 10, 100, 100);
         panel.add(HinhAnhSach);
 
         JLabel MaDauSach = new JLabel("Mã đầu sách: " + DauSach.getMaDauSach());
-        MaDauSach.setBounds(10, 120, 200, 30);
+        MaDauSach.setBounds(10, 120, 240, 30);
         MaDauSach.setFont(new Font("Arial", Font.BOLD, 14));
 
         JLabel TenDauSach = new JLabel("Tựa đề: " + DauSach.getTenDauSach());
-        TenDauSach.setBounds(10, 140, 200, 30);
+        TenDauSach.setBounds(10, 145, 240, 30);
         TenDauSach.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JLabel SoTrang = new JLabel("Số trang: " + DauSach.getSoTrang());
-        SoTrang.setBounds(10, 160, 200, 30);
-        SoTrang.setFont(new Font("Arial", Font.BOLD, 14));
+        // JLabel SoTrang = new JLabel("Số trang: " + DauSach.getSoTrang());
+        // SoTrang.setBounds(10, 160, 200, 30);
+        // SoTrang.setFont(new Font("Arial", Font.BOLD, 14));
+        String Theloai = "";
+        for (TheLoaiDTO tl : DauSach.getListTheLoai()) {
+            Theloai += tl.getTenTheLoai() + ", ";
+        }
+        JLabel TheloaiLabel = new JLabel("Thể loại: " + Theloai.substring(0, Theloai.length() - 2));
+        TheloaiLabel.setBounds(10, 170, 240, 30);
+        TheloaiLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
         JLabel NhaXuatBan = new JLabel("Nhà xuất bản: " + DauSach.getNhaXuatBan());
-        NhaXuatBan.setBounds(10, 180, 230, 30);
+        NhaXuatBan.setBounds(10, 195, 240, 30);
         NhaXuatBan.setFont(new Font("Arial", Font.BOLD, 14));
 
         JLabel NamXuatBan = new JLabel("Năm xuất bản: " + DauSach.getNamXuatBan());
-        NamXuatBan.setBounds(10, 200, 230, 30);
+        NamXuatBan.setBounds(10, 220, 240, 30);
         NamXuatBan.setFont(new Font("Arial", Font.BOLD, 14));
 
         panel.add(MaDauSach);
-        panel.add(SoTrang);
+        panel.add(TheloaiLabel);
         panel.add(TenDauSach);
         panel.add(NhaXuatBan);
         panel.add(NamXuatBan);
@@ -436,7 +462,11 @@ public class Sach extends JPanel {
         TuaDeTextfield.setText(dausach.getTenDauSach());
         NgayNhapSachTextfield.setText(dausach.getNhaXuatBan());
         setTextfieldDisable();
-        FlatSVGIcon icon = new FlatSVGIcon(getClass().getResource("/svg/Book.svg")).derive(200, 200);
+
+        // Cập nhật hình ảnh
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/" + dausach.getHinhAnh()));
+        Image img = icon.getImage().getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
         this.HinhAnhDauSach.setIcon(icon);
     }
 

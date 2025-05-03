@@ -1,14 +1,14 @@
     package com.bookstore.views.Component;
 
-    import java.awt.BorderLayout;
-    import java.awt.Color;
+
+
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
     import java.awt.FlowLayout;
     import java.awt.Font;
     import java.awt.Graphics;
     import java.awt.Graphics2D;
-    import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
@@ -25,6 +25,43 @@ import javax.swing.JPanel;
 
 
     public class Header extends JPanel {
+        private JButton btnAdd, btnEdit, btnDelete, btnDetail, btnImport, btnExport;
+        private JComboBox<String> sortComboBox;
+        private JButton btnRefresh;
+        private SearchText searchField;
+        
+        public JButton getBtnRefresh(){
+            return btnRefresh;
+        }
+        public SearchText getSearchField(){
+            return searchField;
+        }
+
+        public JComboBox<String> getSortComboBox() {
+            return sortComboBox;
+        }
+        public JButton getBtnAdd() {
+            return btnAdd;
+        }
+        
+        public JButton getBtnEdit() {
+            return btnEdit;
+        }
+        
+        public JButton getBtnDelete() {
+            return btnDelete;
+        }
+        
+        public JButton getBtnDetail() {
+            return btnDetail;
+        }
+        public JButton getBtnImport() {
+            return btnImport;
+        }
+        
+        public JButton getBtnExport() {
+            return btnExport;
+        }
         
         public Header() {
             initComponent();
@@ -33,42 +70,46 @@ import javax.swing.JPanel;
 
         public void initComponent() {
             // Tạo các nút JButton
-            JButton btnAdd = createButton("THÊM", "resources/icons/add.png");
-            JButton btnEdit = createButton("SỬA", "resources/icons/edit.png");
-            JButton btnDelete = createButton("XÓA", "resources/icons/delete.png");
-
+            btnAdd = createButton("THÊM", "add.png");
+             btnEdit = createButton("SỬA", "resources/icons/edit.png");
+             btnDelete = createButton("XÓA", "resources/icons/delete.png");
+             btnDetail = createButton("CHI TIẾT", "resources/icons/delete.png");
+            
             // add
             add(btnAdd);
             add(btnEdit);
             add(btnDelete);
+            add(btnDetail);
 
-            setLayout(new BorderLayout());
-            setLayout(new FlowLayout(FlowLayout.LEFT, 15, 0));  // can goc trai 20px và height 10px
+           
+            setLayout(new FlowLayout(FlowLayout.LEFT, 6, 0));  // can goc trai 20px và height 10px
 
-            ImageIcon icon = new ImageIcon("/svg/add.svg"); // link
+            // ImageIcon icon = new ImageIcon("resources/svg/add.svg"); // link
             
             // Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH); // edit size img
             // icon = new ImageIcon(img);
 
-            JLabel iconLabel = new JLabel(icon); // create iconLabel
-            add(iconLabel);
+            // JLabel iconLabel = new JLabel(icon); // create iconLabel
+            // add(iconLabel);
 
 
             //Sort and search
-            JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+            JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
             searchPanel.setOpaque(false);
 
             // Sort ComboBox
-            JComboBox<String> sortComboBox = new JComboBox<>();
+            sortComboBox = new JComboBox<>();
             sortComboBox.addItem("Tất cả");
             sortComboBox.addItem("Mã TG");
             sortComboBox.addItem("Tên TG");
-            sortComboBox.setPreferredSize(new Dimension(120, 40));
+            sortComboBox.addItem("Ngày sinh");
+            sortComboBox.addItem("Quốc tịch");
+            sortComboBox.setPreferredSize(new Dimension(135, 40));
             sortComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
             sortComboBox.setBackground(Color.WHITE);
-            sortComboBox.setFocusable(false);
+            sortComboBox.setFocusable(false); // close tab
             sortComboBox.setOpaque(false);
-            sortComboBox.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            sortComboBox.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
             // Custom UI bo góc
             sortComboBox.setUI(new javax.swing.plaf.basic.BasicComboBoxUI() {
@@ -95,8 +136,8 @@ import javax.swing.JPanel;
             });
 
             // Search
-            SearchText searchField = new SearchText();
-            searchField.setPreferredSize(new Dimension(200, 40)); 
+            searchField = new SearchText();
+            searchField.setPreferredSize(new Dimension(180, 40)); 
 
             searchPanel.add(sortComboBox);
             searchPanel.add(searchField);
@@ -104,29 +145,15 @@ import javax.swing.JPanel;
             add(searchPanel);
 
 
-            JButton btnRefresh = new JButton("LÀM MỚI");
-            btnRefresh.setFont(new Font("Arial", Font.BOLD, 14));
+            btnRefresh = new JButton("LÀM MỚI");    // ADD CENTER
+            btnRefresh.setFont(new Font("Arial", Font.BOLD, 12));
             btnRefresh.setFocusPainted(false);
             btnRefresh.setBorderPainted(false);
-            btnRefresh.setBackground(Color.WHITE);
-            btnRefresh.setPreferredSize(new Dimension(110, 40));
-            // Đặt icon
-            ImageIcon refreshIcon = new ImageIcon("/resources/svg/account.svg");
-            Image refreshImg = refreshIcon.getImage().getScaledInstance(20, 40, Image.SCALE_SMOOTH);
-            btnRefresh.setIcon(new ImageIcon(refreshImg));
-
-            // Đặt vị trí chữ bên phải icon
-            btnRefresh.setHorizontalTextPosition(JButton.RIGHT);
-            btnRefresh.setIconTextGap(10);
+            btnRefresh.setBackground(new Color(215, 219, 221));
+            btnRefresh.setPreferredSize(new Dimension(100, 40));
 
             add(btnRefresh);
-
-
         }
-
-
-
-
 
         @Override
         protected void paintComponent(Graphics grphcs) {
@@ -142,19 +169,20 @@ import javax.swing.JPanel;
         // ???
         private JButton createButton(String text, String iconPath) {
             JButton button = new JButton(text);
-            button.setFont(new Font("Arial", Font.BOLD, 14));
+            button.setFont(new Font("Arial", Font.BOLD, 12));
             button.setFocusPainted(false);
             button.setBorderPainted(false);
-            button.setBackground(Color.WHITE);
-            button.setPreferredSize(new Dimension(80, 100));
-
-            // Check img
-            ImageIcon icon = new ImageIcon(iconPath);
-            if (icon.getIconWidth() > 0) { 
-                Image img = icon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-                button.setIcon(new ImageIcon(img));
-            }
-
+            button.setBackground(new Color(215, 219, 221));
+            button.setPreferredSize(new Dimension(85, 100)); 
+        
             return button;
         }
+
+
+        
     }
+
+
+
+
+    // Check image

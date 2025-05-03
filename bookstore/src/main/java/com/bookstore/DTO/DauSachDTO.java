@@ -1,5 +1,7 @@
 package com.bookstore.DTO;
 
+import java.util.List;
+
 public class DauSachDTO {
     private String MaDauSach;
     private String TenDauSach;
@@ -8,6 +10,7 @@ public class DauSachDTO {
     private int NamXuatBan;
     private String NgonNgu;
     private int SoTrang;
+    private List<TheLoaiDTO> listTheLoai;
 
     public DauSachDTO(String maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan,
             String ngonNgu, int soTrang) {
@@ -18,6 +21,18 @@ public class DauSachDTO {
         NamXuatBan = namXuatBan;
         NgonNgu = ngonNgu;
         SoTrang = soTrang;
+    }
+
+    public DauSachDTO(String maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan,
+            String ngonNgu, int soTrang, List<TheLoaiDTO> listTheLoai) {
+        MaDauSach = maDauSach;
+        TenDauSach = tenDauSach;
+        HinhAnh = hinhAnh;
+        NhaXuatBan = nhaXuatBan;
+        NamXuatBan = namXuatBan;
+        NgonNgu = ngonNgu;
+        SoTrang = soTrang;
+        this.listTheLoai = listTheLoai;
     }
 
     public String getMaDauSach() {
@@ -74,6 +89,14 @@ public class DauSachDTO {
 
     public void setSoTrang(int soTrang) {
         SoTrang = soTrang;
+    }
+
+    public List<TheLoaiDTO> getListTheLoai() {
+        return listTheLoai;
+    }
+
+    public void setListTheLoai(List<TheLoaiDTO> listTheLoai) {
+        this.listTheLoai = listTheLoai;
     }
 
 }

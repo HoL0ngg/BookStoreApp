@@ -64,6 +64,10 @@ public class DauSachBUS {
         return false;
     }
 
+    public List<DauSachDTO> getListDauSach() {
+        return listDauSach;
+    }
+
     public boolean update(DauSachDTO ds) {
         for (int i = 0; i < listDauSach.size(); i++) {
             if (listDauSach.get(i).getMaDauSach().equals(ds.getMaDauSach())) {
