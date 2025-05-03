@@ -1,5 +1,7 @@
 package com.bookstore.DTO;
 
+import com.bookstore.dao.TaiKhoanDAO;
+
 public class TaiKhoanDTO {
     private String TenDangNhap;
     private String MatKhau;
@@ -7,11 +9,11 @@ public class TaiKhoanDTO {
     private String Email;
     private int MaNhomQuyen;
 
-    public TaiKhoanDTO(){
+    public TaiKhoanDTO() {
     }
 
     public TaiKhoanDTO(String TenDangNhap, String MatKhau,
-                 int TrangThai, String Email, int MaNhomQuyen){
+            int TrangThai, String Email, int MaNhomQuyen) {
 
         this.TenDangNhap = TenDangNhap;
         this.MatKhau = MatKhau;
@@ -61,5 +63,4 @@ public class TaiKhoanDTO {
         MaNhomQuyen = maNhomQuyen;
     }
 
-    
 }

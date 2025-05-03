@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bookstore.DTO.NCCDTO;
-import com.bookstore.DTO.SachDTO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class NCCDAO implements IBaseDAO<NCCDTO> {

@@ -94,9 +94,10 @@ public class NCCDialog extends JDialog {
         btnLuu.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Có thể thêm kiểm tra dữ liệu ở đây
-                validateForm();
-                isSaved = true;
-                dispose();
+                if (validateForm()) {
+                    isSaved = true;
+                    dispose();
+                }
             }
         });
 
