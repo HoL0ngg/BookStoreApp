@@ -1,7 +1,6 @@
 package com.bookstore.views.Panel;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
@@ -9,12 +8,9 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -27,12 +23,8 @@ import java.text.SimpleDateFormat;
 import mdlaf.MaterialLookAndFeel;
 
 import com.bookstore.DTO.PhieuMuonDTO;
-import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.controller.PhieuMuonController;
-import com.bookstore.controller.PhieuTraController;
 import com.bookstore.dao.PhieuMuonDAO;
-import com.bookstore.dao.PhieuTraDAO;
-import com.bookstore.BUS.PhieuMuonBUS;
 
 public class PhieuMuon extends JPanel {
 
@@ -40,6 +32,7 @@ public class PhieuMuon extends JPanel {
     private JPanel search;
     private JTable table;
     private DefaultTableModel tableModel;
+    @SuppressWarnings("unused")
     private JTextField txtMaPhieuTra, txtNgayTra, txtMaNV, txtMaDocGia, txtMaPhieuMuon;
     private JComboBox<String> cbLuaChonTK;
     private JComboBox<String> cbSapXep;
@@ -54,6 +47,7 @@ public class PhieuMuon extends JPanel {
         init();
     }
 
+    @SuppressWarnings("unused")
     public void init() {
 
         // sau khi hoàn chỉnh -> xóa
@@ -82,6 +76,7 @@ public class PhieuMuon extends JPanel {
         };
 
         String[] LuaChonSapXep = {
+                "Tất cả",
                 "Mã phiếu mượn",
                 "Ngày mượn",
                 "Ngày trả dự kiến",
@@ -107,7 +102,7 @@ public class PhieuMuon extends JPanel {
         cbSapXep.setBounds(690, 10, 150, 30);
 
         btnTimKiem.addActionListener(phieumuoncontroller);
-        cbSapXep.addActionListener(phieumuoncontroller);
+        cbSapXep.addItemListener(phieumuoncontroller);
 
         // button đổi chiều
         btnReverse = new JButton(upIcon);

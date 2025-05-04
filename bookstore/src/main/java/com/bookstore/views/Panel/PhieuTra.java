@@ -1,7 +1,6 @@
 package com.bookstore.views.Panel;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
@@ -9,12 +8,9 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -75,6 +71,7 @@ public class PhieuTra extends JPanel {
         };
 
         String[] LuaChonSapXep = {
+            "Tất cả",
             "Mã phiếu trả",
             "Ngày trả",
             "Mã nhân viên",

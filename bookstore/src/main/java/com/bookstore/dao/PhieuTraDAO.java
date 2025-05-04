@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.utils.DatabaseUtils;
-import com.bookstore.views.Panel.PhieuTra;
 
 public class PhieuTraDAO {
 

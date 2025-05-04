@@ -7,15 +7,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.Comparator;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +21,7 @@ import javax.swing.*;
 
 import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.DTO.CTPhieuTraDTO;
+import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.views.Panel.PhieuTra;
 import com.bookstore.dao.PhieuTraDAO;
 import com.bookstore.DTO.TaiKhoanDTO;
@@ -31,8 +29,9 @@ import com.bookstore.DTO.TaiKhoanDTO;
 public class PhieuTraController implements ItemListener, ActionListener{
     private PhieuTra pt;
     private PhieuTraDAO ptdao = new PhieuTraDAO();
+    @SuppressWarnings("unused")
     private TaiKhoanDTO tkDTO = new TaiKhoanDTO();
-    private Comparator<PhieuTraDTO> comparator =  Comparator.comparing(PhieuTraDTO:: getMaPhieuTra);
+    private Comparator<PhieuTraDTO> comparator = (pt1, pt2) -> 0;
     private List<PhieuTraDTO> manggoc;
     List<PhieuTraDTO> mangtmp;
     private boolean isAscending = true;
@@ -313,11 +312,15 @@ public class PhieuTraController implements ItemListener, ActionListener{
     @Override
     public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED){
+            @SuppressWarnings("unchecked")
             JComboBox<String> cbb = (JComboBox<String>) e.getSource();
             String str = (String) cbb.getSelectedItem();
             if (str != null){
                 System.out.println("da nhan vao sap xep"+ str);
                 switch (str) {
+                    case "Tất cả":
+                        comparator = Comparator.comparing(PhieuTraDTO:: getMaPhieuTra);
+                        break;
                     case "Mã phiếu trả":
                         comparator = Comparator.comparing(PhieuTraDTO:: getMaPhieuTra);
                         break;

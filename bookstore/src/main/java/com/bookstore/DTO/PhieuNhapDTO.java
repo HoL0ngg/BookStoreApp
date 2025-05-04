@@ -1,0 +1,51 @@
+package com.bookstore.DTO;
+
+import java.sql.Date;
+
+public class PhieuNhapDTO {
+    private String MaPhieuNhap;
+    private Date thoigian;
+    private String MaNV;
+    private int MaNCC;
+
+    public PhieuNhapDTO(String MaPhieuNhap, Date thoigian, String MaNV, int MaNCC){
+        this.MaPhieuNhap = MaPhieuNhap;
+        this.thoigian = thoigian;
+        this.MaNV = MaNV;
+        this.MaNCC = MaNCC;
+    }
+
+    public String getMaPhieuNhap() {
+        return MaPhieuNhap;
+    }
+
+    public void setMaPhieuNhap(String maPhieuNhap) {
+        MaPhieuNhap = maPhieuNhap;
+    }
+
+    public Date getThoigian() {
+        return thoigian;
+    }
+
+    public void setThoigian(Date thoigian) {
+        this.thoigian = thoigian;
+    }
+
+    public String getMaNV() {
+        return MaNV;
+    }
+
+    public void setMaNV(String maNV) {
+        MaNV = maNV;
+    }
+
+    public int getMaNCC() {
+        return MaNCC;
+    }
+
+    public void setMaNCC(int maNCC) {
+        MaNCC = maNCC;
+    }
+
+}
+

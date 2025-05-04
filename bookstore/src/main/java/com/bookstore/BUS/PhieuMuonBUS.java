@@ -5,20 +5,14 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.xml.crypto.Data;
 
 import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.utils.DatabaseUtils;
-import com.bookstore.dao.PhieuMuonDAO;;
 
 public class PhieuMuonBUS {
-    private List<PhieuMuonDTO> listPhieuMuon;
 
     public PhieuMuonBUS() {
-        listPhieuMuon = new PhieuMuonDAO().layDanhSachPhieuMuon();
     }
 
     public PhieuMuonDTO timPhieuMuon(int MaPhieuMuon) {
