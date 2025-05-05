@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.*;
 
@@ -25,7 +23,6 @@ import com.bookstore.BUS.PhieuMuonBUS;
 import com.bookstore.DTO.CTPhieuMuonDTO;
 import com.bookstore.DTO.DauSachDTO;
 import com.bookstore.DTO.PhieuMuonDTO;
-import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.DTO.SachDTO;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.dao.CTPhieuMuonDAO;
@@ -48,7 +45,6 @@ public class PhieuMuonController implements ItemListener, ActionListener {
     private CTPhieuMuonDAO ctpmdao = new CTPhieuMuonDAO();
     private FlatSVGIcon add_icon = new FlatSVGIcon(getClass().getResource("/svg/add_2.svg")).derive(12, 12);
     private FlatSVGIcon subtractIcon = new FlatSVGIcon(getClass().getResource("/svg/subtract.svg")).derive(25, 25);
-    private Timer sTimer;
     
 
     public PhieuMuonController(PhieuMuon pm) {

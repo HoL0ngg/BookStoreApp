@@ -15,9 +15,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import java.text.SimpleDateFormat;
 import mdlaf.MaterialLookAndFeel;
@@ -36,10 +41,11 @@ public class PhieuNhap extends JPanel {
     private JComboBox<String> cbSapXep;
     private JTextField txtTimKiem;
     private PhieuNhapController phieuNhapController;
-    private JButton btnReverse, btnThem, btnSua, btnXoa, btnTimKiem;
+    private JButton btnReverse, btnThem, btnSua, btnXoa;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
-    
+    private Timer searchTimer;
+
     // Khởi tạo
     public PhieuNhap() {
         phieuNhapController = new PhieuNhapController(this);
@@ -63,6 +69,7 @@ public class PhieuNhap extends JPanel {
 
         String[] LuaChonTimKiem = {
             "Mã phiếu nhập",
+            "Thời gian",
             "Mã nhân viên",
             "Mã nhà cung cấp"
         };
@@ -79,11 +86,9 @@ public class PhieuNhap extends JPanel {
         cbLuaChonTK = new JComboBox<>(LuaChonTimKiem);
         txtTimKiem = new JTextField();
         JLabel lbTimKiem = new JLabel("Tìm kiếm theo ");
-        btnTimKiem = new JButton("Tìm");
         lbTimKiem.setBounds(20, 10, 100, 30);
         cbLuaChonTK.setBounds(120, 10, 150, 30);
         txtTimKiem.setBounds(280, 10, 150, 30);
-        btnTimKiem.setBounds(440, 10, 80, 30);
 
         // Phần sắp xếp
         cbSapXep = new JComboBox<>(LuaChonSapXep);
@@ -91,7 +96,22 @@ public class PhieuNhap extends JPanel {
         lbSapXep.setBounds(590, 10, 100, 30);
         cbSapXep.setBounds(690, 10, 150, 30);
 
-        btnTimKiem.addActionListener(phieuNhapController);
+        txtTimKiem.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e){
+                if (searchTimer != null){
+                    searchTimer.cancel();
+                }
+                searchTimer = new Timer();
+                searchTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        SwingUtilities.invokeLater(() -> phieuNhapController.performSearch());
+                    }
+                }, 300);
+            }
+        });
+
         cbSapXep.addItemListener(phieuNhapController);
 
         // Button đổi chiều
@@ -103,7 +123,6 @@ public class PhieuNhap extends JPanel {
         search.add(lbTimKiem);
         search.add(cbLuaChonTK);
         search.add(txtTimKiem);
-        search.add(btnTimKiem);
         search.add(lbSapXep);
         search.add(cbSapXep);
         search.add(btnReverse);
@@ -180,7 +199,7 @@ public class PhieuNhap extends JPanel {
                 sdf.format(pn.getThoigian()),
                 pn.getMaNV(),
                 pn.getMaNCC(),
-                ""
+                "Chi tiết"
             });
         }
     }
@@ -196,7 +215,7 @@ public class PhieuNhap extends JPanel {
                 dateFormat.format(pn.getThoigian()),
                 pn.getMaNV(),
                 pn.getMaNCC(),
-                ""
+                "Chi tiết"
             });
         }
     }
@@ -272,14 +291,6 @@ public class PhieuNhap extends JPanel {
 
     public void setBtnXoa(JButton btnXoa) {
         this.btnXoa = btnXoa;
-    }
-
-    public JButton getBtnTimKiem() {
-        return btnTimKiem;
-    }
-
-    public void setBtnTimKiem(JButton btnTimKiem) {
-        this.btnTimKiem = btnTimKiem;
     }
 
     public JTextField getTxtTimKiem() {

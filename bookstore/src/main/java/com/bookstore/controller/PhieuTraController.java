@@ -20,8 +20,8 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.*;
 
 import com.bookstore.DTO.PhieuTraDTO;
-import com.bookstore.DTO.CTPhieuTraDTO;
-import com.bookstore.DTO.PhieuMuonDTO;
+// import com.bookstore.DTO.CTPhieuTraDTO;
+// import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.views.Panel.PhieuTra;
 import com.bookstore.dao.PhieuTraDAO;
 import com.bookstore.DTO.TaiKhoanDTO;

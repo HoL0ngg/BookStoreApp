@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -35,6 +36,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
     private List<PhieuNhapDTO> mangtmp;
     private boolean isAscending = true;
 
+    // constructor
     public PhieuNhapController(PhieuNhap pn) {
         this.pn = pn;
         manggoc = pn.getListpn();
@@ -43,26 +45,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == pn.getBtnTimKiem()) {
-            String str = (String) pn.getCbLuaChonTK().getSelectedItem();
-            if (str != null) {
-                System.out.println("Đã chọn tìm kiếm");
-                String key = pn.getTxtTimKiem().getText().trim();
-                switch (str) {
-                    case "Mã phiếu nhập":
-                        timMPN(key);
-                        break;
-                    case "Mã nhân viên":
-                        timMNV(key);
-                        break;
-                    case "Mã nhà cung cấp":
-                        timMNCC(key);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } else if (e.getSource() == pn.getBtnReverse()) {
+        if (e.getSource() == pn.getBtnReverse()) {
             if (isAscending) {
                 pn.getBtnReverse().setIcon(pn.upIcon);
                 Collections.sort(mangtmp, comparator);
@@ -74,58 +57,143 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             pn.updateTable(mangtmp);
         } else if (e.getSource() == pn.getBtnSua()) {
             int slt = pn.getTable().getSelectedRow();
-            if (slt != -1) {
-                String mpn = pn.getTxtMaPhieuNhap().getText();
-                String strThoigian = pn.getTxtThoigian().getText();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                java.sql.Date thoigian = null;
-                try {
-                    java.util.Date utilDate = sdf.parse(strThoigian);
-                    thoigian = new java.sql.Date(utilDate.getTime());
-                } catch (ParseException e1) {
-                    System.out.println("Ngày không hợp lệ");
-                    e1.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Ngày không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                String mnv = pn.getTxtMaNV().getText();
-                int mncc;
-                try {
-                    mncc = Integer.parseInt(pn.getTxtMaNCC().getText());
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Mã nhà cung cấp phải là số nguyên", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                PhieuNhapDTO updatePn = new PhieuNhapDTO(mpn, thoigian, mnv, mncc);
-                boolean kq = pnbus.suaPhieuNhap(updatePn);
-                if (kq) {
-                    JOptionPane.showMessageDialog(null, "Cập nhật thành công");
-                    int rowtmp = pn.getTable().getSelectedRow();
-                    pn.setListpn(pndao.layDanhSachPhieuNhap());
-                    pn.loadTableData();
-                    if (rowtmp >= 0 && rowtmp < pn.getTable().getRowCount()) {
-                        pn.getTable().setRowSelectionInterval(rowtmp, rowtmp);
-                    }
-                    manggoc = pn.getListpn();
-                    mangtmp = pn.getListpn();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Cập nhật thất bại");
-                }
+            if (slt == -1) {
+                JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn sửa", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
             }
+
+            // Lấy MaPhieuNhap từ cột 1 (cột 0 trong JTable)
+            String mpn = pn.getTable().getValueAt(slt, 0).toString();
+            // Giả sử các cột khác trong bảng lần lượt là: MaPhieuNhap, ThoiGian, MaNV,
+            // MaNCC
+            String strThoigian = pn.getTable().getValueAt(slt, 1).toString();
+            String mnv = pn.getTable().getValueAt(slt, 2).toString();
+            String mncc = pn.getTable().getValueAt(slt, 3).toString();
+
+            // Tạo dialog chỉnh sửa
+            JDialog dialog = new JDialog((JFrame) null, "Sửa phiếu nhập", true);
+            dialog.setSize(400, 300);
+            dialog.setLayout(new BorderLayout());
+            dialog.setResizable(false);
+            dialog.setLocationRelativeTo(null);
+
+            // Panel chính
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Panel chứa các trường nhập liệu
+            JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+
+            // Các trường nhập liệu
+            JLabel lblMpn = new JLabel("Mã phiếu nhập:");
+            JTextField txtMpn = new JTextField(mpn);
+            txtMpn.setEditable(false); // Không cho sửa mã phiếu nhập
+            JLabel lblThoigian = new JLabel("Thời gian (yyyy-MM-dd):");
+            JTextField txtThoigian = new JTextField(strThoigian);
+            JLabel lblMnv = new JLabel("Mã nhân viên:");
+            JTextField txtMnv = new JTextField(mnv);
+            JLabel lblMncc = new JLabel("Mã nhà cung cấp:");
+            JTextField txtMncc = new JTextField(mncc);
+
+            inputPanel.add(lblMpn);
+            inputPanel.add(txtMpn);
+            inputPanel.add(lblThoigian);
+            inputPanel.add(txtThoigian);
+            inputPanel.add(lblMnv);
+            inputPanel.add(txtMnv);
+            inputPanel.add(lblMncc);
+            inputPanel.add(txtMncc);
+
+            // Panel chứa nút
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+            JButton btnConfirm = new JButton("Xác nhận");
+            JButton btnCancel = new JButton("Hủy");
+
+            // Style cho nút
+            styleButton(btnConfirm, new Color(0, 120, 215));
+            styleButton(btnCancel, new Color(100, 100, 100));
+
+            buttonPanel.add(btnConfirm);
+            buttonPanel.add(btnCancel);
+
+            mainPanel.add(inputPanel, BorderLayout.CENTER);
+            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+            dialog.add(mainPanel);
+
+            // Xử lý nút Xác nhận
+            btnConfirm.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Lấy dữ liệu từ các trường nhập liệu
+                    String newMpn = txtMpn.getText();
+                    String newThoigianStr = txtThoigian.getText();
+                    String newMnv = txtMnv.getText();
+                    String newMnccStr = txtMncc.getText();
+
+                    // Kiểm tra và chuyển đổi thời gian
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Date thoigian = null;
+                    try {
+                        java.util.Date utilDate = sdf.parse(newThoigianStr);
+                        thoigian = new Date(utilDate.getTime());
+                    } catch (ParseException ex) {
+                        JOptionPane.showMessageDialog(dialog, "Ngày không hợp lệ (định dạng yyyy-MM-dd)", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Kiểm tra và chuyển đổi mã nhà cung cấp
+                    int newMncc;
+                    try {
+                        newMncc = Integer.parseInt(newMnccStr);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(dialog, "Mã nhà cung cấp phải là số nguyên", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Tạo đối tượng PhieuNhapDTO để cập nhật
+                    PhieuNhapDTO updatePn = new PhieuNhapDTO(newMpn, thoigian, newMnv, newMncc);
+                    boolean kq = pnbus.suaPhieuNhap(updatePn);
+                    if (kq) {
+                        JOptionPane.showMessageDialog(dialog, "Cập nhật thành công", "Thành công",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        pn.setListpn(pndao.layDanhSachPhieuNhap());
+                        pn.loadTableData();
+                        // Giữ dòng được chọn
+                        if (slt >= 0 && slt < pn.getTable().getRowCount()) {
+                            pn.getTable().setRowSelectionInterval(slt, slt);
+                        }
+                        manggoc = pn.getListpn();
+                        mangtmp = pn.getListpn();
+                    } else {
+                        JOptionPane.showMessageDialog(dialog, "Cập nhật thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                    dialog.dispose();
+                }
+            });
+
+            // Xử lý nút Hủy
+            btnCancel.addActionListener(e1 -> dialog.dispose());
+
+            dialog.setVisible(true);
             System.out.println("Đã nhấn vào nút Sửa");
         } else if (e.getSource() == pn.getBtnXoa()) {
-            if (pn.getTxtMaPhieuNhap().getText().isEmpty()) {
+            int slt = pn.getTable().getSelectedRow();
+            if (slt == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu nhập", "Thông báo",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            System.out.println("Đã nhấn vào nút Xóa");
+
+            String mpn = pn.getTable().getValueAt(slt, 0).toString();
+
+            // Tạo dialog xác nhận xóa
             JDialog dialog = new JDialog((JFrame) null, "Xóa phiếu nhập", true);
             dialog.setSize(400, 200);
             dialog.setLayout(new BorderLayout());
             dialog.setResizable(false);
-
-            String mpn = pn.getTxtMaPhieuNhap().getText();
 
             // Panel chính
             JPanel mainPanel = new JPanel(new BorderLayout());
@@ -165,7 +233,6 @@ public class PhieuNhapController implements ItemListener, ActionListener {
 
             confirm.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String mpn = pn.getTxtMaPhieuNhap().getText();
                     if (pnbus.xoaPhieuNhap(mpn)) {
                         pn.setListpn(pndao.layDanhSachPhieuNhap());
                         pn.loadTableData();
@@ -187,8 +254,18 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             System.out.println("Đã nhấn vào nút Thêm");
             JDialog dialog = new JDialog((JFrame) null, "Thêm Phiếu Nhập", true);
             dialog.setSize(400, 300);
-            dialog.setLayout(new GridLayout(5, 2));
+            dialog.setLayout(new BorderLayout());
+            dialog.setResizable(false);
+            dialog.setLocationRelativeTo(null);
 
+            // Panel chính
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Panel chứa các trường nhập liệu
+            JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+
+            // Các trường nhập liệu
             JTextField txtfMaPhieuNhap = new JTextField();
             JTextField txtfThoigian = new JTextField();
             JTextField txtfMaNV = new JTextField();
@@ -202,8 +279,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             txtfThoigian.setEditable(false);
 
             // Mã nhân viên hiện tại
-            txtfMaNV.setText("NV001");
-            // txtfMaNV.setText(tkDTO.getTenDangNhap());
+            txtfMaNV.setText("NV001"); // Có thể thay bằng tkDTO.getTenDangNhap()
             txtfMaNV.setEditable(false);
 
             // Mã phiếu nhập mới
@@ -224,41 +300,54 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             txtfMaPhieuNhap.setText(mpnNew);
             txtfMaPhieuNhap.setEditable(false);
 
-            dialog.add(new JLabel("Mã phiếu nhập: "));
-            dialog.add(txtfMaPhieuNhap);
+            // Thêm các nhãn và trường vào inputPanel
+            inputPanel.add(new JLabel("Mã phiếu nhập:"));
+            inputPanel.add(txtfMaPhieuNhap);
+            inputPanel.add(new JLabel("Thời gian (yyyy-MM-dd):"));
+            inputPanel.add(txtfThoigian);
+            inputPanel.add(new JLabel("Mã nhân viên:"));
+            inputPanel.add(txtfMaNV);
+            inputPanel.add(new JLabel("Mã nhà cung cấp:"));
+            inputPanel.add(txtfMaNCC);
 
-            dialog.add(new JLabel("Thời gian: "));
-            dialog.add(txtfThoigian);
-
-            dialog.add(new JLabel("Mã nhân viên: "));
-            dialog.add(txtfMaNV);
-
-            dialog.add(new JLabel("Mã nhà cung cấp: "));
-            dialog.add(txtfMaNCC);
-
+            // Panel chứa nút
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
             JButton confirm = new JButton("Xác nhận");
-            dialog.add(confirm);
+            JButton cancel = new JButton("Hủy");
 
+            // Style cho nút (giả sử phương thức styleButton đã được định nghĩa)
+            styleButton(confirm, new Color(0, 120, 215));
+            styleButton(cancel, new Color(100, 100, 100));
+
+            buttonPanel.add(confirm);
+            buttonPanel.add(cancel);
+
+            mainPanel.add(inputPanel, BorderLayout.CENTER);
+            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+            dialog.add(mainPanel);
+
+            // Xử lý nút Xác nhận
             confirm.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     int maNCC;
                     try {
                         maNCC = Integer.parseInt(txtfMaNCC.getText().trim());
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "Mã nhà cung cấp phải là số nguyên", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(dialog, "Mã nhà cung cấp phải là số nguyên", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
                         return;
                     }
+
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     java.sql.Date date = null;
                     try {
                         java.util.Date utilDate = sdf.parse(fomatedday);
                         date = new java.sql.Date(utilDate.getTime());
                     } catch (ParseException e1) {
-                        System.out.println("Lỗi ngày");
-                        e1.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "Ngày không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(dialog, "Ngày không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
+
                     PhieuNhapDTO insertPN = new PhieuNhapDTO(
                             txtfMaPhieuNhap.getText(),
                             date,
@@ -267,17 +356,21 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                     if (pnbus.themPhieuNhap(insertPN)) {
                         pn.setListpn(pndao.layDanhSachPhieuNhap());
                         pn.loadTableData();
-                        JOptionPane.showMessageDialog(null, "Thêm phiếu nhập thành công");
+                        JOptionPane.showMessageDialog(dialog, "Thêm phiếu nhập thành công", "Thành công",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        manggoc = pn.getListpn();
+                        mangtmp = pn.getListpn();
+                        dialog.dispose();
                     } else {
-                        JOptionPane.showMessageDialog(null, "Thêm phiếu nhập thất bại");
+                        JOptionPane.showMessageDialog(dialog, "Thêm phiếu nhập thất bại", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
                     }
-                    manggoc = pn.getListpn();
-                    mangtmp = pn.getListpn();
-                    dialog.dispose();
                 }
             });
 
-            dialog.setLocationRelativeTo(null);
+            // Xử lý nút Hủy
+            cancel.addActionListener(e1 -> dialog.dispose());
+
             dialog.setVisible(true);
         }
     }
@@ -285,6 +378,61 @@ public class PhieuNhapController implements ItemListener, ActionListener {
     public void timMPN(String MaPN) {
         mangtmp = manggoc.stream()
                 .filter(i -> i.getMaPhieuNhap().contains(MaPN))
+                .collect(Collectors.toList());
+        pn.updateTable(mangtmp);
+    }
+
+    public void timTG(String tg) {
+        if (tg == null || tg.trim().isEmpty()) {
+            mangtmp = manggoc;
+            pn.updateTable(mangtmp);
+            return;
+        }
+
+        SimpleDateFormat sdfDay = new SimpleDateFormat("dd");
+        SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
+        SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+        SimpleDateFormat sdfMonthDay = new SimpleDateFormat("MM-dd");
+        SimpleDateFormat sdfYearMonth = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat sdfFull = new SimpleDateFormat("yyyy-MM-dd");
+
+        mangtmp = manggoc.stream()
+                .filter(i -> {
+                    Date itemDate = i.getThoigian();
+                    String day = sdfDay.format(itemDate);
+                    String month = sdfMonth.format(itemDate);
+                    String year = sdfYear.format(itemDate);
+                    String monthDay = sdfMonthDay.format(itemDate);
+                    String yearMonth = sdfYearMonth.format(itemDate);
+                    String fullDate = sdfFull.format(itemDate);
+
+                    // Phân tích định dạng của tg
+                    if (tg.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                        // Định dạng yyyy-MM-dd
+                        return fullDate.equals(tg);
+                    } else if (tg.matches("\\d{4}-\\d{2}")) {
+                        // Định dạng yyyy-MM
+                        return yearMonth.equals(tg);
+                    } else if (tg.matches("\\d{2}-\\d{2}")) {
+                        // Định dạng MM-dd
+                        return monthDay.equals(tg);
+                    } else if (tg.matches("\\d{4}")) {
+                        // Định dạng yyyy
+                        return year.equals(tg);
+                    } else if (tg.matches("\\d{1,2}")) {
+                        // Định dạng MM hoặc dd (ưu tiên tháng nếu <= 12, ngày nếu > 12)
+                        int value = Integer.parseInt(tg);
+                        if (value <= 12) {
+                            // Có thể là tháng hoặc ngày
+                            return month.equals(String.format("%02d", value))
+                                    || day.equals(String.format("%02d", value));
+                        } else {
+                            // Chỉ là ngày
+                            return day.equals(String.format("%02d", value));
+                        }
+                    }
+                    return false;
+                })
                 .collect(Collectors.toList());
         pn.updateTable(mangtmp);
     }
@@ -390,5 +538,30 @@ public class PhieuNhapController implements ItemListener, ActionListener {
         }
 
         dialog.setVisible(true);
+    }
+
+    public void performSearch() {
+        String type = (String) pn.getCbLuaChonTK().getSelectedItem();
+        String txt = pn.getTxtTimKiem().getText().trim();
+        System.out.println("dang tim kiem" + txt + "loai " + type);
+        switch (type) {
+            case "Mã phiếu nhập":
+                timMPN(txt);
+                break;
+
+            case "Thời gian":
+                timTG(txt);
+                break;
+            case "Mã nhân viên":
+                timMNV(txt);
+                break;
+
+            case "Mã nhà cung cấp":
+                timMNCC(txt);
+                ;
+                break;
+            default:
+                break;
+        }
     }
 }

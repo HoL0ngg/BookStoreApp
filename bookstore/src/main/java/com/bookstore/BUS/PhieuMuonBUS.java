@@ -3,40 +3,22 @@ package com.bookstore.BUS;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.util.List;
 
 import com.bookstore.DTO.PhieuMuonDTO;
+import com.bookstore.dao.PhieuMuonDAO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class PhieuMuonBUS {
+    private List<PhieuMuonDTO> listPM;
 
     public PhieuMuonBUS() {
+        listPM = new PhieuMuonDAO().layDanhSachPhieuMuon();
     }
 
-    public PhieuMuonDTO timPhieuMuon(int MaPhieuMuon) {
-        String sql = "SELECT * FROM PhieuMuon WHERE MaPhieuMuon = ?";
-        try (Connection conn = DatabaseUtils.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, MaPhieuMuon);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new PhieuMuonDTO(
-                        rs.getInt("MaPhieuMuon"),
-                        rs.getDate("NgayMuon"),
-                        rs.getDate("NgayTraDuKien"),
-                        rs.getInt("TrangThai"),
-                        rs.getString("MaDocGia"),
-                        rs.getString("MaNhanVien"),
-                        rs.getBoolean("Status")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public List<PhieuMuonDTO> getList() {
+        return listPM;
     }
 
     // thêm phiếu mượn

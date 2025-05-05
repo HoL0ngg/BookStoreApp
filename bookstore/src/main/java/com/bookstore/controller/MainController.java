@@ -1,12 +1,9 @@
 package com.bookstore.controller;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import com.bookstore.views.LoginFrame;
