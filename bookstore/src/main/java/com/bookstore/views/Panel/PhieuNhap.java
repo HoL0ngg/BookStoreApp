@@ -31,7 +31,7 @@ import com.bookstore.controller.PhieuNhapController;
 import com.bookstore.dao.PhieuNhapDAO;
 
 public class PhieuNhap extends JPanel {
-    
+
     private List<PhieuNhapDTO> listpn = new PhieuNhapDAO().layDanhSachPhieuNhap();
     private JPanel search;
     private JTable table;
@@ -51,7 +51,7 @@ public class PhieuNhap extends JPanel {
         phieuNhapController = new PhieuNhapController(this);
         init();
     }
-    
+
     public void init() {
         // Cấu hình Look and Feel (bỏ trong ứng dụng thực tế nếu đã có trong MainFrame)
         try {
@@ -68,18 +68,18 @@ public class PhieuNhap extends JPanel {
         search.setLayout(null);
 
         String[] LuaChonTimKiem = {
-            "Mã phiếu nhập",
-            "Thời gian",
-            "Mã nhân viên",
-            "Mã nhà cung cấp"
+                "Mã phiếu nhập",
+                "Thời gian",
+                "Mã nhân viên",
+                "Mã nhà cung cấp"
         };
 
         String[] LuaChonSapXep = {
-            "Tất cả",
-            "Mã phiếu nhập",
-            "Thời gian",
-            "Mã nhân viên",
-            "Mã nhà cung cấp"
+                "Tất cả",
+                "Mã phiếu nhập",
+                "Thời gian",
+                "Mã nhân viên",
+                "Mã nhà cung cấp"
         };
 
         // Phần tìm kiếm
@@ -98,8 +98,8 @@ public class PhieuNhap extends JPanel {
 
         txtTimKiem.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(KeyEvent e){
-                if (searchTimer != null){
+            public void keyReleased(KeyEvent e) {
+                if (searchTimer != null) {
                     searchTimer.cancel();
                 }
                 searchTimer = new Timer();
@@ -130,9 +130,15 @@ public class PhieuNhap extends JPanel {
         // Panel chứa bảng dữ liệu
         JPanel tablePanel = new JPanel(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[] {
-            "Mã phiếu nhập", "Thời gian", "Mã nhân viên", "Mã nhà cung cấp", "Thao tác"
-        }, 0);
-        
+                "Mã phiếu nhập", "Thời gian", "Mã nhân viên", "Mã nhà cung cấp", "Thao tác"
+        }, 0) {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa bất kỳ ô nào
+            }
+        };
+
         // Tạo bảng và sự kiện chi tiết
         table = new JTable(tableModel);
         table.addMouseListener(new MouseAdapter() {
@@ -144,13 +150,13 @@ public class PhieuNhap extends JPanel {
                 if (col == 4 && row >= 0) {
                     String maPhieuNhap = (String) table.getValueAt(row, 0);
                     phieuNhapController.hienThiChiTietTable(maPhieuNhap);
-                }   
+                }
             }
         });
 
         // Thanh cuộn
         JScrollPane scrollPane = new JScrollPane(table);
-        tablePanel.add(scrollPane, BorderLayout.CENTER);  
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         // Panel chứa các nút thêm, sửa, xóa
         JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
@@ -186,7 +192,7 @@ public class PhieuNhap extends JPanel {
         // Load dữ liệu vào bảng
         loadTableData();
     }
-    
+
     // Hàm tải dữ liệu lên bảng
     public void loadTableData() {
         tableModel.setRowCount(0);
@@ -195,27 +201,27 @@ public class PhieuNhap extends JPanel {
         setListpn(tmpList);
         for (PhieuNhapDTO pn : tmpList) {
             tableModel.addRow(new Object[] {
-                pn.getMaPhieuNhap(),
-                sdf.format(pn.getThoigian()),
-                pn.getMaNV(),
-                pn.getMaNCC(),
-                "Chi tiết"
+                    pn.getMaPhieuNhap(),
+                    sdf.format(pn.getThoigian()),
+                    pn.getMaNV(),
+                    pn.getMaNCC(),
+                    "Chi tiết"
             });
         }
     }
 
     // Hàm cập nhật bảng
     public void updateTable(List<PhieuNhapDTO> danhSach) {
-        tableModel.setRowCount(0); 
+        tableModel.setRowCount(0);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    
+
         for (PhieuNhapDTO pn : danhSach) {
             tableModel.addRow(new Object[] {
-                pn.getMaPhieuNhap(),
-                dateFormat.format(pn.getThoigian()),
-                pn.getMaNV(),
-                pn.getMaNCC(),
-                "Chi tiết"
+                    pn.getMaPhieuNhap(),
+                    dateFormat.format(pn.getThoigian()),
+                    pn.getMaNV(),
+                    pn.getMaNCC(),
+                    "Chi tiết"
             });
         }
     }

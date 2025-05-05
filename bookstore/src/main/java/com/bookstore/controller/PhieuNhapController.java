@@ -23,6 +23,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.BUS.NCCBUS;
 import com.bookstore.BUS.PhieuNhapBUS;
@@ -31,6 +33,7 @@ import com.bookstore.DTO.PhieuNhapDTO;
 import com.bookstore.views.Panel.PhieuNhap;
 import com.bookstore.dao.PhieuNhapDAO;
 import com.bookstore.DTO.TaiKhoanDTO;
+import com.bookstore.DTO.CTPhieuNhapDTO;
 
 public class PhieuNhapController implements ItemListener, ActionListener {
     private PhieuNhap pn;
@@ -190,36 +193,113 @@ public class PhieuNhapController implements ItemListener, ActionListener {
         } else if (e.getSource() == pn.getBtnThem()) {
             System.out.println("Đã nhấn vào nút Thêm");
             JDialog dialog = new JDialog((JFrame) null, "Thêm Phiếu Nhập", true);
-            dialog.setSize(450, 400); // Tăng chiều rộng và chiều cao
+            dialog.setSize(900, 600);
             dialog.setLayout(new BorderLayout());
             dialog.setResizable(false);
             dialog.setLocationRelativeTo(null);
-        
-            // Panel chính
-            JPanel mainPanel = new JPanel(new BorderLayout());
-            mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        
+
+            // Panel chính chia làm 2 phần
+            JPanel mainContainer = new JPanel(new GridLayout(1, 2, 15, 0));
+            mainContainer.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            mainContainer.setBackground(new Color(245, 245, 245));
+
+            // ========= PHẦN BÊN TRÁI (THÔNG TIN PHIẾU NHẬP) =========
+            JPanel leftPanel = new JPanel(new BorderLayout(0, 10));
+            leftPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+                    "Thông tin phiếu nhập",
+                    TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION,
+                    new Font("Segoe UI", Font.BOLD, 14)));
+            leftPanel.setBackground(new Color(245, 245, 245));
+
             // Panel chứa các trường nhập liệu
-            JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        
+            JPanel inputPanel = new JPanel();
+            inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+            inputPanel.setBackground(new Color(245, 245, 245));
+
             // Các trường nhập liệu
-            JTextField txtfMaPhieuNhap = new JTextField();
-            JTextField txtfThoigian = new JTextField();
-            JTextField txtfMaNV = new JTextField();
+            JPanel row1 = createInputRow("Mã phiếu nhập:", new JTextField());
+            JTextField txtfMaPhieuNhap = (JTextField) row1.getComponent(1);
+            txtfMaPhieuNhap.setEditable(false);
+
+            JPanel row2 = createInputRow("Thời gian (yyyy-MM-dd):", new JTextField());
+            JTextField txtfThoigian = (JTextField) row2.getComponent(1);
+            txtfThoigian.setEditable(false);
+
+            JPanel row3 = createInputRow("Mã nhân viên:", new JTextField());
+            JTextField txtfMaNV = (JTextField) row3.getComponent(1);
+            txtfMaNV.setEditable(false);
+
+            // Panel cho phần chọn nhà cung cấp với JList
+            JPanel row4 = new JPanel(new BorderLayout(0, 5));
+            row4.setBackground(new Color(245, 245, 245));
+            JLabel nccLabel = new JLabel("Nhà cung cấp:");
+            nccLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            row4.add(nccLabel, BorderLayout.NORTH);
+
             JTextField txtfSearchNCC = new JTextField();
-            JComboBox<NCCDTO> comboMaNCC = new JComboBox<>();
-        
+            txtfSearchNCC.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            txtfSearchNCC.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                    BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+            JList<NCCDTO> listNCC = new JList<>();
+            listNCC.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            listNCC.setVisibleRowCount(5);
+            listNCC.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
+            JScrollPane nccScrollPane = new JScrollPane(listNCC);
+            nccScrollPane.setPreferredSize(new Dimension(0, 100));
+
+            JPanel nccInputPanel = new JPanel(new BorderLayout(0, 5));
+            nccInputPanel.setBackground(new Color(245, 245, 245));
+            nccInputPanel.add(txtfSearchNCC, BorderLayout.NORTH);
+            nccInputPanel.add(nccScrollPane, BorderLayout.CENTER);
+            row4.add(nccInputPanel, BorderLayout.CENTER);
+
+            // Thêm các TextField chi tiết nhà cung cấp
+            JPanel row5 = createInputRow("Tên NCC:", new JTextField());
+            JTextField txtfTenNCC = (JTextField) row5.getComponent(1);
+            txtfTenNCC.setEditable(false);
+
+            JPanel row6 = createInputRow("Địa chỉ:", new JTextField());
+            JTextField txtfDiaChi = (JTextField) row6.getComponent(1);
+            txtfDiaChi.setEditable(false);
+
+            JPanel row7 = createInputRow("Email:", new JTextField());
+            JTextField txtfEmail = (JTextField) row7.getComponent(1);
+            txtfEmail.setEditable(false);
+
+            JPanel row8 = createInputRow("SĐT:", new JTextField());
+            JTextField txtfSDT = (JTextField) row8.getComponent(1);
+            txtfSDT.setEditable(false);
+
+            // Thêm các row vào inputPanel
+            inputPanel.add(row1);
+            inputPanel.add(Box.createVerticalStrut(15));
+            inputPanel.add(row2);
+            inputPanel.add(Box.createVerticalStrut(15));
+            inputPanel.add(row3);
+            inputPanel.add(Box.createVerticalStrut(15));
+            inputPanel.add(row4);
+            inputPanel.add(Box.createVerticalStrut(15));
+            inputPanel.add(row5);
+            inputPanel.add(Box.createVerticalStrut(15));
+            inputPanel.add(row6);
+            inputPanel.add(Box.createVerticalStrut(15));
+            inputPanel.add(row7);
+            inputPanel.add(Box.createVerticalStrut(15));
+            inputPanel.add(row8);
+
             // Thời gian hiện tại
             LocalDate tmpday = LocalDate.now();
             DateTimeFormatter fomatdaytime = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String fomatedday = tmpday.format(fomatdaytime);
             txtfThoigian.setText(fomatedday);
-            txtfThoigian.setEditable(false);
-        
+
             // Mã nhân viên hiện tại
             txtfMaNV.setText("NV001");
-            txtfMaNV.setEditable(false);
-        
+
             // Mã phiếu nhập mới
             String mpnNew = "PN001";
             int maxNum = 0;
@@ -236,14 +316,14 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             }
             mpnNew = String.format("PN%03d", maxNum + 1);
             txtfMaPhieuNhap.setText(mpnNew);
-            txtfMaPhieuNhap.setEditable(false);
-        
+
             // Lấy danh sách nhà cung cấp từ NCCBUS
             NCCBUS nccBus = new NCCBUS();
             List<NCCDTO> danhSachNCC = nccBus.getList();
-        
-            // Renderer để hiển thị MaNCC - TenNCC trong JComboBox
-            comboMaNCC.setRenderer(new DefaultListCellRenderer() {
+            System.out.println("Tổng số NCC: " + danhSachNCC.size());
+
+            // Renderer cho JList
+            listNCC.setCellRenderer(new DefaultListCellRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                         boolean isSelected, boolean cellHasFocus) {
@@ -252,17 +332,24 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                         NCCDTO ncc = (NCCDTO) value;
                         setText(ncc.getMaNCC() + " - " + ncc.getTenNCC());
                     }
+                    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                    setBackground(isSelected ? new Color(0, 120, 215) : Color.WHITE);
+                    setForeground(isSelected ? Color.WHITE : Color.BLACK);
                     return this;
                 }
             });
-        
-            // Tạo panel riêng cho phần nhà cung cấp
-            JPanel nccPanel = new JPanel(new BorderLayout());
-            nccPanel.add(txtfSearchNCC, BorderLayout.NORTH);
-            nccPanel.add(comboMaNCC, BorderLayout.CENTER);
-            comboMaNCC.setVisible(false); // Ẩn combo box ban đầu
-        
-            // Quản lý Timer cho tìm kiếm
+
+            // Hiển thị toàn bộ danh sách nhà cung cấp ngay khi mở dialog
+            DefaultListModel<NCCDTO> initialModel = new DefaultListModel<>();
+            for (NCCDTO ncc : danhSachNCC) {
+                initialModel.addElement(ncc);
+            }
+            listNCC.setModel(initialModel);
+            nccScrollPane.setVisible(true);
+            nccInputPanel.revalidate();
+            nccInputPanel.repaint();
+
+            // Quản lý Timer cho tìm kiếm liên tục
             searchNCC = new Timer();
             txtfSearchNCC.addKeyListener(new KeyAdapter() {
                 @Override
@@ -274,72 +361,202 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                         @Override
                         public void run() {
                             SwingUtilities.invokeLater(() -> {
-                                String searchText = txtfSearchNCC.getText().trim();
-                                DefaultComboBoxModel<NCCDTO> comboModel = new DefaultComboBoxModel<>();
-                                
-                                if (!searchText.isEmpty()) {
-                                    List<NCCDTO> filteredList = danhSachNCC.stream()
-                                            .filter(ncc -> String.valueOf(ncc.getMaNCC()).contains(searchText))
-                                            .collect(Collectors.toList());
-                                            
-                                    for (NCCDTO ncc : filteredList) {
-                                        comboModel.addElement(ncc);
-                                    }
-                                    
-                                    if (!filteredList.isEmpty()) {
-                                        comboMaNCC.setModel(comboModel);
-                                        comboMaNCC.setVisible(true);
-                                        comboMaNCC.showPopup();
-                                    } else {
-                                        comboMaNCC.setVisible(false);
+                                String searchText = txtfSearchNCC.getText().trim().toLowerCase();
+                                DefaultListModel<NCCDTO> listModel = new DefaultListModel<>();
+
+                                // Nếu TextField rỗng, hiển thị toàn bộ danh sách
+                                if (searchText.isEmpty()) {
+                                    for (NCCDTO ncc : danhSachNCC) {
+                                        listModel.addElement(ncc);
                                     }
                                 } else {
-                                    comboMaNCC.setVisible(false);
+                                    // Lọc danh sách nhà cung cấp
+                                    for (NCCDTO ncc : danhSachNCC) {
+                                        String maNCC = String.valueOf(ncc.getMaNCC()).toLowerCase();
+                                        String tenNCC = ncc.getTenNCC().toLowerCase();
+                                        if (maNCC.contains(searchText) || tenNCC.contains(searchText)) {
+                                            listModel.addElement(ncc);
+                                        }
+                                    }
                                 }
+
+                                // Cập nhật JList
+                                listNCC.setModel(listModel);
+                                nccScrollPane.setVisible(!listModel.isEmpty());
+                                nccInputPanel.revalidate();
+                                nccInputPanel.repaint();
+                                System.out.println("Số NCC tìm thấy: " + listModel.getSize());
                             });
                         }
                     }, 300);
                 }
             });
-        
-            // Thêm các nhãn và trường vào inputPanel
-            inputPanel.add(new JLabel("Mã phiếu nhập:"));
-            inputPanel.add(txtfMaPhieuNhap);
-            inputPanel.add(new JLabel("Thời gian (yyyy-MM-dd):"));
-            inputPanel.add(txtfThoigian);
-            inputPanel.add(new JLabel("Mã nhân viên:"));
-            inputPanel.add(txtfMaNV);
-            inputPanel.add(new JLabel("Nhà cung cấp:"));
-            inputPanel.add(nccPanel);
-        
-            // Panel chứa nút
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+
+            // Xử lý khi chọn item từ JList
+            listNCC.addListSelectionListener(e1 -> {
+                if (!e1.getValueIsAdjusting() && listNCC.getSelectedValue() != null) {
+                    NCCDTO selectedNCC = listNCC.getSelectedValue();
+                    txtfSearchNCC.setText(String.valueOf(selectedNCC.getMaNCC()));
+                    txtfTenNCC.setText(selectedNCC.getTenNCC());
+                    txtfDiaChi.setText(selectedNCC.getDiaChi());
+                    txtfEmail.setText(selectedNCC.getEmail());
+                    txtfSDT.setText(selectedNCC.getSoDienThoai());
+                    nccScrollPane.setVisible(false);
+                    nccInputPanel.revalidate();
+                    nccInputPanel.repaint();
+                }
+            });
+
+            leftPanel.add(inputPanel, BorderLayout.CENTER);
+
+            // ========= PHẦN BÊN PHẢI (DANH SÁCH SÁCH NHẬP) =========
+            JPanel rightPanel = new JPanel(new BorderLayout(0, 10));
+            rightPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+                    "Danh sách nhập",
+                    TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION,
+                    new Font("Segoe UI", Font.BOLD, 14)));
+            rightPanel.setBackground(new Color(245, 245, 245));
+
+            // Panel header
+            JPanel headerPanel = new JPanel(new GridLayout(1, 3, 5, 5));
+            headerPanel.setBackground(new Color(245, 245, 245));
+            JLabel maSachLabel = new JLabel("Mã sách");
+            JLabel soLuongLabel = new JLabel("Số lượng");
+            JLabel actionLabel = new JLabel("");
+            maSachLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            soLuongLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            headerPanel.add(maSachLabel);
+            headerPanel.add(soLuongLabel);
+            headerPanel.add(actionLabel);
+
+            // Panel chứa các dòng nhập sách
+            JPanel booksInputPanel = new JPanel();
+            booksInputPanel.setLayout(new BoxLayout(booksInputPanel, BoxLayout.Y_AXIS));
+            booksInputPanel.setBackground(new Color(245, 245, 245));
+
+            // Hàm thêm dòng nhập sách mới
+            Runnable addBookRow = () -> {
+                JPanel bookRow = new JPanel(new GridLayout(1, 3, 5, 5));
+                bookRow.setBackground(new Color(245, 245, 245));
+                bookRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+
+                JTextField txtMaSach = new JTextField();
+                txtMaSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                txtMaSach.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+                JSpinner spinnerSoLuong = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+                spinnerSoLuong.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                spinnerSoLuong.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+                JButton btnRemove = new JButton("Xóa");
+                styleButton(btnRemove, new Color(200, 50, 50));
+                btnRemove.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
+                bookRow.add(txtMaSach);
+                bookRow.add(spinnerSoLuong);
+                bookRow.add(btnRemove);
+
+                booksInputPanel.add(bookRow);
+                booksInputPanel.add(Box.createVerticalStrut(5));
+
+                btnRemove.addActionListener(e1 -> {
+                    booksInputPanel.remove(bookRow);
+                    booksInputPanel.remove(booksInputPanel.getComponentCount() - 1); // Remove strut
+                    booksInputPanel.revalidate();
+                    booksInputPanel.repaint();
+                });
+
+                booksInputPanel.revalidate();
+                booksInputPanel.repaint();
+            };
+
+            // Thêm 5 dòng mặc định
+            for (int i = 0; i < 7; i++) {
+                addBookRow.run();
+            }
+
+            // Thêm nút thêm dòng
+            JButton btnAddBook = new JButton("+ Thêm sách");
+            styleButton(btnAddBook, new Color(0, 120, 215));
+            btnAddBook.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            btnAddBook.addActionListener(e2 -> addBookRow.run());
+
+            JScrollPane booksScrollPane = new JScrollPane(booksInputPanel);
+            booksScrollPane.setBorder(BorderFactory.createEmptyBorder());
+            booksScrollPane.setBackground(new Color(245, 245, 245));
+
+            rightPanel.add(headerPanel, BorderLayout.NORTH);
+            rightPanel.add(booksScrollPane, BorderLayout.CENTER);
+            rightPanel.add(btnAddBook, BorderLayout.SOUTH);
+
+            // Thêm 2 panel vào main container
+            mainContainer.add(leftPanel);
+            mainContainer.add(rightPanel);
+
+            // Panel chứa nút xác nhận/hủy
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+            buttonPanel.setBackground(new Color(245, 245, 245));
             JButton confirm = new JButton("Xác nhận");
             JButton cancel = new JButton("Hủy");
-        
+
             // Style cho nút
             styleButton(confirm, new Color(0, 120, 215));
             styleButton(cancel, new Color(100, 100, 100));
-        
+            confirm.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            cancel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
             buttonPanel.add(confirm);
             buttonPanel.add(cancel);
-        
-            mainPanel.add(inputPanel, BorderLayout.CENTER);
-            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-            dialog.add(mainPanel);
-        
+
+            dialog.add(mainContainer, BorderLayout.CENTER);
+            dialog.add(buttonPanel, BorderLayout.SOUTH);
+
             // Xử lý nút Xác nhận
             confirm.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    NCCDTO selectedNCC = (NCCDTO) comboMaNCC.getSelectedItem();
+                    NCCDTO selectedNCC = listNCC.getSelectedValue();
                     if (selectedNCC == null) {
                         JOptionPane.showMessageDialog(dialog, "Vui lòng chọn nhà cung cấp", "Lỗi",
                                 JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-        
+
+                    // Lấy danh sách sách nhập
+                    List<CTPhieuNhapDTO> chiTietList = new ArrayList<>();
+                    for (Component comp : booksInputPanel.getComponents()) {
+                        if (comp instanceof JPanel) {
+                            JPanel row = (JPanel) comp;
+                            if (row.getComponentCount() >= 2) {
+                                JTextField txtMaSach = (JTextField) row.getComponent(0);
+                                JSpinner spinner = (JSpinner) row.getComponent(1);
+
+                                String maSach = txtMaSach.getText().trim();
+                                int soLuong = (int) spinner.getValue();
+
+                                if (!maSach.isEmpty()) {
+                                    chiTietList.add(new CTPhieuNhapDTO(
+                                            txtfMaPhieuNhap.getText(),
+                                            maSach,
+                                            soLuong));
+                                }
+                            }
+                        }
+                    }
+
+                    if (chiTietList.isEmpty()) {
+                        JOptionPane.showMessageDialog(dialog, "Vui lòng nhập ít nhất một sách", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
                     int maNCC = selectedNCC.getMaNCC();
-        
+
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     java.sql.Date date = null;
                     try {
@@ -349,13 +566,14 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                         JOptionPane.showMessageDialog(dialog, "Ngày không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-        
+
                     PhieuNhapDTO insertPN = new PhieuNhapDTO(
                             txtfMaPhieuNhap.getText(),
                             date,
                             txtfMaNV.getText(),
                             maNCC);
-                    if (pnbus.themPhieuNhap(insertPN)) {
+
+                    if (pnbus.themPhieuNhap(insertPN, chiTietList)) {
                         pn.setListpn(pndao.layDanhSachPhieuNhap());
                         pn.loadTableData();
                         JOptionPane.showMessageDialog(dialog, "Thêm phiếu nhập thành công", "Thành công",
@@ -369,9 +587,76 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                     }
                 }
             });
-            
             // Xử lý nút Hủy
             cancel.addActionListener(e1 -> dialog.dispose());
+            dialog.setVisible(true);
+        } else if (e.getSource() == pn.getBtnXoa()) {
+            int slt = pn.getTable().getSelectedRow();
+            if (slt == -1) {
+                JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn xóa", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            String mpn = pn.getTable().getValueAt(slt, 0).toString();
+
+            // Tạo JDialog xác nhận xóa
+            JDialog dialog = new JDialog((JFrame) null, "Xác nhận xóa phiếu nhập", true);
+            dialog.setSize(400, 200);
+            dialog.setLayout(new BorderLayout());
+            dialog.setResizable(false);
+            dialog.setLocationRelativeTo(null);
+
+            // Panel chính chứa thông báo
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            mainPanel.setBackground(new Color(245, 245, 245));
+
+            // Thông báo
+            JLabel messageLabel = new JLabel("Bạn muốn xóa phiếu nhập " + mpn + "?", SwingConstants.CENTER);
+            messageLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+            mainPanel.add(messageLabel, BorderLayout.CENTER);
+
+            // Panel chứa nút Xác nhận và Hủy
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+            buttonPanel.setBackground(new Color(245, 245, 245));
+
+            JButton confirmButton = new JButton("Xác nhận");
+            JButton cancelButton = new JButton("Hủy");
+
+            // Style cho nút
+            styleButton(confirmButton, new Color(0, 120, 215));
+            styleButton(cancelButton, new Color(100, 100, 100));
+            confirmButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            cancelButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+            buttonPanel.add(confirmButton);
+            buttonPanel.add(cancelButton);
+
+            // Thêm các panel vào dialog
+            dialog.add(mainPanel, BorderLayout.CENTER);
+            dialog.add(buttonPanel, BorderLayout.SOUTH);
+
+            // Xử lý nút Xác nhận
+            confirmButton.addActionListener(e1 -> {
+                // Gọi BUS để xóa phiếu nhập
+                if (pnbus.xoaPhieuNhap(mpn)) {
+                    // Cập nhật danh sách và bảng
+                    pn.setListpn(pndao.layDanhSachPhieuNhap());
+                    pn.loadTableData();
+                    JOptionPane.showMessageDialog(dialog, "Xóa phiếu nhập thành công", "Thành công",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    manggoc = pn.getListpn();
+                    mangtmp = pn.getListpn();
+                } else {
+                    JOptionPane.showMessageDialog(dialog, "Xóa phiếu nhập thất bại", "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+                dialog.dispose();
+            });
+
+            // Xử lý nút Hủy
+            cancelButton.addActionListener(e1 -> dialog.dispose());
+
             dialog.setVisible(true);
         }
     }
@@ -513,32 +798,129 @@ public class PhieuNhapController implements ItemListener, ActionListener {
     public void hienThiChiTietTable(String mpn) {
         JDialog dialog = new JDialog();
         dialog.setTitle("Chi tiết phiếu nhập");
-        dialog.setSize(400, 300);
-        dialog.setLayout(new GridLayout(5, 2));
+        dialog.setSize(600, 500);
+        dialog.setLayout(new BorderLayout());
         dialog.setLocationRelativeTo(null);
 
-        PhieuNhapDTO phieuNhap = pnbus.themChiTietPhieuNhap(mpn);
+        PhieuNhapDTO phieuNhap = null;
+        for (PhieuNhapDTO pn : pn.getListpn()) {
+            if (pn.getMaPhieuNhap().equals(mpn)) {
+                phieuNhap = pn;
+                break;
+            }
+        }
+
         if (phieuNhap != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            dialog.add(new JLabel("Mã phiếu nhập: "));
-            dialog.add(new JLabel(phieuNhap.getMaPhieuNhap()));
-            dialog.add(new JLabel("Thời gian: "));
-            dialog.add(new JLabel(sdf.format(phieuNhap.getThoigian())));
-            dialog.add(new JLabel("Mã nhân viên: "));
-            dialog.add(new JLabel(phieuNhap.getMaNV()));
-            dialog.add(new JLabel("Mã nhà cung cấp: "));
-            dialog.add(new JLabel(String.valueOf(phieuNhap.getMaNCC())));
 
-            JButton close = new JButton("Đóng");
-            close.addActionListener(e -> dialog.dispose());
-            dialog.add(new JLabel(""));
-            dialog.add(close);
+            // Panel chính
+            JPanel mainPanel = new JPanel(new BorderLayout(0, 10));
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            mainPanel.setBackground(new Color(245, 245, 245));
+
+            // Panel thông tin phiếu nhập
+            JPanel infoPanel = new JPanel();
+            infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+            infoPanel.setBackground(new Color(245, 245, 245));
+            infoPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+                    "Thông tin phiếu nhập",
+                    TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION,
+                    new Font("Segoe UI", Font.BOLD, 14)));
+
+            // Thêm các trường thông tin
+            infoPanel.add(createInfoRow("Mã phiếu nhập:", phieuNhap.getMaPhieuNhap()));
+            infoPanel.add(Box.createVerticalStrut(10));
+            String thoiGian = phieuNhap.getThoigian() != null ? sdf.format(phieuNhap.getThoigian())
+                    : "Không có thời gian";
+            infoPanel.add(createInfoRow("Thời gian:", thoiGian));
+            infoPanel.add(Box.createVerticalStrut(10));
+            infoPanel.add(
+                    createInfoRow("Mã nhân viên:", phieuNhap.getMaNV() != null ? phieuNhap.getMaNV() : "Không có"));
+            infoPanel.add(Box.createVerticalStrut(10));
+            infoPanel.add(createInfoRow("Mã nhà cung cấp:", String.valueOf(phieuNhap.getMaNCC())));
+
+            // Panel danh sách chi tiết phiếu nhập
+            JPanel booksPanel = new JPanel(new BorderLayout());
+            booksPanel.setBackground(new Color(245, 245, 245));
+            booksPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+                    "Chi tiết phiếu nhập",
+                    TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION,
+                    new Font("Segoe UI", Font.BOLD, 14)));
+
+            // Tạo JTable cho chi tiết phiếu nhập
+            DefaultTableModel booksModel = new DefaultTableModel(
+                    new Object[] { "Mã sách", "Số lượng" }, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            // Lấy danh sách chi tiết từ BUS
+            List<CTPhieuNhapDTO> chiTietList = pnbus.getChiTietPhieuNhap(mpn);
+            for (CTPhieuNhapDTO ct : chiTietList) {
+                if (ct.getMaPhieuNhap().equals(mpn)) {
+                    booksModel.addRow(new Object[] { ct.getMaDauSach(), ct.getSoLuong() });
+                }
+            }
+
+            JTable booksTable = new JTable(booksModel);
+            booksTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            booksTable.setRowHeight(25);
+            booksTable.setGridColor(new Color(200, 200, 200));
+            booksTable.setShowGrid(true);
+            booksTable.setBackground(new Color(245, 245, 245));
+            booksTable.setSelectionBackground(new Color(0, 120, 215));
+            booksTable.setSelectionForeground(Color.WHITE);
+
+            JScrollPane booksScrollPane = new JScrollPane(booksTable);
+            booksScrollPane.setBorder(BorderFactory.createEmptyBorder());
+            booksPanel.add(booksScrollPane, BorderLayout.CENTER);
+
+            // Thêm các panel vào mainPanel
+            mainPanel.add(infoPanel, BorderLayout.NORTH);
+            mainPanel.add(booksPanel, BorderLayout.CENTER);
+
+            // Panel chứa nút Đóng
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+            buttonPanel.setBackground(new Color(245, 245, 245));
+            JButton closeButton = new JButton("Đóng");
+            closeButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            closeButton.setBackground(new Color(0, 120, 215));
+            closeButton.setForeground(Color.WHITE);
+            closeButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+            closeButton.addActionListener(e -> dialog.dispose());
+            buttonPanel.add(closeButton);
+
+            // Thêm các panel vào dialog
+            dialog.add(mainPanel, BorderLayout.CENTER);
+            dialog.add(buttonPanel, BorderLayout.SOUTH);
         } else {
             JOptionPane.showMessageDialog(null, "Không tìm thấy chi tiết phiếu nhập", "Lỗi", JOptionPane.ERROR_MESSAGE);
             dialog.dispose();
         }
 
         dialog.setVisible(true);
+    }
+
+    private JPanel createInfoRow(String labelText, String value) {
+        JPanel row = new JPanel(new GridLayout(1, 2, 10, 10));
+        row.setBackground(new Color(245, 245, 245));
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        JTextField textField = new JTextField(value);
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setEditable(false);
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        row.add(label);
+        row.add(textField);
+        return row;
     }
 
     public void performSearch() {
@@ -563,5 +945,19 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             default:
                 break;
         }
+    }
+
+    private JPanel createInputRow(String labelText, JTextField textField) {
+        JPanel row = new JPanel(new GridLayout(1, 2, 10, 10));
+        row.setBackground(new Color(245, 245, 245));
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        row.add(label);
+        row.add(textField);
+        return row;
     }
 }
