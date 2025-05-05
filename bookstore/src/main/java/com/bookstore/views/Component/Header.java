@@ -4,6 +4,7 @@
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
     import java.awt.FlowLayout;
     import java.awt.Font;
@@ -14,7 +15,6 @@ import java.awt.RenderingHints;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
     import javax.swing.JButton;
     import javax.swing.JComboBox;
     import javax.swing.JLabel;
@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
     import com.bookstore.views.Panel.SearchText;
+    import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 
     public class Header extends JPanel {
@@ -70,31 +71,24 @@ import javax.swing.JPanel;
 
         public void initComponent() {
             // Tạo các nút JButton
-            btnAdd = createButton("THÊM", "add.png");
-             btnEdit = createButton("SỬA", "resources/icons/edit.png");
-             btnDelete = createButton("XÓA", "resources/icons/delete.png");
-             btnDetail = createButton("CHI TIẾT", "resources/icons/delete.png");
+            btnAdd = createButton("THÊM", "add");
+             btnEdit = createButton("SỬA", "edit");
+             btnDelete = createButton("XÓA", "delete");
+             btnDetail = createButton("CHI TIẾT", "ChiTiet");
+             btnExport = createButton("XUẤT EXCEL", "importExcel");
             
             // add
             add(btnAdd);
             add(btnEdit);
             add(btnDelete);
             add(btnDetail);
+            add(btnExport);
 
            
-            setLayout(new FlowLayout(FlowLayout.LEFT, 6, 0));  // can goc trai 20px và height 10px
-
-            // ImageIcon icon = new ImageIcon("resources/svg/add.svg"); // link
-            
-            // Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH); // edit size img
-            // icon = new ImageIcon(img);
-
-            // JLabel iconLabel = new JLabel(icon); // create iconLabel
-            // add(iconLabel);
-
+            setLayout(new FlowLayout(FlowLayout.LEFT, 8, 10));  // can goc trai 20px và height 10px
 
             //Sort and search
-            JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+            JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
             searchPanel.setOpaque(false);
 
             // Sort ComboBox
@@ -166,23 +160,32 @@ import javax.swing.JPanel;
             super.paintComponent(grphcs);
         }
 
-        // ???
-        private JButton createButton(String text, String iconPath) {
-            JButton button = new JButton(text);
-            button.setFont(new Font("Arial", Font.BOLD, 12));
-            button.setFocusPainted(false);
-            button.setBorderPainted(false);
-            button.setBackground(new Color(215, 219, 221));
-            button.setPreferredSize(new Dimension(85, 100)); 
+        private JButton createButton(String text, String iconName) {
+            JButton button = new JButton(); 
+            button.setPreferredSize(new Dimension(77, 80));
+            button.setBackground(Color.white);
+            button.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+            
+            FlatSVGIcon icon = new FlatSVGIcon(getClass().getResource("/svg/" + iconName + ".svg")).derive(30, 30);
+            JLabel label = new JLabel(text);
+            label.setFont(new Font("Arial", Font.PLAIN, 11));
+            
+            button.add(new JLabel(icon)); 
+            button.add(label);           
+            
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
         
             return button;
         }
+        
 
 
+
+
+        
         
     }
 
 
 
-
-    // Check image

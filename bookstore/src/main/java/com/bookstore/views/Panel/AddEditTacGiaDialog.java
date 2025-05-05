@@ -23,7 +23,7 @@ public class AddEditTacGiaDialog extends JDialog {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
         
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 5, 5)); // tạo form riêng
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 5, 5)); 
         formPanel.add(new JLabel("Mã Tác Giả:"));
         txtMaTacGia = new JTextField();
         formPanel.add(txtMaTacGia);
@@ -40,7 +40,7 @@ public class AddEditTacGiaDialog extends JDialog {
         txtQuocTich = new JTextField();
         formPanel.add(txtQuocTich);
 
-        add(formPanel, BorderLayout.CENTER); // thêm form vào giữa
+        add(formPanel, BorderLayout.CENTER); 
 
 
         btnSave = new JButton("LƯU");
@@ -49,7 +49,7 @@ public class AddEditTacGiaDialog extends JDialog {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(btnSave);
-        add(buttonPanel, BorderLayout.SOUTH);
+        add(buttonPanel, BorderLayout.SOUTH); // network
 
 
         if (tacGia != null) { // Nếu thông tin đã tồn tại
@@ -163,6 +163,3 @@ public class AddEditTacGiaDialog extends JDialog {
     }
     
 }
-
-// Btn save can center 
-// dialog hoi nho

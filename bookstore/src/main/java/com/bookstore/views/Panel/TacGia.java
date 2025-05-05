@@ -2,6 +2,7 @@ package com.bookstore.views.Panel;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -77,7 +78,7 @@ public class TacGia extends JPanel {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn tác giả để xóa.");
             }
         });
-
+        // Refesh
         header.getBtnRefresh().addActionListener(e -> {
             String selectedSearchType = (String) header.getSortComboBox().getSelectedItem();
             String inputKeyword = header.getSearchField().getText().trim();
@@ -93,6 +94,8 @@ public class TacGia extends JPanel {
                 JOptionPane.showMessageDialog(this,"Vui lòng chọn một tác giả để xem chi tiết.");
             }
         });
+
+        
 
         // Tiêu đề
         JPanel titlePanel = new JPanel(new GridLayout(1, 4, 10, 0));
@@ -117,6 +120,9 @@ public class TacGia extends JPanel {
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBorder(null);
         scrollPane.setPreferredSize(new Dimension(900, 400));
+        
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // speed scroll
+
         add(scrollPane);
     }
 
@@ -133,6 +139,7 @@ public class TacGia extends JPanel {
         List<JPanel> rowPanels = new ArrayList<>();   
         for (TacGiaDTO tg : list) {
             JPanel rowPanel = new JPanel(new GridLayout(1, 4, 10, 0));
+            rowPanel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Change Mouse Hand
             rowPanel.setPreferredSize(new Dimension(900, 35));
             rowPanel.setMaximumSize(new Dimension(900, 35));
             rowPanel.setBackground(Color.WHITE);
@@ -216,5 +223,9 @@ public class TacGia extends JPanel {
         return label;
     }
 }
+
+
+// can edit lai color
+// kich thuoc add/edit can to ra them
 
 
