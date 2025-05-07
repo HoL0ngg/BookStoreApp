@@ -10,6 +10,8 @@ import com.bookstore.utils.DatabaseUtils;
 import com.bookstore.DTO.CTPhieuNhapDTO;
 import com.bookstore.DTO.PhieuNhapDTO;
 import com.bookstore.dao.CTPhieuNhapDAO;
+import com.bookstore.dao.DauSachDAO;
+import com.bookstore.DTO.DauSachDTO;
 
 public class PhieuNhapBUS {
 
@@ -78,10 +80,24 @@ public class PhieuNhapBUS {
                 stmt.setString(1, mpn);
                 stmt.setString(2, ct.getMaDauSach());
                 stmt.setInt(3, ct.getSoLuong());
+                themdausach(ct.getMaDauSach(), ct.getSoLuong());
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void themdausach(String MaDauSach, int SoLuong) throws SQLException {
+        String sql = "UPDATE DauSach SET SoLuong = SoLuong + ? WHERE MaDauSach = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, SoLuong); // Đặt tham số SoLuong vào vị trí 1
+            stmt.setString(2, MaDauSach); // Đặt tham số MaDauSach vào vị trí 2
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -125,6 +141,8 @@ public class PhieuNhapBUS {
             return;
         }
     }
+
+    // private void xoa
 
     public PhieuNhapDTO themChiTietPhieuNhap(String mpn) {
         PhieuNhapDTO tmp = new PhieuNhapDTO(mpn, null, mpn, 0);

@@ -34,6 +34,8 @@ import com.bookstore.views.Panel.PhieuNhap;
 import com.bookstore.dao.PhieuNhapDAO;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.DTO.CTPhieuNhapDTO;
+import com.bookstore.DTO.DauSachDTO;
+import com.bookstore.BUS.DauSachBUS;
 
 public class PhieuNhapController implements ItemListener, ActionListener {
     private PhieuNhap pn;
@@ -45,7 +47,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
     private List<PhieuNhapDTO> manggoc;
     private List<PhieuNhapDTO> mangtmp;
     private boolean isAscending = true;
-    private Timer searchNCC;
+    private Timer searchNCC, dstimer;
 
     // constructor
     public PhieuNhapController(PhieuNhap pn) {
@@ -54,6 +56,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
         mangtmp = pn.getListpn();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pn.getBtnReverse()) {
@@ -94,7 +97,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
             // Panel chứa các trường nhập liệu
-            JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+            JPanel inputPanel = new JPanel(new GridLayout(5, 2, 10, 10));
 
             // Các trường nhập liệu
             JLabel lblMpn = new JLabel("Mã phiếu nhập:");
@@ -106,6 +109,13 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             JTextField txtMnv = new JTextField(mnv);
             JLabel lblMncc = new JLabel("Mã nhà cung cấp:");
             JTextField txtMncc = new JTextField(mncc);
+            JLabel lbTrangThai = new JLabel("Trạng thái");
+            String[] TT = {
+                    "Đang xử lý",
+                    "Đã hủy",
+                    "Đã hoàn thành",
+            };
+            JComboBox<String> cbtrangthai = new JComboBox<>(TT);
 
             inputPanel.add(lblMpn);
             inputPanel.add(txtMpn);
@@ -115,9 +125,11 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             inputPanel.add(txtMnv);
             inputPanel.add(lblMncc);
             inputPanel.add(txtMncc);
+            inputPanel.add(lbTrangThai);
+            inputPanel.add(cbtrangthai);
 
             // Panel chứa nút
-            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
             JButton btnConfirm = new JButton("Xác nhận");
             JButton btnCancel = new JButton("Hủy");
 
@@ -442,11 +454,53 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                 bookRow.setBackground(new Color(245, 245, 245));
                 bookRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-                JTextField txtMaSach = new JTextField();
-                txtMaSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-                txtMaSach.setBorder(BorderFactory.createCompoundBorder(
+                // Panel chứa JComboBox
+                JPanel dsInputPanel = new JPanel(new BorderLayout(0, 5));
+                dsInputPanel.setBackground(new Color(245, 245, 245));
+
+                // Tải danh sách đầu sách
+                DauSachBUS dsbus = new DauSachBUS();
+                List<DauSachDTO> tmplist = dsbus.getListDauSach();
+                System.out.println("Tổng số đầu sách: " + tmplist.size());
+
+                // Tạo JComboBox với custom renderer
+                JComboBox<String> comboBox = new JComboBox<>(new String[]{"Chọn đầu sách"});
+                comboBox.setEditable(true); // Cho phép nhập để lọc
+                comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                comboBox.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(new Color(180, 180, 180)),
                         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+                comboBox.setRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                            boolean isSelected, boolean cellHasFocus) {
+                        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                        if (value instanceof DauSachDTO) {
+                            DauSachDTO ds = (DauSachDTO) value;
+                            setText(ds.getMaDauSach() + " - " + ds.getTenDauSach());
+                        }
+                        return this;
+                    }
+                });
+
+                // Thêm lọc từ phần editable (AutoComplete-like)
+                JTextField editor = (JTextField) comboBox.getEditor().getEditorComponent();
+                editor.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyReleased(KeyEvent e) {
+                        String input = editor.getText().trim().toLowerCase();
+                        comboBox.removeAllItems();
+                        for (DauSachDTO ds : tmplist) {
+                            if (ds.getMaDauSach().toLowerCase().contains(input) ||
+                                    ds.getTenDauSach().toLowerCase().contains(input)) {
+                                comboBox.addItem(ds.getTenDauSach());
+                            }
+                        }
+                        comboBox.setPopupVisible(comboBox.getItemCount() > 0);
+                        editor.setText(input); // Giữ lại nội dung đang gõ
+                    }
+                });
 
                 JSpinner spinnerSoLuong = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
                 spinnerSoLuong.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -458,7 +512,9 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                 styleButton(btnRemove, new Color(200, 50, 50));
                 btnRemove.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 
-                bookRow.add(txtMaSach);
+                dsInputPanel.add(comboBox, BorderLayout.CENTER);
+
+                bookRow.add(dsInputPanel); // Thêm panel chứa comboBox
                 bookRow.add(spinnerSoLuong);
                 bookRow.add(btnRemove);
 
@@ -467,7 +523,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
 
                 btnRemove.addActionListener(e1 -> {
                     booksInputPanel.remove(bookRow);
-                    booksInputPanel.remove(booksInputPanel.getComponentCount() - 1); // Remove strut
+                    booksInputPanel.remove(booksInputPanel.getComponentCount() - 1); // Xóa strut
                     booksInputPanel.revalidate();
                     booksInputPanel.repaint();
                 });

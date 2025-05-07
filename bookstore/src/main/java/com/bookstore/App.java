@@ -13,13 +13,13 @@ public class App {
         // Đặt encoding toàn cục cho ứng dụng
         System.setProperty("file.encoding", "UTF-8");
 
-        try {
-            // Thiết lập Material Look and Feel
-            UIManager.setLookAndFeel(new MaterialLookAndFeel());
+        // try {
+        //     // Thiết lập Material Look and Feel
+        //     UIManager.setLookAndFeel(new MaterialLookAndFeel());
 
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+        // } catch (UnsupportedLookAndFeelException e) {
+        //     e.printStackTrace();
+        // }
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override

@@ -9,17 +9,19 @@ public class DauSachDTO {
     private String NhaXuatBan;
     private int NamXuatBan;
     private String NgonNgu;
+    private int SoLuong;
     private int SoTrang;
     private List<TheLoaiDTO> listTheLoai;
 
     public DauSachDTO(String maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan,
-            String ngonNgu, int soTrang) {
+            String ngonNgu, int soLuong, int soTrang) {
         MaDauSach = maDauSach;
         TenDauSach = tenDauSach;
         HinhAnh = hinhAnh;
         NhaXuatBan = nhaXuatBan;
         NamXuatBan = namXuatBan;
         NgonNgu = ngonNgu;
+        SoLuong = soLuong;
         SoTrang = soTrang;
     }
 
@@ -97,6 +99,14 @@ public class DauSachDTO {
 
     public void setListTheLoai(List<TheLoaiDTO> listTheLoai) {
         this.listTheLoai = listTheLoai;
+    }
+
+    public int getSoLuong() {
+        return SoLuong;
+    }
+
+    public void setSoLuong(int soLuong) {
+        soLuong = SoLuong;
     }
 
 }

@@ -130,7 +130,7 @@ public class PhieuNhap extends JPanel {
         // Panel chứa bảng dữ liệu
         JPanel tablePanel = new JPanel(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[] {
-                "Mã phiếu nhập", "Thời gian", "Mã nhân viên", "Mã nhà cung cấp", "Thao tác"
+                "Mã phiếu nhập", "Thời gian", "Mã nhân viên", "Mã nhà cung cấp", "Thao tác", "Trạng thái"
         }, 0) {
 
             @Override
@@ -205,7 +205,8 @@ public class PhieuNhap extends JPanel {
                     sdf.format(pn.getThoigian()),
                     pn.getMaNV(),
                     pn.getMaNCC(),
-                    "Chi tiết"
+                    "Chi tiết",
+                    "012"
             });
         }
     }
@@ -221,7 +222,8 @@ public class PhieuNhap extends JPanel {
                     dateFormat.format(pn.getThoigian()),
                     pn.getMaNV(),
                     pn.getMaNCC(),
-                    "Chi tiết"
+                    "Chi tiết",
+                    "012"
             });
         }
     }
