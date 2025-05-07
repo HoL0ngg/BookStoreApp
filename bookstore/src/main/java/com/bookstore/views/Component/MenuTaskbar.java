@@ -21,6 +21,7 @@ public class MenuTaskbar extends JPanel {
             { "Phiếu mượn", "loan.svg", "loan" },
             { "Phiếu trả", "payment.svg", "tra" },
             { "Phiếu hủy", "phieuhuy.svg", "huy" },
+            { "Phiếu phạt", "phieuphat.svg", "phat" },
             { "Phân quyền", "permission.svg", "phanquyen" },
             { "Tài khoản", "account.svg", "taikhoan" },
     };
@@ -134,11 +135,19 @@ public class MenuTaskbar extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 pnMenuTaskbarMousePress(e);
+                PhieuPhat PhieuPhat = new PhieuPhat();
+                mainFrame.setPanel(PhieuPhat);
+            }
+        });
+        listItem[10].addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pnMenuTaskbarMousePress(e);
                 PhanQuyen PhanQuyen = new PhanQuyen();
                 mainFrame.setPanel(PhanQuyen);
             }
         });
-        listItem[10].addMouseListener(new MouseAdapter() {
+        listItem[11].addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 pnMenuTaskbarMousePress(e);

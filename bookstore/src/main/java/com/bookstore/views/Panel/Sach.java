@@ -153,7 +153,7 @@ public class Sach extends JPanel {
         TongDauSachPanel.add(TongDauSachLabel);
         JLabel SortDauSachLabel = new JLabel("Sắp xếp theo: ");
         SortDauSachLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        SortDauSachLabel.setBounds(650, 10, 200, 30);
+        SortDauSachLabel.setBounds(650, 10, 200, 40);
         TongDauSachPanel.add(SortDauSachLabel);
         JComboBox<String> SortDauSachCBx = new JComboBox<>();
         SortDauSachCBx.addItem("Mã đầu sách");
@@ -230,7 +230,7 @@ public class Sach extends JPanel {
         TongSachPanel.add(TongSachLabel);
         JLabel SortSachLabel = new JLabel("Sắp xếp theo: ");
         SortSachLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        SortSachLabel.setBounds(650, 5, 200, 40);
+        SortSachLabel.setBounds(650, 10, 200, 40);
         TongSachPanel.add(SortSachLabel);
         SortSachCbx = new JComboBox<>();
         SortSachCbx.addItem("Mã sách");

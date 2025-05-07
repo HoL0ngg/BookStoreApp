@@ -230,20 +230,6 @@ public class NhaCungCap extends JPanel {
         panel.add(label);
         panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-
-        // JFrame hihi = new JFrame();
-        // hihi.setSize(300, 300);
-        // JButton hehe = new JButton("hehe");
-        // FlatSVGIcon iconhehe = new FlatSVGIcon(getClass().getResource("/svg/" +
-        // iconName + ".svg")).derive(30,
-        // 30);
-        // hehe.setIcon(iconhehe);
-        // hihi.add(hehe);
-        // hehe.setVerticalTextPosition(JButton.BOTTOM);
-        // hehe.setHorizontalTextPosition(JButton.CENTER);
-        // hihi.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // hihi.setVisible(true);
-
         return panel;
     }
 
