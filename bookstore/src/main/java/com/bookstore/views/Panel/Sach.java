@@ -109,15 +109,27 @@ public class Sach extends JPanel {
         NgayNhapSachTextfield.setEnabled(false);
 
         JButton ThemTauButton = new JButton("THÊM");
+        ThemTauButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/add.svg")).derive(20, 20));
+        ThemTauButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        ThemTauButton.setIconTextGap(25);
         JButton SuaTauButton = new JButton("SỬA");
+        SuaTauButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/ChiTiet.svg")).derive(20, 20));
+        SuaTauButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        SuaTauButton.setIconTextGap(25);
         SuaTauButton.addActionListener(e -> {
             setTextfieldEnable();
         });
         JButton XoaTauButton = new JButton("XÓA");
+        XoaTauButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/delete.svg")).derive(20, 20));
+        XoaTauButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        XoaTauButton.setIconTextGap(25);
         XoaTauButton.addActionListener(e -> {
             XoaDauSach();
         });
         JButton LuuButton = new JButton("LƯU");
+        LuuButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/update.svg")).derive(20, 20));
+        LuuButton.setHorizontalTextPosition(SwingConstants.RIGHT);
+        LuuButton.setIconTextGap(25);
         LuuButton.addActionListener(e -> {
             if (ValidateDuLieu() == true)
                 setTextfieldDisable();

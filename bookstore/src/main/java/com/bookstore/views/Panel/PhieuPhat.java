@@ -1,9 +1,11 @@
 package com.bookstore.views.Panel;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import org.apache.poi.ss.usermodel.Color;
 
 public class PhieuPhat extends JPanel {
     Color BackgroundColor = new Color(0, 2, 2);
@@ -17,7 +19,7 @@ public class PhieuPhat extends JPanel {
         this.add(lichTrinhLabel, BorderLayout.CENTER);
     }
 
-    public PhieuHuy() {
+    public PhieuPhat() {
         initComponent();
     }
 }
