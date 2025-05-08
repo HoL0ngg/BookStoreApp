@@ -5,28 +5,28 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.bookstore.DTO.SachDTO;
 import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.utils.DatabaseUtils;
 
-public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
-  
+public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO> {
+
     public static TacGiaDAO getInstance() {
         return new TacGiaDAO();
     }
 
-
     @Override
     public int insert(TacGiaDTO t) {
-       int result = 0;
-       try  {
-        Connection con = (Connection) DatabaseUtils.getConnection();
-        String sql = "InSERT INTO `tacgia`(`MaTacGia`, `TenTacGia`, `NamSinh`, `QuocTich`, `Status`) VALUES (?,?,?,?,1)";
-        PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql); 
+        int result = 0;
+        try {
+            Connection con = (Connection) DatabaseUtils.getConnection();
+            String sql = "InSERT INTO `tacgia`(`MaTacGia`, `TenTacGia`, `NamSinh`, `QuocTich`, `Status`) VALUES (?,?,?,?,1)";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t.getMaTacGia());
             pst.setString(2, t.getTenTacGia());
             pst.setInt(3, t.getNamSinh());
@@ -45,7 +45,7 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
         try {
             Connection con = (Connection) DatabaseUtils.getConnection();
             String sql = "UPDATE `tacgia` SET `MaTacGia`=?,`TenTacGia`=?,`NamSinh`=?,`QuocTich`=? WHERE MaTacGia=?";
-            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql); // Chuan bi du lieu 
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql); // Chuan bi du lieu
             pst.setString(1, t.getMaTacGia());
             pst.setString(2, t.getTenTacGia());
             pst.setInt(3, t.getNamSinh());
@@ -59,26 +59,25 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
         return result;
     }
 
-//     @Override
-// public int delete(int id) {
-//     int result = 0;
-//     try {
-//        // change dtype 
-//         String maTacGia = String.valueOf(id);  
+    // @Override
+    // public int delete(int id) {
+    // int result = 0;
+    // try {
+    // // change dtype
+    // String maTacGia = String.valueOf(id);
 
-//         Connection con = (Connection) DatabaseUtils.getConnection();
-//         String sql = "UPDATE `tacgia` SET Status= 0 WHERE `MaTacGia` = ?";
-//         PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-//         pst.setString(1, maTacGia);  // Sử dụng setString vì MaTacGia là String
+    // Connection con = (Connection) DatabaseUtils.getConnection();
+    // String sql = "UPDATE `tacgia` SET Status= 0 WHERE `MaTacGia` = ?";
+    // PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+    // pst.setString(1, maTacGia); // Sử dụng setString vì MaTacGia là String
 
-//         result = pst.executeUpdate();
-//         DatabaseUtils.closeConnection(con);
-//     } catch (Exception e) {
-//         Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
-//     }
-//     return result;
-// }
-
+    // result = pst.executeUpdate();
+    // DatabaseUtils.closeConnection(con);
+    // } catch (Exception e) {
+    // Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
+    // }
+    // return result;
+    // }
 
     @Override
     public List<TacGiaDTO> selectAll() {
@@ -88,7 +87,7 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
             String sql = "SELECT * FROM tacgia WHERE Status = 1 ";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 String MaTacGia = rs.getString("MaTacGia");
                 String TenTacGia = rs.getString("TenTacGia");
                 int NamSinh = rs.getInt("NamSinh");
@@ -101,7 +100,7 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
             System.out.println(e);
         }
         return result;
-        
+
     }
 
     @Override
@@ -113,7 +112,7 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, ma);
             ResultSet rs = (ResultSet) pst.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 String MaTacGia = rs.getString("MaTacGia");
                 String TenTacGia = rs.getString("TenTacGia");
                 int NamSinh = rs.getInt("NamSinh");
@@ -126,32 +125,30 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
         }
         return result;
     }
-    
+
     // Get data Sach and TacGia
     public List<String> selectByMaTacGia(String maTacGia) {
         List<String> listTenSach = new ArrayList<>();
         String query = "SELECT ds.TenDauSach FROM tacgia_sach as tgs " +
-               "JOIN sach as s ON tgs.MaSach = s.MaSach " +
-               "JOIN dausach as ds ON s.MaDauSach = ds.MaDauSach " +
-               "WHERE tgs.MaTacGia = ? AND tgs.Status = 1";
+                "JOIN sach as s ON tgs.MaSach = s.MaSach " +
+                "JOIN dausach as ds ON s.MaDauSach = ds.MaDauSach " +
+                "WHERE tgs.MaTacGia = ? AND tgs.Status = 1";
 
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, maTacGia);
 
-                   try (Connection conn = DatabaseUtils.getConnection();
-                   PreparedStatement stmt = conn.prepareStatement(query)) {
-                  stmt.setString(1, maTacGia);
-          
-                  try (ResultSet rs = stmt.executeQuery()) {
-                      while (rs.next()) {
-                          listTenSach.add(rs.getString("TenDauSach"));
-                      }
-                  }
-              } catch (SQLException e) {
-                  e.printStackTrace();
-              }
-          
-              return listTenSach;
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    listTenSach.add(rs.getString("TenDauSach"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return listTenSach;
     }
-
 
     @Override
     public int delete(String id) {
@@ -160,7 +157,7 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
             Connection con = DatabaseUtils.getConnection();
             String sql = "UPDATE `tacgia` SET Status = 0 WHERE `MaTacGia` = ?";
             PreparedStatement pst = con.prepareStatement(sql);
-            pst.setString(1, id);  // Sử dụng setString vì MaTacGia là String
+            pst.setString(1, id); // Sử dụng setString vì MaTacGia là String
 
             result = pst.executeUpdate();
             DatabaseUtils.closeConnection(con);
@@ -170,6 +167,22 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO>{
         return result;
     }
 
+    public Map<String, String> getThongTin() {
+        Map<String, String> hehe = new LinkedHashMap<>();
+        try {
+            Connection con = DatabaseUtils.getConnection();
+            String sql = "SELECT matacgia, tentacgia FROM tacgia";
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                hehe.put(rs.getString("tentacgia"), rs.getString("matacgia"));
+            }
+            DatabaseUtils.closeConnection(con);
+        } catch (Exception e) {
+            Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return hehe;
+    }
 
 }
-

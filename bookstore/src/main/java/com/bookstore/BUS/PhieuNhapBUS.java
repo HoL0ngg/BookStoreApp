@@ -10,8 +10,6 @@ import com.bookstore.utils.DatabaseUtils;
 import com.bookstore.DTO.CTPhieuNhapDTO;
 import com.bookstore.DTO.PhieuNhapDTO;
 import com.bookstore.dao.CTPhieuNhapDAO;
-import com.bookstore.dao.DauSachDAO;
-import com.bookstore.DTO.DauSachDTO;
 
 public class PhieuNhapBUS {
 

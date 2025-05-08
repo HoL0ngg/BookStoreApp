@@ -37,6 +37,9 @@ public class DauSachDTO {
         this.listTheLoai = listTheLoai;
     }
 
+    public DauSachDTO() {
+    }
+
     public String getMaDauSach() {
         return MaDauSach;
     }

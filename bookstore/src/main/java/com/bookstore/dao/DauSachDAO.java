@@ -15,6 +15,19 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
 
     @Override
     public int insert(DauSachDTO t) {
+        String query = "INSERT INTO dausach(madausach, tendausach, hinhanh, nhaxuatban, namxuatban, ngonngu) VALUES(?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, t.getMaDauSach());
+            stmt.setString(2, t.getTenDauSach());
+            stmt.setString(3, t.getHinhAnh());
+            stmt.setString(4, t.getNhaXuatBan());
+            stmt.setInt(5, t.getNamXuatBan());
+            stmt.setString(6, t.getNgonNgu());
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 
@@ -66,40 +79,51 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
         return 0;
     }
 
-
-    // show books 
+    // show books
     public List<DauSachDTO> selectDauSachByMaTacGia(String maTacGia) {
         List<DauSachDTO> list = new ArrayList<>();
         String query = "SELECT DISTINCT ds.* FROM tacgia_sach ts " +
-                       "JOIN sach s ON ts.MaSach = s.MaSach " +
-                       "JOIN dausach ds ON s.MaDauSach = ds.MaDauSach " +
-                       "WHERE ts.MaTacGia = ? AND ts.Status = 1";
-    
+                "JOIN sach s ON ts.MaSach = s.MaSach " +
+                "JOIN dausach ds ON s.MaDauSach = ds.MaDauSach " +
+                "WHERE ts.MaTacGia = ? AND ts.Status = 1";
+
         try (Connection conn = DatabaseUtils.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+                PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, maTacGia);
-    
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     TheLoaiDAO theloaiDAO = new TheLoaiDAO();
                     List<TheLoaiDTO> listTheLoai = theloaiDAO.getTheLoaiByMaSach(rs.getString("MaDauSach"));
                     DauSachDTO ds = new DauSachDTO(
-                        rs.getString("MaDauSach"),
-                        rs.getString("TenDauSach"),
-                        rs.getString("HinhAnh"),
-                        rs.getString("NhaXuatBan"),
-                        rs.getInt("NamXuatBan"),
-                        rs.getString("NgonNgu"),
-                        rs.getInt("SoTrang"),
-                        listTheLoai
-                    );
+                            rs.getString("MaDauSach"),
+                            rs.getString("TenDauSach"),
+                            rs.getString("HinhAnh"),
+                            rs.getString("NhaXuatBan"),
+                            rs.getInt("NamXuatBan"),
+                            rs.getString("NgonNgu"),
+                            rs.getInt("SoTrang"),
+                            listTheLoai);
                     list.add(ds);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         return list;
+    }
+
+    public int selectID() {
+        String query = "SELECT count(*) FROM dausach";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

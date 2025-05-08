@@ -91,4 +91,20 @@ public class NCCDAO implements IBaseDAO<NCCDTO> {
         return maxId;
     }
 
+    public List<String> getTenNCC() {
+        List<String> dsNCC = new ArrayList<>();
+        String sql = "SELECT tennhacc FROM NhaCungCap";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    dsNCC.add(rs.getString("tennhacc"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dsNCC;
+    }
+
 }

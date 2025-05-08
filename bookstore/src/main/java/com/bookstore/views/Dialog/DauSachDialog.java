@@ -1,139 +1,281 @@
 package com.bookstore.views.Dialog;
 
 import javax.swing.*;
+
+import com.bookstore.BUS.DauSachBUS;
+import com.bookstore.DTO.DauSachDTO;
+import com.bookstore.dao.DauSachDAO;
+import com.bookstore.dao.NCCDAO;
+import com.bookstore.dao.TacGiaDAO;
+
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
+import java.util.*;
 import java.util.List;
 
 public class DauSachDialog extends JDialog {
-    private JTextField txtMaDauSach;
-    private JTextField txtTenDauSach;
     private JLabel lblHinhAnh;
-    private JButton btnChonHinh;
-    private JComboBox<String> cboNhaXuatBan;
-    private JTextField txtNamXuatBan;
-    private JComboBox<String> cboNgonNgu;
-    private JTextField txtSoTrang;
+    private JTextField txtTenDauSach, txtNamXuatBan;
+    private JComboBox<String> cboNhaXuatBan, cboNgonNgu, cboTacGia;
+    private JButton btnChonHinh, btnLuu, btnHuy, btnThemTacGia, btnXoaTacGia;
+    private JList<String> listTacGia;
+    private DefaultListModel<String> listModelTacGia;
+    private String duongDanHinh;
+    private Map<String, String> mapTacGia; // tên -> id
 
-    private String hinhAnhPath = null;
-
-    public DauSachDialog(Frame parent, int nextMaDauSach, List<String> dsNhaXuatBan) {
-        super(parent, "Thêm đầu sách mới", true);
-        setSize(500, 600);
+    public DauSachDialog(Frame parent) {
+        super(parent, "Thêm Đầu Sách", true);
+        setSize(700, 550);
         setLocationRelativeTo(parent);
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout(10, 10));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        String MaDauSach = this.generateMaDauSach();
 
-        // Mã đầu sách
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(new JLabel("Mã đầu sách:"), gbc);
-        gbc.gridx = 1;
-        txtMaDauSach = new JTextField(String.valueOf(nextMaDauSach));
-        txtMaDauSach.setEditable(false);
-        add(txtMaDauSach, gbc);
+        JPanel panelMain = new JPanel(new BorderLayout(10, 10));
+        panelMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Tên đầu sách
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Tên đầu sách:"), gbc);
-        gbc.gridx = 1;
-        txtTenDauSach = new JTextField();
-        add(txtTenDauSach, gbc);
-
-        // Hình ảnh
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Hình ảnh:"), gbc);
-        gbc.gridx = 1;
-        JPanel panelHinh = new JPanel(new BorderLayout());
-        lblHinhAnh = new JLabel("Chưa chọn", JLabel.CENTER);
-        lblHinhAnh.setPreferredSize(new Dimension(150, 150));
+        // === HÌNH ẢNH ===
+        lblHinhAnh = new JLabel("Chưa có ảnh", SwingConstants.CENTER);
+        lblHinhAnh.setPreferredSize(new Dimension(200, 250));
         lblHinhAnh.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        panelHinh.add(lblHinhAnh, BorderLayout.CENTER);
-        btnChonHinh = new JButton("Chọn ảnh");
-        btnChonHinh.addActionListener(e -> chonHinh());
-        panelHinh.add(btnChonHinh, BorderLayout.SOUTH);
-        add(panelHinh, gbc);
 
-        // Nhà xuất bản
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Nhà xuất bản:"), gbc);
-        gbc.gridx = 1;
+        btnChonHinh = new JButton("Chọn hình ảnh");
+        btnChonHinh.setBackground(new Color(60, 179, 113));
+        btnChonHinh.setForeground(Color.WHITE);
+        btnChonHinh.setFocusPainted(false);
+
+        JPanel panelHinh = new JPanel(new BorderLayout(5, 5));
+        panelHinh.add(lblHinhAnh, BorderLayout.CENTER);
+        panelHinh.add(btnChonHinh, BorderLayout.SOUTH);
+
+        // === THÔNG TIN ===
+        JPanel panelThongTin = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        JLabel lblMa = new JLabel("Mã đầu sách:");
+        JLabel lblTen = new JLabel("Tên đầu sách:");
+        JLabel lblNXB = new JLabel("Nhà xuất bản:");
+        JLabel lblNam = new JLabel("Năm xuất bản:");
+        JLabel lblNgonNgu = new JLabel("Ngôn ngữ:");
+
+        JTextField txtMa = new JTextField(String.valueOf(MaDauSach), 20);
+        txtMa.setEnabled(false);
+        txtTenDauSach = new JTextField(20);
+        txtNamXuatBan = new JTextField(20);
         cboNhaXuatBan = new JComboBox<>();
-        for (String nxb : dsNhaXuatBan) {
+        cboNgonNgu = new JComboBox<>(new String[] { "Tiếng Việt", "Tiếng Anh", "Tiếng Pháp" });
+
+        List<String> dsNXB = new NCCDAO().getTenNCC();
+
+        for (String nxb : dsNXB) {
             cboNhaXuatBan.addItem(nxb);
         }
-        add(cboNhaXuatBan, gbc);
 
-        // Năm xuất bản
+        // Map<String, Integer> dsTacGia = new LinkedHashMap<>();
+        // dsTacGia.put("Nguyễn Nhật Ánh", 1);
+        // dsTacGia.put("Nam Cao", 2);
+        // dsTacGia.put("Tô Hoài", 3);
+        mapTacGia = new TacGiaDAO().getThongTin();
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Năm xuất bản:"), gbc);
+        gbc.gridy = 0;
+        gbc.weightx = 0; // Các JTextField không giãn theo chiều ngang
+        gbc.weighty = 0;
+        panelThongTin.add(lblMa, gbc);
         gbc.gridx = 1;
-        txtNamXuatBan = new JTextField();
-        add(txtNamXuatBan, gbc);
+        panelThongTin.add(txtMa, gbc);
 
-        // Ngôn ngữ
         gbc.gridx = 0;
         gbc.gridy++;
-        add(new JLabel("Ngôn ngữ:"), gbc);
+        panelThongTin.add(lblTen, gbc);
         gbc.gridx = 1;
-        cboNgonNgu = new JComboBox<>(new String[] { "Tiếng Việt", "Tiếng Anh", "Pháp", "Trung", "Khác" });
-        add(cboNgonNgu, gbc);
+        panelThongTin.add(txtTenDauSach, gbc);
 
-        // Số trang
         gbc.gridx = 0;
         gbc.gridy++;
-        add(new JLabel("Số trang:"), gbc);
+        panelThongTin.add(lblNXB, gbc);
         gbc.gridx = 1;
-        txtSoTrang = new JTextField();
-        add(txtSoTrang, gbc);
+        panelThongTin.add(cboNhaXuatBan, gbc);
 
-        // Nút thao tác
         gbc.gridx = 0;
         gbc.gridy++;
+        panelThongTin.add(lblNam, gbc);
+        gbc.gridx = 1;
+        panelThongTin.add(txtNamXuatBan, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        panelThongTin.add(lblNgonNgu, gbc);
+        gbc.gridx = 1;
+        panelThongTin.add(cboNgonNgu, gbc);
+
+        // === TÁC GIẢ ===
+        JPanel panelTacGia = new JPanel(new BorderLayout(5, 5));
+        panelTacGia.setBorder(BorderFactory.createTitledBorder("Tác giả"));
+
+        cboTacGia = new JComboBox<>();
+        for (String tenTG : mapTacGia.keySet()) {
+            cboTacGia.addItem(tenTG);
+        }
+
+        btnThemTacGia = new JButton("Thêm");
+        btnXoaTacGia = new JButton("Xóa");
+
+        JPanel panelChonTG = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelChonTG.add(cboTacGia);
+        panelChonTG.add(btnThemTacGia);
+        panelChonTG.add(btnXoaTacGia);
+
+        listModelTacGia = new DefaultListModel<>();
+        listTacGia = new JList<>(listModelTacGia);
+        JScrollPane scrollTG = new JScrollPane(listTacGia);
+
+        panelTacGia.add(panelChonTG, BorderLayout.NORTH);
+        panelTacGia.add(scrollTG, BorderLayout.CENTER);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5; // Vì bạn có 5 dòng phía trên (0-4): Mã, Tên, NXB, Năm, Ngôn ngữ
         gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        JButton btnLuu = new JButton("Lưu");
-        btnLuu.addActionListener(e -> luuDauSach());
-        add(btnLuu, gbc);
+        gbc.fill = GridBagConstraints.BOTH; // giúp panelTacGia co giãn tốt
+        gbc.weightx = 1;
+        gbc.weighty = 1; // để tác giả có không gian dọc
+        panelThongTin.add(panelTacGia, gbc);
+
+        // === BOTTOM BUTTON ===
+        btnLuu = new JButton("Lưu");
+        btnHuy = new JButton("Hủy");
+
+        btnLuu.setBackground(new Color(30, 144, 255));
+        btnLuu.setForeground(Color.WHITE);
+        btnLuu.setFocusPainted(false);
+
+        btnHuy.setBackground(Color.GRAY);
+        btnHuy.setForeground(Color.WHITE);
+
+        JPanel panelBtn = new JPanel();
+        panelBtn.add(btnLuu);
+        panelBtn.add(btnHuy);
+
+        panelMain.add(panelHinh, BorderLayout.WEST);
+        panelMain.add(panelThongTin, BorderLayout.CENTER);
+        add(panelMain, BorderLayout.CENTER);
+        add(panelBtn, BorderLayout.SOUTH);
+
+        // === SỰ KIỆN ===
+        btnChonHinh.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser();
+            int result = chooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                duongDanHinh = file.getAbsolutePath();
+                File file2 = new File(duongDanHinh);
+                duongDanHinh = file.getName(); // Ví dụ: \img2.jpg
+                ImageIcon icon = new ImageIcon(
+                        new ImageIcon(duongDanHinh).getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH));
+                lblHinhAnh.setIcon(icon);
+                lblHinhAnh.setText(null);
+            }
+        });
+        // Sửa lại hành động khi hover vào nút
+        btnChonHinh.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnChonHinh.setBackground(new Color(46, 139, 87)); // Màu khi hover
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnChonHinh.setBackground(new Color(60, 179, 113)); // Màu khi không hover
+            }
+        });
+
+        btnThemTacGia.addActionListener(e -> {
+            String ten = (String) cboTacGia.getSelectedItem();
+            if (ten != null && !listModelTacGia.contains(ten)) {
+                listModelTacGia.addElement(ten);
+            }
+        });
+
+        btnXoaTacGia.addActionListener(e -> {
+            String selected = listTacGia.getSelectedValue();
+            if (selected != null) {
+                listModelTacGia.removeElement(selected);
+            }
+        });
+
+        btnHuy.addActionListener(e -> dispose());
+
+        btnLuu.addActionListener(e -> {
+            String ten = txtTenDauSach.getText().trim();
+            String nam = txtNamXuatBan.getText().trim();
+            String ngonngu = (String) cboNgonNgu.getSelectedItem();
+            String NXB = (String) cboNhaXuatBan.getSelectedItem();
+
+            if (ten.isEmpty() || nam.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
+                return;
+            }
+            int namxuatban = 0;
+            try {
+                namxuatban = Integer.parseInt(nam);
+            } catch (Exception es) {
+                JOptionPane.showMessageDialog(this, "Nhập đúng định dạng năm");
+                return;
+            }
+
+            List<String> dsIDTacGia = new ArrayList<>();
+            for (int i = 0; i < listModelTacGia.size(); i++) {
+                String tenTacGia = listModelTacGia.getElementAt(i);
+                dsIDTacGia.add(mapTacGia.get(tenTacGia));
+            }
+
+            // In ra kiểm tra (thay thế bằng truyền cho BUS/DAO)
+            System.out.println("Tên sách: " + ten);
+            System.out.println("Năm: " + nam);
+            System.out.println("Hình ảnh: " + duongDanHinh);
+            System.out.println("Tác giả ID: " + dsIDTacGia);
+            DauSachDTO dauSach = new DauSachDTO();
+            dauSach.setHinhAnh(duongDanHinh);
+            dauSach.setMaDauSach(MaDauSach);
+            dauSach.setTenDauSach(ten);
+            dauSach.setNamXuatBan(namxuatban);
+            dauSach.setNgonNgu(ngonngu);
+            dauSach.setNhaXuatBan(NXB);
+            new DauSachDAO().insert(dauSach);
+
+            JOptionPane.showMessageDialog(this, "Lưu thành công!");
+            dispose();
+        });
+        btnLuu.setBackground(new Color(30, 144, 255));
+        btnLuu.setForeground(Color.WHITE);
+        btnLuu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnLuu.setBackground(new Color(0, 123, 255)); // Màu khi hover
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnLuu.setBackground(new Color(30, 144, 255)); // Màu khi không hover
+            }
+        });
+
+        btnHuy.setBackground(Color.GRAY);
+        btnHuy.setForeground(Color.WHITE);
+        btnHuy.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnHuy.setBackground(new Color(169, 169, 169)); // Màu khi hover
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnHuy.setBackground(Color.GRAY); // Màu khi không hover
+            }
+        });
+
     }
 
-    private void chonHinh() {
-        JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            hinhAnhPath = file.getAbsolutePath();
-            ImageIcon icon = new ImageIcon(
-                    new ImageIcon(hinhAnhPath).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH));
-            lblHinhAnh.setText("");
-            lblHinhAnh.setIcon(icon);
-        }
-    }
-
-    private void luuDauSach() {
-        String ten = txtTenDauSach.getText().trim();
-        String nxb = (String) cboNhaXuatBan.getSelectedItem();
-        String nam = txtNamXuatBan.getText().trim();
-        String ngonNgu = (String) cboNgonNgu.getSelectedItem();
-        String soTrang = txtSoTrang.getText().trim();
-
-        // Validate đơn giản
-        if (ten.isEmpty() || nam.isEmpty() || soTrang.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
-            return;
-        }
-
-        // TODO: Gọi DAO hoặc BUS để lưu dữ liệu
-
-        JOptionPane.showMessageDialog(this, "Thêm đầu sách thành công!");
-        dispose();
+    private String generateMaDauSach() {
+        int count = new DauSachDAO().selectID(); // Ví dụ: trả về 1 nếu có 1 đầu sách
+        int nextId = count + 1; // Tăng ID tiếp theo
+        return String.format("DS%03d", nextId); // Format thành DS001, DS010, DS123,...
     }
 }

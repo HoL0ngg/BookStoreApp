@@ -1,7 +1,5 @@
 package com.bookstore.DTO;
 
-import com.bookstore.dao.TaiKhoanDAO;
-
 public class TaiKhoanDTO {
     private String TenDangNhap;
     private String MatKhau;

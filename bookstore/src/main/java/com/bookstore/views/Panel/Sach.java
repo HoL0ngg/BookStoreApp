@@ -10,7 +10,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -39,7 +38,6 @@ import com.bookstore.dao.SachDAO;
 import com.bookstore.views.Component.RoundedPanel;
 import com.bookstore.views.Dialog.DauSachDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import com.mysql.cj.x.protobuf.MysqlxNotice.Frame;
 
 public class Sach extends JPanel {
     private SachController sachController = new SachController(this);
@@ -116,10 +114,10 @@ public class Sach extends JPanel {
         ThemTauButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/add.svg")).derive(20, 20));
         ThemTauButton.setHorizontalTextPosition(SwingConstants.RIGHT);
         ThemTauButton.setIconTextGap(25);
-        List<String> dsNxb = Arrays.asList("NXB Kim Đồng", "NXB Giáo Dục", "NXB Trẻ");
+
         ThemTauButton.addActionListener(e -> {
-            new DauSachDialog((java.awt.Frame) SwingUtilities.getWindowAncestor(Sach.this), 10,
-                    dsNxb).setVisible(true);
+            new DauSachDialog((java.awt.Frame) SwingUtilities.getWindowAncestor(Sach.this))
+                    .setVisible(true);
         });
         JButton SuaTauButton = new JButton("SỬA");
         SuaTauButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/ChiTiet.svg")).derive(20, 20));
@@ -174,13 +172,13 @@ public class Sach extends JPanel {
         TongDauSachPanel.add(TongDauSachLabel);
         JLabel SortDauSachLabel = new JLabel("Sắp xếp theo: ");
         SortDauSachLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        SortDauSachLabel.setBounds(650, 10, 200, 40);
+        SortDauSachLabel.setBounds(650, 5, 200, 40);
         TongDauSachPanel.add(SortDauSachLabel);
         JComboBox<String> SortDauSachCBx = new JComboBox<>();
         SortDauSachCBx.addItem("Mã đầu sách");
         SortDauSachCBx.addItem("Số trang");
         SortDauSachCBx.addItem("Năm xuất bản");
-        SortDauSachCBx.setBounds(760, 10, 100, 30);
+        SortDauSachCBx.setBounds(760, 5, 120, 30);
         SortDauSachCBx.addItemListener(sachController);
         TongDauSachPanel.add(SortDauSachCBx);
 
@@ -251,13 +249,13 @@ public class Sach extends JPanel {
         TongSachPanel.add(TongSachLabel);
         JLabel SortSachLabel = new JLabel("Sắp xếp theo: ");
         SortSachLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        SortSachLabel.setBounds(650, 10, 200, 40);
+        SortSachLabel.setBounds(650, 5, 200, 40);
         TongSachPanel.add(SortSachLabel);
         SortSachCbx = new JComboBox<>();
         SortSachCbx.addItem("Mã sách");
         SortSachCbx.addItem("Ngày nhập");
         SortSachCbx.addItem("Trạng thái");
-        SortSachCbx.setBounds(760, 5, 100, 30);
+        SortSachCbx.setBounds(760, 5, 120, 30);
         SortSachCbx.addItemListener(sachController);
         TongSachPanel.add(SortSachCbx);
 

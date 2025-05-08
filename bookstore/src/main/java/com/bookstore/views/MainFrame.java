@@ -5,9 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Image;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,7 +18,6 @@ import com.bookstore.controller.MainController;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import com.bookstore.views.Component.MenuTaskbar;
-import com.bookstore.views.Component.RoundedPanel;
 import com.bookstore.views.Panel.TrangChu;
 
 public class MainFrame extends JFrame {
@@ -31,7 +28,6 @@ public class MainFrame extends JFrame {
     private JPanel MinimizeButton;
     private JLabel ExitIcon;
     private JLabel MinimizeIcon;
-    
 
     public JPanel MainContent;
     private MenuTaskbar menuTaskbar;
