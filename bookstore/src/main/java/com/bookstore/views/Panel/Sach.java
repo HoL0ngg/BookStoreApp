@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -22,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -35,7 +37,9 @@ import com.bookstore.controller.SachController;
 import com.bookstore.dao.DauSachDAO;
 import com.bookstore.dao.SachDAO;
 import com.bookstore.views.Component.RoundedPanel;
+import com.bookstore.views.Dialog.DauSachDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.mysql.cj.x.protobuf.MysqlxNotice.Frame;
 
 public class Sach extends JPanel {
     private SachController sachController = new SachController(this);
@@ -112,6 +116,11 @@ public class Sach extends JPanel {
         ThemTauButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/add.svg")).derive(20, 20));
         ThemTauButton.setHorizontalTextPosition(SwingConstants.RIGHT);
         ThemTauButton.setIconTextGap(25);
+        List<String> dsNxb = Arrays.asList("NXB Kim Đồng", "NXB Giáo Dục", "NXB Trẻ");
+        ThemTauButton.addActionListener(e -> {
+            new DauSachDialog((java.awt.Frame) SwingUtilities.getWindowAncestor(Sach.this), 10,
+                    dsNxb).setVisible(true);
+        });
         JButton SuaTauButton = new JButton("SỬA");
         SuaTauButton.setIcon(new FlatSVGIcon(getClass().getResource("/svg/ChiTiet.svg")).derive(20, 20));
         SuaTauButton.setHorizontalTextPosition(SwingConstants.RIGHT);
