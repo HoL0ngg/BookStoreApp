@@ -7,6 +7,7 @@ import com.bookstore.DTO.DauSachDTO;
 import com.bookstore.dao.DauSachDAO;
 import com.bookstore.dao.NCCDAO;
 import com.bookstore.dao.TacGiaDAO;
+import com.bookstore.dao.TheLoaiDAO;
 
 import java.awt.*;
 import java.io.File;
@@ -16,12 +17,12 @@ import java.util.List;
 public class DauSachDialog extends JDialog {
     private JLabel lblHinhAnh;
     private JTextField txtTenDauSach, txtNamXuatBan;
-    private JComboBox<String> cboNhaXuatBan, cboNgonNgu, cboTacGia;
-    private JButton btnChonHinh, btnLuu, btnHuy, btnThemTacGia, btnXoaTacGia;
-    private JList<String> listTacGia;
-    private DefaultListModel<String> listModelTacGia;
+    private JComboBox<String> cboNhaXuatBan, cboNgonNgu, cboTacGia, cboTheLoai;
+    private JButton btnChonHinh, btnLuu, btnHuy, btnThemTacGia, btnXoaTacGia, btnThemTheLoai, btnXoaTheLoai;
+    private JList<String> listTacGia, listTheLoai;
+    private DefaultListModel<String> listModelTacGia, listModelTheLoai;
     private String duongDanHinh;
-    private Map<String, String> mapTacGia; // tên -> id
+    private Map<String, String> mapTacGia, mapTheLoai; // tên -> id
 
     public DauSachDialog(Frame parent) {
         super(parent, "Thêm Đầu Sách", true);
@@ -78,6 +79,7 @@ public class DauSachDialog extends JDialog {
         // dsTacGia.put("Nam Cao", 2);
         // dsTacGia.put("Tô Hoài", 3);
         mapTacGia = new TacGiaDAO().getThongTin();
+        mapTheLoai = new TheLoaiDAO().getThongTin();
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
@@ -112,6 +114,38 @@ public class DauSachDialog extends JDialog {
         gbc.gridx = 1;
         panelThongTin.add(cboNgonNgu, gbc);
 
+        // === THỂ LOẠI ===
+        JPanel panelTheLoai = new JPanel(new BorderLayout(5, 5));
+        panelTheLoai.setBorder(BorderFactory.createTitledBorder("Thể loại"));
+
+        cboTheLoai = new JComboBox<>();
+        for (String tenTL : mapTheLoai.keySet()) {
+            cboTheLoai.addItem(tenTL);
+        }
+        btnThemTheLoai = new JButton("Thêm");
+        btnXoaTheLoai = new JButton("Xóa");
+
+        JPanel panelChonTheLoai = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelChonTheLoai.add(cboTheLoai);
+        panelChonTheLoai.add(btnThemTheLoai);
+        panelChonTheLoai.add(btnXoaTheLoai);
+
+        listModelTheLoai = new DefaultListModel<>();
+        listTheLoai = new JList<>(listModelTheLoai);
+        JScrollPane scrollTheLoai = new JScrollPane(listTheLoai);
+
+        panelTheLoai.add(panelChonTheLoai, BorderLayout.NORTH);
+        panelTheLoai.add(scrollTheLoai, BorderLayout.CENTER);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.BOTH; // giúp panelTacGia co giãn tốt
+        gbc.weightx = 1;
+        gbc.weighty = 1; // để tác giả có không gian dọc
+        panelThongTin.add(panelTheLoai, gbc);
+        gbc.gridwidth = 1;
+
         // === TÁC GIẢ ===
         JPanel panelTacGia = new JPanel(new BorderLayout(5, 5));
         panelTacGia.setBorder(BorderFactory.createTitledBorder("Tác giả"));
@@ -137,7 +171,7 @@ public class DauSachDialog extends JDialog {
         panelTacGia.add(scrollTG, BorderLayout.CENTER);
 
         gbc.gridx = 0;
-        gbc.gridy = 5; // Vì bạn có 5 dòng phía trên (0-4): Mã, Tên, NXB, Năm, Ngôn ngữ
+        gbc.gridy = 6; // Vì bạn có 5 dòng phía trên (0-4): Mã, Tên, NXB, Năm, Ngôn ngữ
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH; // giúp panelTacGia co giãn tốt
         gbc.weightx = 1;
@@ -243,6 +277,7 @@ public class DauSachDialog extends JDialog {
             dauSach.setNgonNgu(ngonngu);
             dauSach.setNhaXuatBan(NXB);
             new DauSachDAO().insert(dauSach);
+            new TheLoaiDAO().insert
 
             JOptionPane.showMessageDialog(this, "Lưu thành công!");
             dispose();
@@ -268,6 +303,20 @@ public class DauSachDialog extends JDialog {
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btnHuy.setBackground(Color.GRAY); // Màu khi không hover
+            }
+        });
+
+        btnThemTheLoai.addActionListener(e -> {
+            String tl = (String) cboTheLoai.getSelectedItem();
+            if (tl != null && !listModelTheLoai.contains(tl)) {
+                listModelTheLoai.addElement(tl);
+            }
+        });
+
+        btnXoaTheLoai.addActionListener(e -> {
+            String selected = listTheLoai.getSelectedValue();
+            if (selected != null) {
+                listModelTheLoai.removeElement(selected);
             }
         });
 
