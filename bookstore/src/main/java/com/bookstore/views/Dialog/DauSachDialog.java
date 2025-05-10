@@ -22,7 +22,8 @@ public class DauSachDialog extends JDialog {
     private JList<String> listTacGia, listTheLoai;
     private DefaultListModel<String> listModelTacGia, listModelTheLoai;
     private String duongDanHinh;
-    private Map<String, String> mapTacGia, mapTheLoai; // tên -> id
+    private Map<String, String> mapTacGia; // tên -> id
+    private Map<String, Integer> mapTheLoai; // tên -> id
 
     public DauSachDialog(Frame parent) {
         super(parent, "Thêm Đầu Sách", true);
@@ -204,11 +205,11 @@ public class DauSachDialog extends JDialog {
             int result = chooser.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
-                duongDanHinh = file.getAbsolutePath();
-                File file2 = new File(duongDanHinh);
+                String duongDanHinhRill = file.getAbsolutePath();
+                // File file2 = new File(duongDanHinh);
                 duongDanHinh = file.getName(); // Ví dụ: \img2.jpg
                 ImageIcon icon = new ImageIcon(
-                        new ImageIcon(duongDanHinh).getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH));
+                        new ImageIcon(duongDanHinhRill).getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH));
                 lblHinhAnh.setIcon(icon);
                 lblHinhAnh.setText(null);
             }
@@ -264,6 +265,12 @@ public class DauSachDialog extends JDialog {
                 dsIDTacGia.add(mapTacGia.get(tenTacGia));
             }
 
+            List<Integer> dsIDTheLoai = new ArrayList<>();
+            for (int i = 0; i < listModelTheLoai.size(); i++) {
+                String tenTheLoai = listModelTheLoai.getElementAt(i);
+                dsIDTheLoai.add(mapTheLoai.get(tenTheLoai));
+            }
+
             // In ra kiểm tra (thay thế bằng truyền cho BUS/DAO)
             System.out.println("Tên sách: " + ten);
             System.out.println("Năm: " + nam);
@@ -277,7 +284,12 @@ public class DauSachDialog extends JDialog {
             dauSach.setNgonNgu(ngonngu);
             dauSach.setNhaXuatBan(NXB);
             new DauSachDAO().insert(dauSach);
-            new TheLoaiDAO().insert
+            for (String idTacGia : dsIDTacGia) {
+                new TacGiaDAO().insertDauSach(MaDauSach, idTacGia);
+            }
+            for (int idTheLoai : dsIDTheLoai) {
+                new TheLoaiDAO().insertDauSach(MaDauSach, idTheLoai);
+            }
 
             JOptionPane.showMessageDialog(this, "Lưu thành công!");
             dispose();

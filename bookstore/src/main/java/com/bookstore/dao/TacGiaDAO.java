@@ -188,10 +188,10 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO> {
     public int insertDauSach(String MaDauSach, String MaTacGia) {
         try {
             Connection con = DatabaseUtils.getConnection();
-            String sql = "INSERT INTO theloaidausach(madausach, matheloai) values(?, ?)";
+            String sql = "INSERT INTO tacgia_dausach(madausach, matacgia) values(?, ?)";
             PreparedStatement pst = con.prepareStatement(sql);
-            pst.setString(1, madausach);
-            pst.setString(2, MaTheLoai);
+            pst.setString(1, MaDauSach);
+            pst.setString(2, MaTacGia);
             return pst.executeUpdate();
         } catch (Exception e) {
             Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);

@@ -26,6 +26,9 @@ SET time_zone = "+00:00";
 --
 -- Cấu trúc bảng cho bảng `chucnang`
 --
+Drop Database if exists quanlythuvien;
+create database quanlythuvien;
+use quanlythuvien;
 
 CREATE TABLE `chucnang` (
   `MaChucNang` int(11) NOT NULL,
@@ -783,9 +786,9 @@ INSERT INTO `tacgia` (`MaTacGia`, `TenTacGia`, `NamSinh`, `QuocTich`, `Status`) 
 -- Cấu trúc bảng cho bảng `tacgia_sach`
 --
 
-CREATE TABLE `tacgia_sach` (
+CREATE TABLE `tacgia_dausach` (
   `MaTacGia` varchar(10) NOT NULL,
-  `MaSach` varchar(10) NOT NULL,
+  `MaDauSach` varchar(10) NOT NULL,
   `Status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -793,113 +796,30 @@ CREATE TABLE `tacgia_sach` (
 -- Đang đổ dữ liệu cho bảng `tacgia_sach`
 --
 
-INSERT INTO `tacgia_sach` (`MaTacGia`, `MaSach`, `Status`) VALUES
-('TG001', 'S001', 1),
-('TG001', 'S002', 1),
-('TG001', 'S021', 1),
-('TG001', 'S041', 1),
-('TG001', 'S061', 1),
-('TG001', 'S081', 1),
-('TG002', 'S003', 1),
-('TG002', 'S022', 1),
-('TG002', 'S042', 1),
-('TG002', 'S062', 1),
-('TG002', 'S082', 1),
-('TG003', 'S004', 1),
-('TG003', 'S023', 1),
-('TG003', 'S043', 1),
-('TG003', 'S063', 1),
-('TG003', 'S083', 1),
-('TG004', 'S005', 1),
-('TG004', 'S024', 1),
-('TG004', 'S044', 1),
-('TG004', 'S064', 1),
-('TG004', 'S084', 1),
-('TG005', 'S006', 1),
-('TG005', 'S025', 1),
-('TG005', 'S045', 1),
-('TG005', 'S065', 1),
-('TG005', 'S085', 1),
-('TG006', 'S007', 1),
-('TG006', 'S026', 1),
-('TG006', 'S046', 1),
-('TG006', 'S066', 1),
-('TG006', 'S086', 1),
-('TG007', 'S008', 1),
-('TG007', 'S027', 1),
-('TG007', 'S047', 1),
-('TG007', 'S067', 1),
-('TG007', 'S087', 1),
-('TG008', 'S009', 1),
-('TG008', 'S028', 1),
-('TG008', 'S048', 1),
-('TG008', 'S068', 1),
-('TG008', 'S088', 1),
-('TG009', 'S010', 1),
-('TG009', 'S029', 1),
-('TG009', 'S049', 1),
-('TG009', 'S069', 1),
-('TG009', 'S089', 1),
-('TG010', 'S011', 1),
-('TG010', 'S030', 1),
-('TG010', 'S050', 1),
-('TG010', 'S070', 1),
-('TG010', 'S090', 1),
-('TG011', 'S012', 1),
-('TG011', 'S031', 1),
-('TG011', 'S051', 1),
-('TG011', 'S071', 1),
-('TG011', 'S091', 1),
-('TG012', 'S013', 1),
-('TG012', 'S032', 1),
-('TG012', 'S052', 1),
-('TG012', 'S072', 1),
-('TG012', 'S092', 1),
-('TG013', 'S014', 1),
-('TG013', 'S033', 1),
-('TG013', 'S053', 1),
-('TG013', 'S073', 1),
-('TG013', 'S093', 1),
-('TG014', 'S015', 1),
-('TG014', 'S034', 1),
-('TG014', 'S054', 1),
-('TG014', 'S074', 1),
-('TG014', 'S094', 1),
-('TG015', 'S016', 1),
-('TG015', 'S035', 1),
-('TG015', 'S055', 1),
-('TG015', 'S075', 1),
-('TG015', 'S095', 1),
-('TG016', 'S017', 1),
-('TG016', 'S036', 1),
-('TG016', 'S056', 1),
-('TG016', 'S076', 1),
-('TG016', 'S096', 1),
-('TG017', 'S018', 1),
-('TG017', 'S037', 1),
-('TG017', 'S057', 1),
-('TG017', 'S077', 1),
-('TG017', 'S097', 1),
-('TG018', 'S019', 1),
-('TG018', 'S038', 1),
-('TG018', 'S058', 1),
-('TG018', 'S078', 1),
-('TG018', 'S098', 1),
-('TG019', 'S020', 1),
-('TG019', 'S039', 1),
-('TG019', 'S059', 1),
-('TG019', 'S079', 1),
-('TG019', 'S099', 1),
-('TG020', 'S040', 1),
-('TG020', 'S060', 1),
-('TG020', 'S080', 1),
-('TG020', 'S100', 1);
+INSERT INTO `tacgia_dausach` (`MaTacGia`, `MaDauSach`, `Status`) VALUES
+('TG001', 'DS001', 1),
+('TG001', 'DS002', 1),
+('TG001', 'DS021', 1),
+('TG001', 'DS041', 1),
+('TG001', 'DS031', 1),
+('TG001', 'DS011', 1),
+('TG002', 'DS003', 1),
+('TG002', 'DS022', 1),
+('TG002', 'DS042', 1),
+('TG002', 'DS012', 1),
+('TG002', 'DS032', 1),
+('TG003', 'DS004', 1),
+('TG003', 'DS023', 1),
+('TG003', 'DS043', 1),
+('TG003', 'DS033', 1),
+('TG004', 'DS005', 1),
+('TG004', 'DS024', 1),
+('TG004', 'DS044', 1);
+
 
 -- --------------------------------------------------------
 
---
 -- Cấu trúc bảng cho bảng `taikhoan`
---
 
 CREATE TABLE `taikhoan` (
   `TenDangNhap` varchar(20) NOT NULL,
@@ -910,9 +830,7 @@ CREATE TABLE `taikhoan` (
   `Status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
 -- Đang đổ dữ liệu cho bảng `taikhoan`
---
 
 INSERT INTO `taikhoan` (`TenDangNhap`, `MatKhau`, `TrangThai`, `Email`, `MaNhomQuyen`, `Status`) VALUES
 ('DG001', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg001@email.com', 3, 1),
@@ -1168,9 +1086,9 @@ ALTER TABLE `tacgia`
 --
 -- Chỉ mục cho bảng `tacgia_sach`
 --
-ALTER TABLE `tacgia_sach`
-  ADD PRIMARY KEY (`MaTacGia`,`MaSach`),
-  ADD KEY `MaSach` (`MaSach`);
+ALTER TABLE `tacgia_dausach`
+  ADD PRIMARY KEY (`MaTacGia`,`MaDauSach`),
+  ADD KEY `MaDauSach` (`MaDauSach`);
 
 --
 -- Chỉ mục cho bảng `taikhoan`
@@ -1283,9 +1201,9 @@ ALTER TABLE `sach`
 --
 -- Các ràng buộc cho bảng `tacgia_sach`
 --
-ALTER TABLE `tacgia_sach`
-  ADD CONSTRAINT `tacgia_sach_ibfk_1` FOREIGN KEY (`MaTacGia`) REFERENCES `tacgia` (`MaTacGia`),
-  ADD CONSTRAINT `tacgia_sach_ibfk_2` FOREIGN KEY (`MaSach`) REFERENCES `sach` (`MaSach`);
+ALTER TABLE `tacgia_dausach`
+  ADD CONSTRAINT `tacgia_dausach_ibfk_1` FOREIGN KEY (`MaTacGia`) REFERENCES `tacgia` (`MaTacGia`),
+  ADD CONSTRAINT `tacgia_dausach_ibfk_2` FOREIGN KEY (`MaDauSach`) REFERENCES `dausach` (`MaDauSach`);
 
 --
 -- Các ràng buộc cho bảng `taikhoan`

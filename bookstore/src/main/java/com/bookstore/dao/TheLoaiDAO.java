@@ -38,8 +38,8 @@ public class TheLoaiDAO {
         return list;
     }
 
-    public Map<String, String> getThongTin() {
-        Map<String, String> hehe = new LinkedHashMap<>();
+    public Map<String, Integer> getThongTin() {
+        Map<String, Integer> hehe = new LinkedHashMap<>();
         try {
             Connection con = DatabaseUtils.getConnection();
             String sql = "SELECT MaTheLoai, TenTheLoai FROM theloai";
@@ -47,7 +47,7 @@ public class TheLoaiDAO {
 
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                hehe.put(rs.getString("tentheloai"), rs.getString("matheloai"));
+                hehe.put(rs.getString("tentheloai"), rs.getInt("matheloai"));
             }
             DatabaseUtils.closeConnection(con);
         } catch (Exception e) {
@@ -56,13 +56,13 @@ public class TheLoaiDAO {
         return hehe;
     }
 
-    public int insertDauSach(String madausach, String MaTheLoai) {
+    public int insertDauSach(String madausach, int MaTheLoai) {
         try {
             Connection con = DatabaseUtils.getConnection();
             String sql = "INSERT INTO theloaidausach(madausach, matheloai) values(?, ?)";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, madausach);
-            pst.setString(2, MaTheLoai);
+            pst.setInt(2, MaTheLoai);
             return pst.executeUpdate();
         } catch (Exception e) {
             Logger.getLogger(TacGiaDAO.class.getName()).log(Level.SEVERE, null, e);
