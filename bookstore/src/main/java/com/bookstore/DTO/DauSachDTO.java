@@ -112,4 +112,9 @@ public class DauSachDTO {
         soLuong = SoLuong;
     }
 
+    @Override
+    public String toString() {
+        return (getMaDauSach() != null ? getMaDauSach() : "") + " - " +
+                (getTenDauSach() != null ? getTenDauSach() : "");
+    }
 }

@@ -23,7 +23,8 @@ public class PhieuNhapDAO {
                         rs.getString("MaPhieuNhap"),
                         rs.getDate("thoigian"),
                         rs.getString("MaNhanVien"),
-                        rs.getInt("MaNCC")
+                        rs.getInt("MaNCC"),
+                        rs.getInt("TrangThai")
                         ));
                 }
             }

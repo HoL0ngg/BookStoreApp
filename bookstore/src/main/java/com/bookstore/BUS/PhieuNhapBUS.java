@@ -16,34 +16,15 @@ public class PhieuNhapBUS {
     public PhieuNhapBUS() {
     }
 
-    public PhieuNhapDTO timPhieuNhap(String MaPhieuNhap) {
-        String sql = "SELECT * FROM PhieuNhap WHERE MaPhieuNhap = ?";
-        try (Connection conn = DatabaseUtils.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, MaPhieuNhap);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new PhieuNhapDTO(
-                            rs.getString("MaPhieuNhap"),
-                            rs.getDate("thoigian"),
-                            rs.getString("MaNhanVien"),
-                            rs.getInt("MaNCC"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public boolean themPhieuNhap(PhieuNhapDTO PhieuNhap, List<CTPhieuNhapDTO> list) {
-        String sql = "INSERT INTO PhieuNhap (MaPhieuNhap, thoigian, MaNhanVien, MaNCC) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO PhieuNhap (MaPhieuNhap, thoigian, MaNhanVien, MaNCC, TrangThai) VALUES (?,?,?,?,?)";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, PhieuNhap.getMaPhieuNhap());
             stmt.setDate(2, PhieuNhap.getThoigian());
             stmt.setString(3, PhieuNhap.getMaNV());
             stmt.setInt(4, PhieuNhap.getMaNCC());
+            stmt.setInt(5, PhieuNhap.getTrangThai());
             stmt.executeUpdate();
             themctphieunhap(PhieuNhap.getMaPhieuNhap(), list);
             return true;
@@ -143,7 +124,7 @@ public class PhieuNhapBUS {
     // private void xoa
 
     public PhieuNhapDTO themChiTietPhieuNhap(String mpn) {
-        PhieuNhapDTO tmp = new PhieuNhapDTO(mpn, null, mpn, 0);
+        PhieuNhapDTO tmp = new PhieuNhapDTO(mpn, null, mpn, 0,0);
         return tmp;
     }
 

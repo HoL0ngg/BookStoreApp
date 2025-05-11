@@ -24,6 +24,8 @@ import java.util.Timer;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.BUS.NCCBUS;
@@ -56,7 +58,6 @@ public class PhieuNhapController implements ItemListener, ActionListener {
         mangtmp = pn.getListpn();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == pn.getBtnReverse()) {
@@ -177,7 +178,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                     }
 
                     // Tạo đối tượng PhieuNhapDTO để cập nhật
-                    PhieuNhapDTO updatePn = new PhieuNhapDTO(newMpn, thoigian, newMnv, newMncc);
+                    PhieuNhapDTO updatePn = new PhieuNhapDTO(newMpn, thoigian, newMnv, newMncc, 0);
                     boolean kq = pnbus.suaPhieuNhap(updatePn);
                     if (kq) {
                         JOptionPane.showMessageDialog(dialog, "Cập nhật thành công", "Thành công",
@@ -336,6 +337,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
 
             // Renderer cho JList
             listNCC.setCellRenderer(new DefaultListCellRenderer() {
+
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                         boolean isSelected, boolean cellHasFocus) {
@@ -450,26 +452,30 @@ public class PhieuNhapController implements ItemListener, ActionListener {
 
             // Hàm thêm dòng nhập sách mới
             Runnable addBookRow = () -> {
-                JPanel bookRow = new JPanel(new GridLayout(1, 3, 5, 5));
+                // Sử dụng GridBagLayout thay vì GridLayout để kiểm soát kích thước tốt hơn
+                JPanel bookRow = new JPanel(new GridBagLayout());
                 bookRow.setBackground(new Color(245, 245, 245));
                 bookRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.insets = new Insets(0, 5, 0, 5); // Khoảng cách giữa các thành phần
+                gbc.fill = GridBagConstraints.HORIZONTAL;
 
                 // Panel chứa JComboBox
                 JPanel dsInputPanel = new JPanel(new BorderLayout(0, 5));
                 dsInputPanel.setBackground(new Color(245, 245, 245));
-
-                // Tải danh sách đầu sách
-                DauSachBUS dsbus = new DauSachBUS();
-                List<DauSachDTO> tmplist = dsbus.getListDauSach();
-                System.out.println("Tổng số đầu sách: " + tmplist.size());
-
-                // Tạo JComboBox với custom renderer
-                JComboBox<String> comboBox = new JComboBox<>(new String[]{"Chọn đầu sách"});
+                List<DauSachDTO> tmplist = new DauSachBUS().getListDauSach();
+                JComboBox<DauSachDTO> comboBox = new JComboBox<>();
                 comboBox.setEditable(true); // Cho phép nhập để lọc
                 comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 comboBox.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(new Color(180, 180, 180)),
                         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+
+                // Đặt kích thước cố định cho JComboBox
+                comboBox.setPreferredSize(new Dimension(180, 30)); // Giảm chiều rộng để nhường chỗ cho các thành phần
+                                                                   // khác
+                comboBox.setMaximumSize(new Dimension(180, 30)); // Khóa kích thước tối đa
 
                 comboBox.setRenderer(new DefaultListCellRenderer() {
                     @Override
@@ -479,26 +485,40 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                         if (value instanceof DauSachDTO) {
                             DauSachDTO ds = (DauSachDTO) value;
                             setText(ds.getMaDauSach() + " - " + ds.getTenDauSach());
+                        } else {
+                            setText(value != null ? value.toString() : "0 - Chọn mã đầu sách");
                         }
                         return this;
                     }
                 });
 
-                // Thêm lọc từ phần editable (AutoComplete-like)
-                JTextField editor = (JTextField) comboBox.getEditor().getEditorComponent();
-                editor.addKeyListener(new KeyAdapter() {
+                DauSachDTO defaultItem = new DauSachDTO("0", "Chọn mã đầu sách", null, null, 0, null, 0, null);
+                comboBox.addItem(defaultItem);
+                comboBox.setSelectedItem(defaultItem); // Đảm bảo hiển thị đúng giá trị mặc định ban đầu
+
+                comboBox.addPopupMenuListener(new PopupMenuListener() {
                     @Override
-                    public void keyReleased(KeyEvent e) {
-                        String input = editor.getText().trim().toLowerCase();
+                    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                         comboBox.removeAllItems();
-                        for (DauSachDTO ds : tmplist) {
-                            if (ds.getMaDauSach().toLowerCase().contains(input) ||
-                                    ds.getTenDauSach().toLowerCase().contains(input)) {
-                                comboBox.addItem(ds.getTenDauSach());
+                        comboBox.addItem(new DauSachDTO("0", "Chọn mã đầu sách", null, null, 0, null, 0, null));
+                        if (tmplist != null) {
+                            for (DauSachDTO ds : tmplist) {
+                                if (ds != null) {
+                                    comboBox.addItem(ds);
+                                }
                             }
                         }
-                        comboBox.setPopupVisible(comboBox.getItemCount() > 0);
-                        editor.setText(input); // Giữ lại nội dung đang gõ
+                    }
+
+                    @Override
+                    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                        // comboBox.setSelectedItem(
+                        // new DauSachDTO(null, "Chọn mã đầu sách", null, null, 0, null, 0, null));
+                    }
+
+                    @Override
+                    public void popupMenuCanceled(PopupMenuEvent e) {
+                        // Không cần xử lý khi hủy popup
                     }
                 });
 
@@ -508,15 +528,29 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                         BorderFactory.createLineBorder(new Color(180, 180, 180)),
                         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
+                // Đặt kích thước cố định cho JSpinner
+                spinnerSoLuong.setPreferredSize(new Dimension(40, 30)); // Giảm chiều rộng xuống 40px
+                spinnerSoLuong.setMaximumSize(new Dimension(40, 30)); // Khóa kích thước tối đa
+                spinnerSoLuong.setMinimumSize(new Dimension(40, 30)); // Ép kích thước tối thiểu
+
                 JButton btnRemove = new JButton("Xóa");
                 styleButton(btnRemove, new Color(200, 50, 50));
                 btnRemove.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+                btnRemove.setPreferredSize(new Dimension(50, 30)); // Đặt kích thước cố định cho nút Xóa
+                btnRemove.setMaximumSize(new Dimension(50, 30));
 
-                dsInputPanel.add(comboBox, BorderLayout.CENTER);
+                // Thêm các thành phần vào bookRow với GridBagLayout
+                gbc.gridx = 0;
+                gbc.weightx = 0.7; // JComboBox chiếm 70% không gian
+                bookRow.add(comboBox, gbc);
 
-                bookRow.add(dsInputPanel); // Thêm panel chứa comboBox
-                bookRow.add(spinnerSoLuong);
-                bookRow.add(btnRemove);
+                gbc.gridx = 1;
+                gbc.weightx = 0.15; // JSpinner chiếm 15% không gian
+                bookRow.add(spinnerSoLuong, gbc);
+
+                gbc.gridx = 2;
+                gbc.weightx = 0.15; // Nút Xóa chiếm 15% không gian
+                bookRow.add(btnRemove, gbc);
 
                 booksInputPanel.add(bookRow);
                 booksInputPanel.add(Box.createVerticalStrut(5));
@@ -532,7 +566,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                 booksInputPanel.repaint();
             };
 
-            // Thêm 5 dòng mặc định
+            // Thêm 7 dòng mặc định
             for (int i = 0; i < 7; i++) {
                 addBookRow.run();
             }
@@ -553,7 +587,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
 
             // Thêm 2 panel vào main container
             mainContainer.add(leftPanel);
-            mainContainer.add(rightPanel);
+            mainContainer.add(rightPanel);  
 
             // Panel chứa nút xác nhận/hủy
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -627,7 +661,8 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                             txtfMaPhieuNhap.getText(),
                             date,
                             txtfMaNV.getText(),
-                            maNCC);
+                            maNCC,
+                            0);
 
                     if (pnbus.themPhieuNhap(insertPN, chiTietList)) {
                         pn.setListpn(pndao.layDanhSachPhieuNhap());

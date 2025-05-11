@@ -7,12 +7,14 @@ public class PhieuNhapDTO {
     private Date thoigian;
     private String MaNV;
     private int MaNCC;
+    private int TrangThai;
 
-    public PhieuNhapDTO(String MaPhieuNhap, Date thoigian, String MaNV, int MaNCC){
+    public PhieuNhapDTO(String MaPhieuNhap, Date thoigian, String MaNV, int MaNCC, int TrangThai) {
         this.MaPhieuNhap = MaPhieuNhap;
         this.thoigian = thoigian;
         this.MaNV = MaNV;
         this.MaNCC = MaNCC;
+        this.TrangThai = TrangThai;
     }
 
     public String getMaPhieuNhap() {
@@ -47,5 +49,12 @@ public class PhieuNhapDTO {
         MaNCC = maNCC;
     }
 
-}
+    public int getTrangThai() {
+        return TrangThai;
+    }
 
+    public void setTrangThai(int trangThai) {
+        TrangThai = trangThai;
+    }
+
+}
