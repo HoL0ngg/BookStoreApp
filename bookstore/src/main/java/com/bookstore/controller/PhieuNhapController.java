@@ -49,7 +49,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
     private List<PhieuNhapDTO> manggoc;
     private List<PhieuNhapDTO> mangtmp;
     private boolean isAscending = true;
-    private Timer searchNCC, dstimer;
+    private Timer searchNCC;
 
     // constructor
     public PhieuNhapController(PhieuNhap pn) {
@@ -85,6 +85,28 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             String strThoigian = pn.getTable().getValueAt(slt, 1).toString();
             String mnv = pn.getTable().getValueAt(slt, 2).toString();
             String mncc = pn.getTable().getValueAt(slt, 3).toString();
+
+            // Lấy trạng thái hiện tại từ danh sách hoặc bảng
+            int currentTrangThai = 1; // Giả sử mặc định
+            for (PhieuNhapDTO pnItem : pn.getListpn()) {
+                if (pnItem.getMaPhieuNhap().equals(mpn)) {
+                    currentTrangThai = pnItem.getTrangThai(); // Lấy trạng thái hiện tại (int)
+                    break;
+                }
+            }
+
+            // Kiểm tra nếu trạng thái là "Đã hoàn thành" (2)
+            if (currentTrangThai == 2) {
+                JOptionPane.showMessageDialog(null, "Phiếu đã hoàn thành không thể sửa!", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (new TaiKhoanDTO().getMaNhomQuyen() == 3 || new TaiKhoanDTO().getMaNhomQuyen() == 2) {
+                JOptionPane.showMessageDialog(null, "Bạn không phải quản lý không thể sửa", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             // Tạo dialog chỉnh sửa
             JDialog dialog = new JDialog((JFrame) null, "Sửa phiếu nhập", true);
@@ -178,7 +200,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                     }
 
                     // Tạo đối tượng PhieuNhapDTO để cập nhật
-                    PhieuNhapDTO updatePn = new PhieuNhapDTO(newMpn, thoigian, newMnv, newMncc, 0);
+                    PhieuNhapDTO updatePn = new PhieuNhapDTO(newMpn, thoigian, newMnv, newMncc, 1, 0);
                     boolean kq = pnbus.suaPhieuNhap(updatePn);
                     if (kq) {
                         JOptionPane.showMessageDialog(dialog, "Cập nhật thành công", "Thành công",
@@ -587,7 +609,7 @@ public class PhieuNhapController implements ItemListener, ActionListener {
 
             // Thêm 2 panel vào main container
             mainContainer.add(leftPanel);
-            mainContainer.add(rightPanel);  
+            mainContainer.add(rightPanel);
 
             // Panel chứa nút xác nhận/hủy
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -622,14 +644,16 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                     for (Component comp : booksInputPanel.getComponents()) {
                         if (comp instanceof JPanel) {
                             JPanel row = (JPanel) comp;
-                            if (row.getComponentCount() >= 2) {
-                                JTextField txtMaSach = (JTextField) row.getComponent(0);
-                                JSpinner spinner = (JSpinner) row.getComponent(1);
-
-                                String maSach = txtMaSach.getText().trim();
-                                int soLuong = (int) spinner.getValue();
-
-                                if (!maSach.isEmpty()) {
+                            // Lấy các thành phần từ bookRow
+                            Component[] components = row.getComponents();
+                            if (components.length >= 3) { // Đảm bảo có đủ 3 thành phần: JComboBox, JSpinner, JButton
+                                @SuppressWarnings("unchecked")
+                                JComboBox<DauSachDTO> comboBox = (JComboBox<DauSachDTO>) components[0]; // Lấy JComboBox
+                                JSpinner spinner = (JSpinner) components[1]; // Lấy JSpinner
+                                DauSachDTO selectedDauSach = (DauSachDTO) comboBox.getSelectedItem();
+                                if (selectedDauSach != null && !selectedDauSach.getMaDauSach().equals("0")) {
+                                    String maSach = selectedDauSach.getMaDauSach();
+                                    int soLuong = (int) spinner.getValue();
                                     chiTietList.add(new CTPhieuNhapDTO(
                                             txtfMaPhieuNhap.getText(),
                                             maSach,
@@ -662,7 +686,8 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                             date,
                             txtfMaNV.getText(),
                             maNCC,
-                            0);
+                            1,
+                            1);
 
                     if (pnbus.themPhieuNhap(insertPN, chiTietList)) {
                         pn.setListpn(pndao.layDanhSachPhieuNhap());

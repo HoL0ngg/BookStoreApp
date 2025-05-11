@@ -11,7 +11,9 @@ import com.bookstore.DTO.CTPhieuNhapDTO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class CTPhieuNhapDAO {
-        public List<CTPhieuNhapDTO> layDanhSachCTPhieuNhap() {
+
+    @SuppressWarnings("unused")
+    public List<CTPhieuNhapDTO> layDanhSachCTPhieuNhap() {
         List<CTPhieuNhapDTO> danhsach = new ArrayList<>();
         String sql = "SELECT * FROM CTPhieuNhap";
         try (Connection conn = DatabaseUtils.getConnection();

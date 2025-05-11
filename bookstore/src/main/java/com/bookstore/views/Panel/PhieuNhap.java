@@ -199,15 +199,32 @@ public class PhieuNhap extends JPanel {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<PhieuNhapDTO> tmpList = new PhieuNhapDAO().layDanhSachPhieuNhap();
         setListpn(tmpList);
+
         for (PhieuNhapDTO pn : tmpList) {
-            tableModel.addRow(new Object[] {
-                    pn.getMaPhieuNhap(),
-                    sdf.format(pn.getThoigian()),
-                    pn.getMaNV(),
-                    pn.getMaNCC(),
-                    "Chi tiết",
-                    "012"
-            });
+            String trangThaiStr;
+            switch (pn.getTrangThai()) {
+                case 0:
+                    trangThaiStr = "Đã hủy";
+                    break;
+                case 1:
+                    trangThaiStr = "Chờ xét duyệt";
+                    break;
+                case 2:
+                    trangThaiStr = "Đã duyệt";
+                    break;
+                default:
+                    trangThaiStr = "Không xác định";
+            }
+            if (pn.getStatus() == 1) {
+                tableModel.addRow(new Object[] {
+                        pn.getMaPhieuNhap(),
+                        sdf.format(pn.getThoigian()),
+                        pn.getMaNV(),
+                        pn.getMaNCC(),
+                        "Chi tiết",
+                        trangThaiStr
+                });
+            }
         }
     }
 
