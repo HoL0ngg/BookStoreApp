@@ -235,6 +235,7 @@ public class LoginFrame extends JFrame {
         this.add(emptyJPanel);
         setVisible(true);
         emptyJPanel.requestFocusInWindow();
+        getRootPane().setDefaultButton(DangNhapButton);
     }
 
     private class TaoTaiKhoanDialog extends JDialog {

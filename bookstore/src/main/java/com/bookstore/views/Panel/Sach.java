@@ -28,18 +28,15 @@ import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.BUS.DauSachBUS;
 import com.bookstore.DTO.DauSachDTO;
-import com.bookstore.DTO.NCCDTO;
 import com.bookstore.controller.SachController;
 import com.bookstore.dao.DauSachDAO;
-import com.bookstore.dao.NCCDAO;
 import com.bookstore.utils.ExcelExporter;
 import com.bookstore.views.Dialog.DauSachDialog;
-import com.bookstore.views.Dialog.NCCDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.Frame;
 
 public class Sach extends JPanel {
-    private SachController sachController = new SachController(this);
+    // private SachController sachController = new SachController(this);
     private DauSachBUS dauSachBUS = new DauSachBUS();
     private JPanel btnThem, btnSua, btnXoa, btnChiTiet, btnXuatExcel, btnNhapExcel, btnLamMoi;
     private JComboBox<String> cboFilter;
