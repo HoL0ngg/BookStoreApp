@@ -217,16 +217,16 @@ public class LoginFrame extends JFrame {
             String tenDangNhap = TenDangNhapField.getText();
             String matKhau = String.valueOf(MatKhauField.getPassword());
 
-            JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo",
-                    JOptionPane.INFORMATION_MESSAGE);
-            this.dispose(); // Đóng cửa sổ đăng nhập
-            new MainFrame(); // Mở cửa sổ chính
-            // if (taiKhoanBUS.dangNhap(tenDangNhap, matKhau)) {
-            // } else {
-            // JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng",
-            // "Thông báo",
-            // JOptionPane.ERROR_MESSAGE);
-            // }
+            if (taiKhoanBUS.dangNhap(tenDangNhap, matKhau)) {
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo",
+                        JOptionPane.INFORMATION_MESSAGE);
+                this.dispose(); // Đóng cửa sổ đăng nhập
+                new MainFrame(); // Mở cửa sổ chính
+            } else {
+                JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng",
+                        "Thông báo",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Tranh focus vao JTextfield tu ban dau

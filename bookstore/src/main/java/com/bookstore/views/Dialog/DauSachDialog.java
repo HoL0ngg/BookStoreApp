@@ -4,6 +4,8 @@ import javax.swing.*;
 
 import com.bookstore.BUS.DauSachBUS;
 import com.bookstore.DTO.DauSachDTO;
+import com.bookstore.DTO.TacGiaDTO;
+import com.bookstore.DTO.TheLoaiDTO;
 import com.bookstore.dao.DauSachDAO;
 import com.bookstore.dao.NCCDAO;
 import com.bookstore.dao.TacGiaDAO;
@@ -15,6 +17,10 @@ import java.util.*;
 import java.util.List;
 
 public class DauSachDialog extends JDialog {
+    public enum Mode {
+        ADD, EDIT, VIEW
+    }
+
     private JLabel lblHinhAnh;
     private JTextField txtTenDauSach, txtNamXuatBan;
     private JComboBox<String> cboNhaXuatBan, cboNgonNgu, cboTacGia, cboTheLoai;
@@ -25,7 +31,7 @@ public class DauSachDialog extends JDialog {
     private Map<String, String> mapTacGia; // tên -> id
     private Map<String, Integer> mapTheLoai; // tên -> id
 
-    public DauSachDialog(Frame parent) {
+    public DauSachDialog(Frame parent, Mode mode, DauSachDTO ds) {
         super(parent, "Thêm Đầu Sách", true);
         setSize(700, 550);
         setLocationRelativeTo(parent);
@@ -37,7 +43,16 @@ public class DauSachDialog extends JDialog {
         panelMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // === HÌNH ẢNH ===
-        lblHinhAnh = new JLabel("Chưa có ảnh", SwingConstants.CENTER);
+        if (ds == null) {
+            duongDanHinh = "D:\\VSCode\\Lap trinh java\\BookStoreApp\\bookstore\\src\\main\\resources\\images\\default.png";
+        } else {
+            duongDanHinh = "D:\\VSCode\\Lap trinh java\\BookStoreApp\\bookstore\\src\\main\\resources\\images\\"
+                    + ds.getHinhAnh();
+        }
+        ImageIcon icon = new ImageIcon(
+                new ImageIcon(duongDanHinh).getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH));
+        System.out.println(duongDanHinh);
+        lblHinhAnh = new JLabel(icon, SwingConstants.CENTER);
         lblHinhAnh.setPreferredSize(new Dimension(200, 250));
         lblHinhAnh.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
@@ -48,7 +63,8 @@ public class DauSachDialog extends JDialog {
 
         JPanel panelHinh = new JPanel(new BorderLayout(5, 5));
         panelHinh.add(lblHinhAnh, BorderLayout.CENTER);
-        panelHinh.add(btnChonHinh, BorderLayout.SOUTH);
+        if (mode != Mode.VIEW)
+            panelHinh.add(btnChonHinh, BorderLayout.SOUTH);
 
         // === THÔNG TIN ===
         JPanel panelThongTin = new JPanel(new GridBagLayout());
@@ -179,6 +195,24 @@ public class DauSachDialog extends JDialog {
         gbc.weighty = 1; // để tác giả có không gian dọc
         panelThongTin.add(panelTacGia, gbc);
 
+        if (mode == Mode.VIEW)
+            disableAll();
+
+        if (ds != null) {
+            txtTenDauSach.setText(ds.getTenDauSach());
+            txtNamXuatBan.setText(String.valueOf(ds.getNamXuatBan()));
+            cboNhaXuatBan.setSelectedItem(ds.getNhaXuatBan());
+            cboNgonNgu.setSelectedItem(ds.getNgonNgu());
+            for (TacGiaDTO tacgia : ds.getListTacGia()) {
+                String tenTacGia = tacgia.getTenTacGia();
+                listModelTacGia.addElement(tenTacGia);
+            }
+            for (TheLoaiDTO tl : ds.getListTheLoai()) {
+                String tenTheLoai = tl.getTenTheLoai();
+                listModelTheLoai.addElement(tenTheLoai);
+            }
+        }
+
         // === BOTTOM BUTTON ===
         btnLuu = new JButton("Lưu");
         btnHuy = new JButton("Hủy");
@@ -206,11 +240,12 @@ public class DauSachDialog extends JDialog {
             if (result == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
                 String duongDanHinhRill = file.getAbsolutePath();
+                System.out.println(duongDanHinhRill);
                 // File file2 = new File(duongDanHinh);
                 duongDanHinh = file.getName(); // Ví dụ: \img2.jpg
-                ImageIcon icon = new ImageIcon(
+                ImageIcon icon2 = new ImageIcon(
                         new ImageIcon(duongDanHinhRill).getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH));
-                lblHinhAnh.setIcon(icon);
+                lblHinhAnh.setIcon(icon2);
                 lblHinhAnh.setText(null);
             }
         });
@@ -338,5 +373,19 @@ public class DauSachDialog extends JDialog {
         int count = new DauSachDAO().selectID(); // Ví dụ: trả về 1 nếu có 1 đầu sách
         int nextId = count + 1; // Tăng ID tiếp theo
         return String.format("DS%03d", nextId); // Format thành DS001, DS010, DS123,...
+    }
+
+    private void disableAll() {
+        txtTenDauSach.setEnabled(false);
+        txtNamXuatBan.setEnabled(false);
+        cboNhaXuatBan.setEnabled(false);
+        cboNgonNgu.setEnabled(false);
+        cboTacGia.setEnabled(false);
+        cboTheLoai.setEnabled(false);
+        btnChonHinh.setEnabled(false);
+        btnThemTacGia.setEnabled(false);
+        btnXoaTacGia.setEnabled(false);
+        btnThemTheLoai.setEnabled(false);
+        btnXoaTheLoai.setEnabled(false);
     }
 }

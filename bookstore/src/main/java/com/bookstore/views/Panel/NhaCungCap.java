@@ -22,7 +22,7 @@ public class NhaCungCap extends JPanel {
     private DefaultTableModel tableModel;
     private JTextField txtTimKiem;
     private JComboBox<String> cboFilter;
-    private JPanel btnThem, btnSua, btnXoa, btnChiTiet, btnXuatExcel, btnLamMoi;
+    private JPanel btnThem, btnSua, btnXoa, btnChiTiet, btnXuatExcel, btnLamMoi, btnNhapExcel;
     private Timer searchTimer;
 
     private NCCBUS nccBUS = new NCCBUS();
@@ -45,19 +45,22 @@ public class NhaCungCap extends JPanel {
         btnXoa = createPanel("Xóa", "delete");
         btnChiTiet = createPanel("Chi tiết", "ChiTiet");
         btnXuatExcel = createPanel("Xuất Excel", "importExcel");
+        btnNhapExcel = createPanel("Nhập Excel", "importExcel2");
+
         btnLamMoi = createPanel("Làm mới", "refresh");
 
         buttonPanel.add(btnThem);
         buttonPanel.add(btnSua);
         buttonPanel.add(btnXoa);
         buttonPanel.add(btnChiTiet);
+        buttonPanel.add(btnNhapExcel);
         buttonPanel.add(btnXuatExcel);
 
         // Right filter panel
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         cboFilter = new JComboBox<>(
                 new String[] { "Tất cả", "Mã NCC", "Tên NCC", "Số điện thoại", "Email", "Địa chỉ" });
-        txtTimKiem = new JTextField(15);
+        txtTimKiem = new JTextField(12);
         txtTimKiem.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -220,7 +223,7 @@ public class NhaCungCap extends JPanel {
 
     private JPanel createPanel(String text, String iconName) {
         JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(72, 80));
+        panel.setPreferredSize(new Dimension(74, 80));
         panel.setBackground(Color.white);
         panel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         FlatSVGIcon icon = new FlatSVGIcon(getClass().getResource("/svg/" + iconName + ".svg")).derive(30, 30);

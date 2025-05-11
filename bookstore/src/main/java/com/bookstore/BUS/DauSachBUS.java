@@ -13,6 +13,10 @@ public class DauSachBUS {
         listDauSach = new DauSachDAO().selectAll();
     }
 
+    public List<DauSachDTO> getList() {
+        return this.listDauSach;
+    }
+
     public List<DauSachDTO> searchDauSach(String txt, String filter) {
         List<DauSachDTO> result = new ArrayList<>();
         for (DauSachDTO ds : listDauSach) {
@@ -34,11 +38,36 @@ public class DauSachBUS {
                         result.add(ds);
                     }
                     break;
-                // case "Tác giả":
-                // if (ds.get().toLowerCase().contains(txt.toLowerCase())) {
-                // result.add(ds);
-                // }
-                // break;
+                case "Thể loại":
+                    if (ds.getListTheLoai() != null) {
+                        for (int i = 0; i < ds.getListTheLoai().size(); i++) {
+                            if (ds.getListTheLoai().get(i).getTenTheLoai().toLowerCase().contains(txt.toLowerCase())) {
+                                result.add(ds);
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case "Ngôn ngữ":
+                    if (ds.getNgonNgu().toLowerCase().contains(txt.toLowerCase())) {
+                        result.add(ds);
+                    }
+                    break;
+                case "Năm xuất bản":
+                    if (String.valueOf(ds.getNamXuatBan()).contains(txt)) {
+                        result.add(ds);
+                    }
+                    break;
+                case "Tác giả":
+                    if (ds.getListTacGia() != null) {
+                        for (int i = 0; i < ds.getListTacGia().size(); i++) {
+                            if (ds.getListTacGia().get(i).getTenTacGia().toLowerCase().contains(txt.toLowerCase())) {
+                                result.add(ds);
+                                break;
+                            }
+                        }
+                    }
+                    break;
                 case "Nhà xuất bản":
                     if (ds.getNhaXuatBan().toLowerCase().contains(txt.toLowerCase())) {
                         result.add(ds);
@@ -53,8 +82,7 @@ public class DauSachBUS {
         for (DauSachDTO ds : listDauSach) {
             if (ds.getMaDauSach().equals(maDauSach)) {
                 listDauSach.remove(ds);
-                DauSachDAO dsDAO = new DauSachDAO();
-                if (dsDAO.delete(maDauSach) > 0) {
+                if (new DauSachDAO().delete(maDauSach) > 0) {
                     return true;
                 } else {
                     listDauSach.add(ds); // Add back if delete fails

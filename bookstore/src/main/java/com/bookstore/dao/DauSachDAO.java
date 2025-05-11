@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bookstore.DTO.DauSachDTO;
+import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.DTO.TheLoaiDTO;
 import com.bookstore.utils.DatabaseUtils;
 
@@ -44,16 +45,22 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
     @Override
     public List<DauSachDTO> selectAll() {
         List<DauSachDTO> list = new ArrayList<>();
-        String query = "SELECT * FROM dausach";
+        String query = "SELECT * FROM dausach WHERE status = 1";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query);
                 ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                TheLoaiDAO theloaiDAO = new TheLoaiDAO();
-                List<TheLoaiDTO> listTheLoai = theloaiDAO.getTheLoaiByMaSach(rs.getString("MaDauSach"));
-                DauSachDTO kh = new DauSachDTO(rs.getString("MaDauSach"), rs.getString("TenDauSach"),
-                        rs.getString("HinhAnh"), rs.getString("NhaXuatBan"), rs.getInt("NamXuatBan"),
-                        rs.getString("NgonNgu"), rs.getInt("SoTrang"), listTheLoai);
+                List<TheLoaiDTO> listTheLoai = new TheLoaiDAO().getTheLoaiByMaSach(rs.getString("MaDauSach"));
+                List<TacGiaDTO> listTacGia = new TacGiaDAO().getTacGiaByMaSach(rs.getString("MaDauSach"));
+                DauSachDTO kh = new DauSachDTO();
+                kh.setMaDauSach(rs.getString("MaDauSach"));
+                kh.setTenDauSach(rs.getString("TenDauSach"));
+                kh.setHinhAnh(rs.getString("HinhAnh"));
+                kh.setNhaXuatBan(rs.getString("NhaXuatBan"));
+                kh.setNamXuatBan(rs.getInt("NamXuatBan"));
+                kh.setNgonNgu(rs.getString("NgonNgu"));
+                kh.setListTheLoai(listTheLoai);
+                kh.setListTacGia(listTacGia);
                 list.add(kh);
             }
         } catch (SQLException e) {
@@ -67,8 +74,34 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
         return null;
     }
 
+    public DauSachDTO selectById(String id) {
+        String query = "SELECT * FROM dausach WHERE MaDauSach = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                List<TheLoaiDTO> listTheLoai = new TheLoaiDAO().getTheLoaiByMaSach(id);
+                List<TacGiaDTO> listTacGia = new TacGiaDAO().getTacGiaByMaSach(id);
+                DauSachDTO ds = new DauSachDTO();
+                ds.setMaDauSach(rs.getString("MaDauSach"));
+                ds.setTenDauSach(rs.getString("TenDauSach"));
+                ds.setHinhAnh(rs.getString("HinhAnh"));
+                ds.setNhaXuatBan(rs.getString("NhaXuatBan"));
+                ds.setNamXuatBan(rs.getInt("NamXuatBan"));
+                ds.setNgonNgu(rs.getString("NgonNgu"));
+                ds.setListTheLoai(listTheLoai);
+                ds.setListTacGia(listTacGia);
+                return ds;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public int delete(String id) {
-        String query = "DELETE FROM dausach WHERE MaDauSach = ?";
+        String query = "UPDATE dausach SET status = 0 WHERE MaDauSach = ?";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, id);
@@ -127,22 +160,19 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
         return 0;
     }
 
-
-
-
     public String getTenDauSachByMa(String maDauSach) {
-    String query = "SELECT TenDauSach FROM dausach WHERE MaDauSach = ?";
-    try (Connection conn = DatabaseUtils.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(query)) {
-        stmt.setString(1, maDauSach);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            return rs.getString("TenDauSach");
+        String query = "SELECT TenDauSach FROM dausach WHERE MaDauSach = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, maDauSach);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("TenDauSach");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return "";
     }
-    return "";
-}
 
 }
