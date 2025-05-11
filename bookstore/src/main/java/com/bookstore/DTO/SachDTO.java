@@ -27,6 +27,10 @@ public class SachDTO {
         NgayNhap = ngayNhap;
     }
 
+    public SachDTO(){
+        
+    }
+
     public String getMasach() {
         return MaSach;
     }

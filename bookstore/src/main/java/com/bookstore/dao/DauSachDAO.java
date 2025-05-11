@@ -126,4 +126,23 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
         }
         return 0;
     }
+
+
+
+
+    public String getTenDauSachByMa(String maDauSach) {
+    String query = "SELECT TenDauSach FROM dausach WHERE MaDauSach = ?";
+    try (Connection conn = DatabaseUtils.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setString(1, maDauSach);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return rs.getString("TenDauSach");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return "";
+}
+
 }

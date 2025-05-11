@@ -127,7 +127,7 @@ public class MenuTaskbar extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 pnMenuTaskbarMousePress(e);
-                PhieuHuy PhieuHuy = new PhieuHuy();
+                PhieuHuyPanel PhieuHuy = new PhieuHuyPanel();
                 mainFrame.setPanel(PhieuHuy);
             }
         });
