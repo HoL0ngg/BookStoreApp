@@ -931,7 +931,7 @@ public class PhieuTraController implements ItemListener, ActionListener {
                     TitledBorder.DEFAULT_JUSTIFICATION,
                     TitledBorder.DEFAULT_POSITION,
                     new Font("Segoe UI", Font.BOLD, 14)));
-            infoPanel.setPreferredSize(new Dimension(200, 0)); // Chiều rộng cố định 200px
+            infoPanel.setPreferredSize(new Dimension(230, 0)); // Chiều rộng cố định 200px
 
             // Thêm các trường thông tin
             infoPanel.add(createInfoRow("Mã phiếu trả:", String.valueOf(phieuTra.getMaPhieuTra())));
@@ -1058,17 +1058,32 @@ public class PhieuTraController implements ItemListener, ActionListener {
             booksInputPanel.add(emptyLabel);
         } else {
             PhieuMuonBUS pmbus = new PhieuMuonBUS();
-            List<CTPhieuMuonDTO> chiTietList = pmbus.getCTPhieuMuon().stream()
-                    .filter(ct -> ct.getMaPhieuMuon() == phieuMuon.getMaPhieuMuon())
-                    .collect(Collectors.toList());
+            List<CTPhieuMuonDTO> chiTietList = (pmbus.getCTPhieuMuon() != null)
+                    ? pmbus.getCTPhieuMuon().stream()
+                            .filter(ct -> ct != null && ct.getMaPhieuMuon() == phieuMuon.getMaPhieuMuon())
+                            .collect(Collectors.toList())
+                    : new ArrayList<>();
 
+            // Tạo map sách với kiểm tra null
             Map<String, SachDTO> sachMap = new HashMap<>();
-            for (SachDTO s : new SachDAO().selectAll()) {
-                sachMap.put(s.getMaSach(), s);
+            List<SachDTO> dsSach = new SachDAO().selectAll();
+            if (dsSach != null) {
+                for (SachDTO s : dsSach) {
+                    if (s != null && s.getMaSach() != null) {
+                        sachMap.put(s.getMaSach(), s);
+                    }
+                }
             }
+
+            // Tạo map đầu sách với kiểm tra null
             Map<String, DauSachDTO> dauSachMap = new HashMap<>();
-            for (DauSachDTO ds : new DauSachBUS().getListDauSach()) {
-                dauSachMap.put(ds.getMaDauSach(), ds);
+            List<DauSachDTO> dsDauSach = new DauSachBUS().getListDauSach();
+            if (dsDauSach != null) {
+                for (DauSachDTO ds : dsDauSach) {
+                    if (ds != null && ds.getMaDauSach() != null) {
+                        dauSachMap.put(ds.getMaDauSach(), ds);
+                    }
+                }
             }
 
             if (chiTietList.isEmpty()) {
@@ -1077,65 +1092,75 @@ public class PhieuTraController implements ItemListener, ActionListener {
                 booksInputPanel.add(emptyLabel);
             } else {
                 for (CTPhieuMuonDTO ct : chiTietList) {
+                    if (ct == null)
+                        continue;
+
                     JPanel bookRow = new JPanel(new GridBagLayout());
                     bookRow.setBackground(new Color(245, 245, 245));
+                    bookRow.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
                     GridBagConstraints gbc = new GridBagConstraints();
                     gbc.insets = new Insets(0, 5, 0, 5);
                     gbc.fill = GridBagConstraints.HORIZONTAL;
 
-                    JTextField txtMaSach = new JTextField(8);
-                    txtMaSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-                    txtMaSach.setBorder(BorderFactory.createCompoundBorder(
-                            BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-                    txtMaSach.setEditable(false);
-
-                    JTextField txtTenDauSach = new JTextField(15);
-                    txtTenDauSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-                    txtTenDauSach.setBorder(BorderFactory.createCompoundBorder(
-                            BorderFactory.createLineBorder(new Color(180, 180, 180)),
-                            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-                    txtTenDauSach.setEditable(false);
-
+                    // Tạo các component
+                    JTextField txtMaSach = createReadOnlyTextField(8);
+                    JTextField txtTenDauSach = createReadOnlyTextField(15);
                     JCheckBox checkBox = new JCheckBox();
                     checkBox.setBackground(new Color(245, 245, 245));
-                    checkBox.setPreferredSize(new Dimension(20, checkBox.getPreferredSize().height));
 
-                    // Lấy trạng thái (giả định có phương thức getTrangThai() trong CTPhieuMuonDTO)
+                    // ComboBox trạng thái sách
+                    String[] trangThaiSachOptions = { "Bình thường", "Hư hỏng", "Mất" };
+                    JComboBox<String> cbTrangThaiSach = new JComboBox<>(trangThaiSachOptions);
+                    cbTrangThaiSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                    cbTrangThaiSach.setBorder(BorderFactory.createCompoundBorder(
+                            BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+                    cbTrangThaiSach.setVisible(false);
+
+                    // Thiết lập trạng thái
                     int trangThai = ct.getTrangThai(); // 0: chưa trả, 1: đã trả
                     if (trangThai == 1) {
-                        checkBox.setSelected(true); // Đánh dấu đã trả
-                        checkBox.setEnabled(false); // Không cho sửa
-                    } else {
-                        checkBox.setEnabled(true); // Cho phép sửa nếu chưa trả
+                        checkBox.setSelected(true);
+                        checkBox.setEnabled(false);
+                        cbTrangThaiSach.setVisible(true);
+                        cbTrangThaiSach.setSelectedIndex(ct.getTrangThai()); // Giả sử có field này
                     }
 
-                    txtMaSach.setText(ct.getMaSach());
-                    SachDTO sach = sachMap.get(ct.getMaSach());
+                    checkBox.addActionListener(e -> {
+                        cbTrangThaiSach.setVisible(checkBox.isSelected());
+                    });
+
+                    // Đặt dữ liệu
+                    txtMaSach.setText(ct.getMaSach() != null ? ct.getMaSach() : "");
+
+                    SachDTO sach = (ct.getMaSach() != null) ? sachMap.get(ct.getMaSach()) : null;
                     if (sach != null) {
-                        DauSachDTO dauSach = dauSachMap.get(sach.getMaDauSach());
-                        if (dauSach != null) {
-                            txtTenDauSach.setText(dauSach.getTenDauSach());
-                        } else {
-                            txtTenDauSach.setText("Không tìm thấy đầu sách");
-                        }
+                        DauSachDTO dauSach = (sach.getMaDauSach() != null) ? dauSachMap.get(sach.getMaDauSach()) : null;
+                        txtTenDauSach.setText(dauSach != null ? dauSach.getTenDauSach() : "Không tìm thấy đầu sách");
                     } else {
                         txtTenDauSach.setText("Không tìm thấy sách");
                     }
 
-                    // Cấu hình GridBagConstraints cho từng thành phần
+                    // Bố cục
                     gbc.gridx = 0;
+                    gbc.gridy = 0;
                     gbc.weightx = 0.25;
-                    gbc.fill = GridBagConstraints.HORIZONTAL;
                     bookRow.add(txtMaSach, gbc);
 
                     gbc.gridx = 1;
                     gbc.weightx = 0.6;
                     bookRow.add(txtTenDauSach, gbc);
 
+                    gbc.gridx = 1;
+                    gbc.gridy = 1;
+                    bookRow.add(cbTrangThaiSach, gbc);
+
                     gbc.gridx = 2;
+                    gbc.gridy = 0;
                     gbc.weightx = 0.15;
+                    gbc.gridheight = 2;
+                    gbc.fill = GridBagConstraints.NONE;
                     bookRow.add(checkBox, gbc);
 
                     booksInputPanel.add(bookRow);
@@ -1144,12 +1169,21 @@ public class PhieuTraController implements ItemListener, ActionListener {
             }
         }
 
-        booksInputPanel.revalidate();
-        booksInputPanel.repaint();
         JScrollPane scrollPane = new JScrollPane(booksInputPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setPreferredSize(new Dimension(400, 200));
         return scrollPane;
+    }
+
+    // Hàm phụ tạo text field chỉ đọc
+    private JTextField createReadOnlyTextField(int columns) {
+        JTextField textField = new JTextField(columns);
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180)),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        textField.setEditable(false);
+        return textField;
     }
 
     private JPanel createInputRow(String labelText, JTextField textField) {

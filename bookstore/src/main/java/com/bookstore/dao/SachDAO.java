@@ -103,32 +103,26 @@ public class SachDAO implements IBaseDAO<SachDTO> {
         return null;
     }
 
-
-
     public List<SachDTO> selectByTrangThaiHuOrMat() {
-    List<SachDTO> list = new ArrayList<>();
-    String query = "SELECT * FROM sach WHERE TrangThai = '0' OR TrangThai = '3'";
-    
-    try (Connection conn = DatabaseUtils.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(query);
-         ResultSet rs = stmt.executeQuery()) {
-        while (rs.next()) {
-            SachDTO sach = new SachDTO(
-                    rs.getString("MaSach"),
-                    rs.getString("TrangThai"),
-                    rs.getString("MaDauSach"),
-                    rs.getDate("NgayNhap").toLocalDate()
-            );
-            list.add(sach);
+        List<SachDTO> list = new ArrayList<>();
+        String query = "SELECT * FROM sach WHERE TrangThai = '0' OR TrangThai = '3'";
+
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                SachDTO sach = new SachDTO(
+                        rs.getString("MaSach"),
+                        rs.getString("TrangThai"),
+                        rs.getString("MaDauSach"),
+                        rs.getDate("NgayNhap").toLocalDate());
+                list.add(sach);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+        return list;
     }
-
-    return list;
-}
-
-
-
 
 }

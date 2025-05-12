@@ -74,13 +74,14 @@ public class PhieuNhapDAO {
         }
 
         // Thêm chi tiết phiếu nhập
-        String sql = "INSERT INTO CTPhieuNhap (MaPhieuNhap, MaDauSach, SoLuong) VALUES (?,?,?)";
+        String sql = "INSERT INTO CTPhieuNhap (MaPhieuNhap, MaDauSach, SoLuong, status) VALUES (?,?,?,?)";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (CTPhieuNhapDTO ct : list) {
                 stmt.setString(1, mpn);
                 stmt.setString(2, ct.getMaDauSach());
                 stmt.setInt(3, ct.getSoLuong());
+                stmt.setInt(4, 1);
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {

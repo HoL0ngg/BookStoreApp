@@ -159,7 +159,7 @@ public class MainFrame extends JFrame {
 
         FlatSVGIcon iconDangXuat = new FlatSVGIcon(getClass().getResource("/svg/back-button.svg")).derive(30, 30);
         JLabel DangXuatIcon = new JLabel(iconDangXuat, JLabel.CENTER);
-        JLabel DangXuatLabel = new JLabel("ĐĂNG XUẤT");
+        JLabel DangXuatLabel = new JLabel("xxxx");
         DangXuatLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
         DangXuatPanel.add(DangXuatIcon);

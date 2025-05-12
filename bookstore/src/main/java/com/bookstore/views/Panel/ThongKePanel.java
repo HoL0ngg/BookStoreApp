@@ -2,14 +2,26 @@ package com.bookstore.views.Panel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import com.bookstore.BUS.PhieuMuonBUS;
+import com.bookstore.BUS.PhieuNhapBUS;
+import com.bookstore.BUS.PhieuTraBUS;
+import com.bookstore.BUS.PhieuPhatBUS;
+import com.bookstore.DTO.*;
+import com.bookstore.dao.SachDAO;
 
 public class ThongKePanel extends JPanel {
     private CardLayout cardLayout;
     private JPanel contentPanel;
     private JPanel thongKeSoPanel;
     private JPanel bieuDoPanel;
+    private List<PhieuMuonDTO> phieumuonlist;
+    private List<PhieuPhatDTO> phieuphatlist;
+    private List<PhieuTraDTO> phieutralist;
 
     public ThongKePanel() {
         setLayout(new BorderLayout());
@@ -52,6 +64,8 @@ public class ThongKePanel extends JPanel {
         // Event chuyển tab
         btnXemSoLieu.addActionListener(e -> cardLayout.show(contentPanel, "soLieu"));
         btnXemBieuDo.addActionListener(e -> cardLayout.show(contentPanel, "bieuDo"));
+        cardLayout.show(contentPanel, "soLieu");
+
     }
 
     private JPanel createThongKeSoLieuPanel(int tongSach, int tongDocGia, int tongLuotMuon) {
@@ -78,18 +92,65 @@ public class ThongKePanel extends JPanel {
     private JPanel createBieuDoPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Tạo biểu đồ bằng JFreeChart
-        org.jfree.data.category.DefaultCategoryDataset dataset = new org.jfree.data.category.DefaultCategoryDataset();
-        dataset.addValue(1234, "Sách", "Thống kê");
-        dataset.addValue(500, "Độc giả", "Thống kê");
-        dataset.addValue(876, "Lượt mượn", "Thống kê");
+        // Giả sử bạn có CTPhieuMuonBUS và SachBUS
+        PhieuMuonBUS ctpmBUS = new PhieuMuonBUS();
+        SachDAO sachDAO = new SachDAO();
+        System.out.println(ctpmBUS.getCTPhieuMuon().size());
+        System.out.println(sachDAO.selectAll().size());
+        List<CTPhieuMuonDTO> dsCTPM = ctpmBUS.getCTPhieuMuon();
+        List<SachDTO> dsSach = sachDAO.selectAll();
 
-        org.jfree.chart.JFreeChart chart = org.jfree.chart.ChartFactory.createBarChart(
-                "Biểu đồ Thống kê", "Loại", "Số lượng", dataset);
+        // Map maSach -> tenSach
+        Map<String, String> maSachToTenSach = new HashMap<>();
+        for (SachDTO sach : dsSach) {
+            maSachToTenSach.put(sach.getMaSach(), sach.getMaDauSach());
+        }
 
-        org.jfree.chart.ChartPanel chartPanel = new org.jfree.chart.ChartPanel(chart);
+        // Thống kê số lượt mượn mỗi sách
+        Map<String, Integer> thongKe = new HashMap<>();
+        for (CTPhieuMuonDTO ct : dsCTPM) {
+            String maSach = ct.getMaSach();
+            String tenSach = maSachToTenSach.getOrDefault(maSach, "Không rõ");
+
+            thongKe.put(tenSach, thongKe.getOrDefault(tenSach, 0) + 1);
+        }
+
+        // Tạo PieDataset
+        org.jfree.data.general.DefaultPieDataset<String> dataset = new org.jfree.data.general.DefaultPieDataset<>();
+        for (Map.Entry<String, Integer> entry : thongKe.entrySet()) {
+            dataset.setValue(entry.getKey(), entry.getValue());
+        }
+
+        // Tạo PieChart
+        org.jfree.chart.JFreeChart pieChart = org.jfree.chart.ChartFactory.createPieChart(
+                "Thống kê lượt mượn theo đầu sách",
+                dataset,
+                true, true, false);
+
+        org.jfree.chart.ChartPanel chartPanel = new org.jfree.chart.ChartPanel(pieChart);
         panel.add(chartPanel, BorderLayout.CENTER);
 
         return panel;
     }
+
+    // private JPanel createBieuDoPanel() {
+    // JPanel panel = new JPanel(new BorderLayout());
+
+    // // Tạo biểu đồ bằng JFreeChart
+    // org.jfree.data.category.DefaultCategoryDataset dataset = new
+    // org.jfree.data.category.DefaultCategoryDataset();
+    // dataset.addValue(1234, "Sách", "Thống kê");
+    // dataset.addValue(500, "Độc giả", "Thống kê");
+    // dataset.addValue(876, "Lượt mượn", "Thống kê");
+
+    // org.jfree.chart.JFreeChart chart =
+    // org.jfree.chart.ChartFactory.createBarChart(
+    // "Biểu đồ Thống kê", "Loại", "Số lượng", dataset);
+
+    // org.jfree.chart.ChartPanel chartPanel = new
+    // org.jfree.chart.ChartPanel(chart);
+    // panel.add(chartPanel, BorderLayout.CENTER);
+
+    // return panel;
+    // }
 }

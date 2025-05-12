@@ -75,7 +75,6 @@ public class PhieuNhap extends JPanel {
         };
 
         String[] LuaChonSapXep = {
-                "Tất cả",
                 "Mã phiếu nhập",
                 "Thời gian",
                 "Mã nhân viên",
@@ -234,14 +233,30 @@ public class PhieuNhap extends JPanel {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         for (PhieuNhapDTO pn : danhSach) {
-            tableModel.addRow(new Object[] {
-                    pn.getMaPhieuNhap(),
-                    dateFormat.format(pn.getThoigian()),
-                    pn.getMaNV(),
-                    pn.getMaNCC(),
-                    "Chi tiết",
-                    "012"
-            });
+            String trangThaiStr;
+            switch (pn.getTrangThai()) {
+                case 0:
+                    trangThaiStr = "Đã hủy";
+                    break;
+                case 1:
+                    trangThaiStr = "Chờ xét duyệt";
+                    break;
+                case 2:
+                    trangThaiStr = "Đã duyệt";
+                    break;
+                default:
+                    trangThaiStr = "Không xác định";
+            }
+            if (pn.getStatus() == 1) {
+                tableModel.addRow(new Object[] {
+                        pn.getMaPhieuNhap(),
+                        dateFormat.format(pn.getThoigian()),
+                        pn.getMaNV(),
+                        pn.getMaNCC(),
+                        "Chi tiết",
+                        trangThaiStr
+                });
+            }
         }
     }
 

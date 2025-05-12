@@ -37,7 +37,6 @@ import com.bookstore.dao.PhieuMuonDAO;
 import com.bookstore.dao.SachDAO;
 import com.bookstore.views.Panel.PhieuMuon;
 import com.formdev.flatlaf.json.ParseException;
-import com.bookstore.views.Panel.Sach;
 
 public class PhieuMuonController implements ItemListener, ActionListener {
 
@@ -61,32 +60,7 @@ public class PhieuMuonController implements ItemListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == pm.getBtnTimKiem()) {
-            String str = (String) pm.getCbLuaChonTK().getSelectedItem();
-            if (str != null) {
-                System.out.println("Da nhan btn tim kiem");
-                String key = pm.getTxtTimKiem().getText().trim();
-                switch (str) {
-                    case "Mã phiếu mượn":
-                        timMPM(key);
-                        break;
-                    case "Ngày mượn":
-                        timNM(key);
-                        break;
-                    case "Ngày trả dự kiến":
-                        timNTDK(key);
-                        break;
-                    case "Mã độc giả":
-                        timMDG(key);
-                        break;
-                    case "Mã nhân viên":
-                        timMNV(key);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } else if (e.getSource() == pm.getBtnReverse()) {
+        if (e.getSource() == pm.getBtnReverse()) {
             if (isAscending) {
                 pm.getBtnReverse().setIcon(pm.upIcon);
                 Collections.sort(mangtmp, comparator);
@@ -131,9 +105,8 @@ public class PhieuMuonController implements ItemListener, ActionListener {
                 }
             }
 
-            // Kiểm tra nếu trạng thái là "Đã trả" (1)
             if (currentTrangThai == 1) {
-                JOptionPane.showMessageDialog(null, "Phiếu đã trả không thể sửa!", "Thông báo",
+                JOptionPane.showMessageDialog(null, "Phiếu đã hoàn thành không thể sửa!", "Thông báo",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -316,12 +289,13 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
         } else if (e.getSource() == pm.getBtnThem()) {
-            Sach tmpSach = new Sach();
-            List<SachDTO> s = tmpSach.getListSach();
+            SachDAO sdao = new SachDAO();
+            List<SachDTO> s = sdao.selectAll();
             if (s == null) {
                 s = new ArrayList<>();
             }
-            List<DauSachDTO> ds = tmpSach.getListDauSach();
+            DauSachBUS dsbus = new DauSachBUS();
+            List<DauSachDTO> ds = dsbus.getList();
             if (ds == null) {
                 ds = new ArrayList<>();
             }
@@ -1027,6 +1001,40 @@ public class PhieuMuonController implements ItemListener, ActionListener {
                 .filter(i -> i.getMaNhanVien().contains(key))
                 .collect(Collectors.toList());
         pm.updateTable(mangtmp);
+    }
+
+    public void performSearch() {
+        String type = (String) pm.getCbLuaChonTK().getSelectedItem();
+        String txt = pm.getTxtTimKiem().getText().trim();
+        System.out.println("dang tim kiem" + txt + "loai " + type);
+        switch (type) {
+            case "Mã phiếu mượn":
+                timMPM(txt);
+                break;
+
+            case "Ngày mượn":
+                timNM(txt);
+                break;
+
+            case "Ngày trả dự kiến":
+                timNTDK(txt);
+                break;
+
+            case "Trạng thái":
+                timTrangThai(txt);
+                break;
+
+            case "Mã độc giả":
+                timMDG(txt);
+                break;
+
+            case "Mã nhân viên":
+                timMNV(txt);
+                break;
+
+            default:
+                break;
+        }
     }
 
     private JPanel createInputRow(String labelText, JComponent component) {

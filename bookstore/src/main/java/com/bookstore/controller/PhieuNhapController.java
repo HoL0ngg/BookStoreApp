@@ -102,12 +102,6 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                 return;
             }
 
-            if (new TaiKhoanDTO().getMaNhomQuyen() == 3 || new TaiKhoanDTO().getMaNhomQuyen() == 2) {
-                JOptionPane.showMessageDialog(null, "Bạn không phải quản lý không thể sửa", "Thông báo",
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
             // Tạo dialog chỉnh sửa
             JDialog dialog = new JDialog((JFrame) null, "Sửa phiếu nhập", true);
             dialog.setSize(400, 300);
@@ -139,7 +133,6 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                     "Đã hoàn thành",
             };
             JComboBox<String> cbtrangthai = new JComboBox<>(TT);
-
             inputPanel.add(lblMpn);
             inputPanel.add(txtMpn);
             inputPanel.add(lblThoigian);
@@ -198,9 +191,9 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                                 JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-
+                    int selectedTT = cbtrangthai.getSelectedIndex();
                     // Tạo đối tượng PhieuNhapDTO để cập nhật
-                    PhieuNhapDTO updatePn = new PhieuNhapDTO(newMpn, thoigian, newMnv, newMncc, 1, 0);
+                    PhieuNhapDTO updatePn = new PhieuNhapDTO(newMpn, thoigian, newMnv, newMncc, 1, selectedTT);
                     boolean kq = pnbus.suaPhieuNhap(updatePn);
                     if (kq) {
                         JOptionPane.showMessageDialog(dialog, "Cập nhật thành công", "Thành công",

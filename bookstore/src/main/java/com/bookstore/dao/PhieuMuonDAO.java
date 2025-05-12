@@ -49,7 +49,8 @@ public class PhieuMuonDAO {
             stmt.setInt(4, phieuMuon.getTrangThai());
             stmt.setString(5, phieuMuon.getMaDocGia());
             stmt.setString(6, phieuMuon.getMaNhanVien());
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -58,19 +59,32 @@ public class PhieuMuonDAO {
 
     // Sửa phiếu mượn ( chỉ cho sửa ngày trả, mã nhân viên, mã độc giả )
     public boolean suaPhieuMuon(PhieuMuonDTO phieuMuon) {
-        String sql = "UPDATE PhieuMuon SET NgayMuon = ?, NgayTraDuKien = ?, TrangThai = ?, MaDocGia = ?, MaNhanVien = ? WHERE MaPhieuMuon = ?";
+        System.out.println("aaa" + phieuMuon.getTrangThai());
+        String sql = "UPDATE PhieuMuon SET NgayMuon = ?, NgayTraDuKien = ?, TrangThai = ?, MaDocGia = ?, MaNhanVien = ?, Status = ? WHERE MaPhieuMuon = ?";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDate(1, (Date) phieuMuon.getNgayMuon());
-            stmt.setDate(2, (Date) phieuMuon.getNgayTraDuKien());
+            // Chuyển đổi java.util.Date thành java.sql.Date cho NgayMuon
+            if (phieuMuon.getNgayMuon() != null) {
+                stmt.setDate(1, new java.sql.Date(phieuMuon.getNgayMuon().getTime()));
+            } else {
+                stmt.setDate(1, null);
+            }
+
+            // Chuyển đổi java.util.Date thành java.sql.Date cho NgayTraDuKien
+            if (phieuMuon.getNgayTraDuKien() != null) {
+                stmt.setDate(2, new java.sql.Date(phieuMuon.getNgayTraDuKien().getTime()));
+            } else {
+                stmt.setDate(2, null);
+            }
+
             stmt.setInt(3, phieuMuon.getTrangThai());
             stmt.setString(4, phieuMuon.getMaDocGia());
             stmt.setString(5, phieuMuon.getMaNhanVien());
-            stmt.setInt(6, phieuMuon.getMaPhieuMuon());
+            stmt.setBoolean(6, true);
+            stmt.setInt(7, phieuMuon.getMaPhieuMuon());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-
             return false;
         }
     }
@@ -126,7 +140,7 @@ public class PhieuMuonDAO {
                 PreparedStatement stmt = conn.prepareStatement(sql2)) {
             stmt.setString(1, mds);
             stmt.executeUpdate();
-        } catch (SQLException e2){
+        } catch (SQLException e2) {
             e2.printStackTrace();
         }
 

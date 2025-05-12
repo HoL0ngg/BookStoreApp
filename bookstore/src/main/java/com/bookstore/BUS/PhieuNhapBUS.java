@@ -42,7 +42,7 @@ public class PhieuNhapBUS {
 
     // hàm sửa phiếu nhập ( nhân viên chỉ được sửa khi phiếu nhập chưa duyệt )
     public boolean suaPhieuNhap(PhieuNhapDTO phieuNhap) {
-        if (phieuNhap.getTrangThai() == 0 && new TaiKhoanDTO().getMaNhomQuyen() == 2) {
+        if (phieuNhap.getTrangThai() == 0) {
             System.out.println("phieu nhap chua duyet va ng sua la nv");
             if (new PhieuNhapDAO().suaThongTinPhieuNhap(phieuNhap)) {
                 return true;

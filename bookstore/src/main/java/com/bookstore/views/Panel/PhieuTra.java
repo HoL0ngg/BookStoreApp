@@ -6,6 +6,9 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,9 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
-
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 
 import mdlaf.MaterialLookAndFeel;
@@ -40,6 +45,7 @@ public class PhieuTra extends JPanel {
     private JButton btnReverse, btnThem, btnSua, btnXoa;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
+    private Timer searchTimer;
 
     // khởi tạo
     public PhieuTra() {
@@ -85,6 +91,22 @@ public class PhieuTra extends JPanel {
         lbtimkiem.setBounds(20, 10, 100, 30);
         cbLuaChonTK.setBounds(120, 10, 150, 30);
         txtTimKiem.setBounds(280, 10, 150, 30);
+
+        txtTimKiem.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (searchTimer != null) {
+                    searchTimer.cancel();
+                }
+                searchTimer = new Timer();
+                searchTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        SwingUtilities.invokeLater(() -> phieuTraController.performSearch());
+                    }
+                }, 300);
+            }
+        });
 
         // phần sắp xếp
         cbSapXep = new JComboBox<>(LuaChonSapXep);

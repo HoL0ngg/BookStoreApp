@@ -3,9 +3,14 @@ package com.bookstore.views.Panel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
@@ -33,14 +39,14 @@ public class PhieuMuon extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     @SuppressWarnings("unused")
-    private JTextField txtMaPhieuTra, txtNgayTra, txtMaNV, txtMaDocGia, txtMaPhieuMuon;
+    private JTextField txtTimKiem, txtMaPhieuTra, txtNgayTra, txtMaNV, txtMaDocGia, txtMaPhieuMuon;
     private JComboBox<String> cbLuaChonTK;
     private JComboBox<String> cbSapXep;
-    private JTextField txtTimKiem;
     private PhieuMuonController phieumuoncontroller;
-    private JButton btnReverse, btnThem, btnSua, btnXoa, btnTimKiem;
+    private JButton btnReverse, btnThem, btnSua, btnXoa;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
+    private Timer searchTimer;
 
     public PhieuMuon() {
         phieumuoncontroller = new PhieuMuonController(this);
@@ -76,7 +82,6 @@ public class PhieuMuon extends JPanel {
         };
 
         String[] LuaChonSapXep = {
-                "Tất cả",
                 "Mã phiếu mượn",
                 "Ngày mượn",
                 "Ngày trả dự kiến",
@@ -89,11 +94,25 @@ public class PhieuMuon extends JPanel {
         cbLuaChonTK = new JComboBox<>(LuaChonTimKiem);
         txtTimKiem = new JTextField();
         JLabel lbtimkiem = new JLabel("Tìm kiếm theo ");
-        btnTimKiem = new JButton("Tìm");
         lbtimkiem.setBounds(20, 10, 100, 30);
         cbLuaChonTK.setBounds(120, 10, 150, 30);
         txtTimKiem.setBounds(280, 10, 150, 30);
-        btnTimKiem.setBounds(440, 10, 80, 30);
+
+        txtTimKiem.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (searchTimer != null) {
+                    searchTimer.cancel();
+                }
+                searchTimer = new Timer();
+                searchTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        SwingUtilities.invokeLater(() -> phieumuoncontroller.performSearch());
+                    }
+                }, 300);
+            }
+        });
 
         // phần sắp xếp
         cbSapXep = new JComboBox<>(LuaChonSapXep);
@@ -101,7 +120,6 @@ public class PhieuMuon extends JPanel {
         lbSapXep.setBounds(590, 10, 100, 30);
         cbSapXep.setBounds(690, 10, 150, 30);
 
-        btnTimKiem.addActionListener(phieumuoncontroller);
         cbSapXep.addItemListener(phieumuoncontroller);
 
         // button đổi chiều
@@ -113,7 +131,6 @@ public class PhieuMuon extends JPanel {
         search.add(lbtimkiem);
         search.add(cbLuaChonTK);
         search.add(txtTimKiem);
-        search.add(btnTimKiem);
 
         search.add(lbSapXep);
         search.add(cbSapXep);
@@ -219,7 +236,7 @@ public class PhieuMuon extends JPanel {
                     pm.getMaPhieuMuon(),
                     sdf.format(pm.getNgayMuon()),
                     sdf.format(pm.getNgayTraDuKien()),
-                    pm.getTrangThai(),
+                    pm.getTrangThai() == 1 ? "Đã hoàn thành" : "Chưa hoàn thành",
                     pm.getMaDocGia(),
                     pm.getMaNhanVien(),
                     "Chi tiết"
@@ -337,14 +354,6 @@ public class PhieuMuon extends JPanel {
 
     public void setBtnXoa(JButton btnXoa) {
         this.btnXoa = btnXoa;
-    }
-
-    public JButton getBtnTimKiem() {
-        return btnTimKiem;
-    }
-
-    public void setBtnTimKiem(JButton btnTimKiem) {
-        this.btnTimKiem = btnTimKiem;
     }
 
     public JTextField getTxtTimKiem() {

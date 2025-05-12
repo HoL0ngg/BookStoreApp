@@ -19,6 +19,7 @@ public class PhieuPhatDTO {
         this.TrangThai = TrangThai;
         this.MaDocGia = MaDocGia;
         this.MaCTPhieuTra = MaCTPhieuTra;
+        this.status = status;
     }
 
     public int getMaPhieuPhat() {

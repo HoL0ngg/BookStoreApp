@@ -116,10 +116,10 @@ public class TaiKhoan extends JPanel {
 
         btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 11, 2)) {
-                    JOptionPane.showMessageDialog(TaiKhoan.this, "Bạn không có quyền thêm tài khoản.");
-                    return;
-                }
+                // if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 11, 2)) {
+                //     JOptionPane.showMessageDialog(TaiKhoan.this, "Bạn không có quyền thêm tài khoản.");
+                //     return;
+                // }
                 TaiKhoanDialog dialog = new TaiKhoanDialog((Frame) SwingUtilities.getWindowAncestor(TaiKhoan.this),
                         TaiKhoanDialog.Mode.ADD, null);
                 dialog.setVisible(true);

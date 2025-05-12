@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class PhieuMuonDTO {
-    
+
     private int MaPhieuMuon;
     private Date NgayMuon;
     private Date NgayTraDuKien;
@@ -14,7 +14,7 @@ public class PhieuMuonDTO {
     private Boolean Status;
 
     public PhieuMuonDTO(int MaPhieuMuon, Date NgayMuon, Date NgayTraDuKien, int TrangThai,
-                    String MaDocGia, String MaNhanVien, Boolean status){
+            String MaDocGia, String MaNhanVien, Boolean status) {
         this.MaPhieuMuon = MaPhieuMuon;
         this.NgayMuon = NgayMuon;
         this.NgayTraDuKien = NgayTraDuKien;
@@ -22,6 +22,9 @@ public class PhieuMuonDTO {
         this.MaDocGia = MaDocGia;
         this.MaNhanVien = MaNhanVien;
         this.Status = status;
+    }
+
+    public PhieuMuonDTO() {
     }
 
     public int getMaPhieuMuon() {
@@ -45,11 +48,11 @@ public class PhieuMuonDTO {
         return NgayTraDuKien;
     }
 
-    private void setNgayTraDuKien(Date ngayMuon) {
+    public void setNgayTraDuKien(Date ngayMuon) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(ngayMuon);
         cal.add(Calendar.DAY_OF_MONTH, 15);
-        this.NgayTraDuKien = cal.getTime(); 
+        this.NgayTraDuKien = cal.getTime();
     }
 
     public int getTrangThai() {
@@ -76,11 +79,11 @@ public class PhieuMuonDTO {
         MaNhanVien = maNhanVien;
     }
 
-    public boolean getStatus(){
+    public boolean getStatus() {
         return Status;
     }
 
-    public void setStatus(boolean status){
+    public void setStatus(boolean status) {
         Status = status;
     }
 
