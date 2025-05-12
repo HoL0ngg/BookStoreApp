@@ -1,5 +1,6 @@
 package com.bookstore.views.Panel;
 
+import com.bookstore.BUS.TacGiaBUS;
 import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.dao.TacGiaDAO;
 
@@ -13,7 +14,7 @@ import javax.swing.*;
 public class AddEditTacGiaDialog extends JDialog {
     private JTextField txtMaTacGia, txtTenTacGia, txtNamSinh, txtQuocTich;
     private JButton btnSave;
-
+    private TacGiaBUS bus = new TacGiaBUS();
     private TacGiaDTO tacGia; // Nếu null => thêm mới
 
     public AddEditTacGiaDialog(TacGiaDTO tacGia) {
@@ -51,7 +52,6 @@ public class AddEditTacGiaDialog extends JDialog {
         buttonPanel.add(btnSave);
         add(buttonPanel, BorderLayout.SOUTH); // network
 
-
         if (tacGia != null) { // Nếu thông tin đã tồn tại
             txtMaTacGia.setText(tacGia.getMaTacGia());
             txtMaTacGia.setEnabled(false); // Block primary key
@@ -59,7 +59,6 @@ public class AddEditTacGiaDialog extends JDialog {
             txtNamSinh.setText(String.valueOf(tacGia.getNamSinh())); 
             txtQuocTich.setText(tacGia.getQuocTich()); 
         }
-
         btnSave.addActionListener(e -> saveData()); // 
     }
 
@@ -79,7 +78,7 @@ public class AddEditTacGiaDialog extends JDialog {
         // Check dinh dang and ton tai trong csdl
         if (!ma.matches("^TG\\d+$")) {
             errorMessage.append("- Mã tác giả phải bắt đầu bằng 'TG' theo sau là số.\n");
-        } else if (tacGia == null && dao.selectById(ma) != null) {
+        } else if (tacGia == null && dao.selectById(ma) != null) { // Tacgia == null have "add"
             errorMessage.append("- Mã tác giả đã tồn tại trong hệ thống.\n");
         }
 
@@ -93,10 +92,10 @@ public class AddEditTacGiaDialog extends JDialog {
         try {
             namSinh = Integer.parseInt(namSinhStr);
             if (namSinh < 1600 || namSinh > 2004) {
-                errorMessage.append( "- Năm sinh phải từ 1600 đến 2004");
+                errorMessage.append( "- Năm sinh phải từ 1600 đến 2004\n");
             }
         } catch (NumberFormatException e) {
-            errorMessage.append( "- Năm sinh phải là số hợp lệ!");
+            errorMessage.append( "- Năm sinh phải là số hợp lệ!\n");
         }
 
         // Kiểm tra quoc tich không chứa ký tự đặc biệt

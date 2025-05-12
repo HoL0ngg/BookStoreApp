@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+
+import com.bookstore.BUS.TacGiaBUS;
 import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.dao.TacGiaDAO;
 import com.bookstore.utils.ExcelExporter;
@@ -20,6 +22,7 @@ public class TacGia extends JPanel {
     private TacGiaDTO selectedTacGia = null;
     private String currentSearchType = "Tất cả";
     private String currentKeyword = "";
+    private TacGiaBUS bus = new TacGiaBUS(); 
 
     private JPanel contentPanel; // chứa danh sách tác giả
 
@@ -66,17 +69,14 @@ public class TacGia extends JPanel {
                         "Bạn có chắc chắn muốn xóa tác giả này?", "Xác nhận",
                         JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    TacGiaDAO dao = new TacGiaDAO();
-                    int result = dao.delete(selectedTacGia.getMaTacGia()); 
-                    if (result > 0) {
+                boolean result = bus.deleteTacGia(selectedTacGia.getMaTacGia());
+                    if (result) {
                         JOptionPane.showMessageDialog(this, "Xóa thành công!");
                         loadData(currentSearchType, currentKeyword);
                     } else {
                         JOptionPane.showMessageDialog(this, "Xóa thất bại!");
                     }
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn tác giả để xóa.");
             }
         });
         // Refesh
@@ -105,7 +105,7 @@ public class TacGia extends JPanel {
                     if (!path.endsWith(".xlsx")) {
                         path += ".xlsx";
                     }
-                            ExcelExporter.exportToExcel(new TacGiaDAO().selectAll(), path);
+                           ExcelExporter.exportToExcel(bus.getAllTacGia(), path);
         JOptionPane.showMessageDialog(TacGia.this, "Xuất file thành công!", "Thông báo",
                 JOptionPane.INFORMATION_MESSAGE);
 
@@ -149,7 +149,7 @@ public class TacGia extends JPanel {
         contentPanel.removeAll(); // ???
         selectedTacGia = null;
 
-        List<TacGiaDTO> list = new TacGiaDAO().selectAll();
+        List<TacGiaDTO> list = bus.getAllTacGia(); 
 
         if (!searchType.equals("Tất cả") && !keyword.isEmpty()) {
             list = filter(list, searchType, keyword);
