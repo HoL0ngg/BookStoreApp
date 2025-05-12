@@ -3,11 +3,10 @@ package com.bookstore.views.Panel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-import com.bookstore.BUS.NCCBUS;
-import com.bookstore.DTO.NCCDTO;
-import com.bookstore.dao.NCCDAO;
+import com.bookstore.BUS.PhanQuyenBUS;
+import com.bookstore.DTO.NhomQuyenDTO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.utils.ExcelExporter;
-import com.bookstore.views.Dialog.NCCDialog;
 import com.bookstore.views.Dialog.PhanQuyenDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
@@ -26,7 +25,7 @@ public class PhanQuyen extends JPanel {
     private JPanel btnThem, btnSua, btnXoa, btnChiTiet, btnXuatExcel, btnLamMoi;
     private Timer searchTimer;
 
-    private NCCBUS nccBUS = new NCCBUS();
+    private PhanQuyenBUS phanQuyenBUS = new PhanQuyenBUS();
 
     public PhanQuyen() {
         initComponents();
@@ -87,13 +86,18 @@ public class PhanQuyen extends JPanel {
         String[] columns = {
                 "Mã nhóm quyền", "Tên nhóm quyền"
         };
-        Object[][] data = new Object[nccBUS.getList().size()][columns.length];
-        for (int i = 0; i < nccBUS.getList().size(); i++) {
-            data[i][0] = nccBUS.getList().get(i).getMaNCC();
-            data[i][1] = nccBUS.getList().get(i).getTenNCC();
+        Object[][] data = new Object[phanQuyenBUS.getList().size()][columns.length];
+        for (int i = 0; i < phanQuyenBUS.getList().size(); i++) {
+            data[i][0] = phanQuyenBUS.getList().get(i).getMaNhomQuyen();
+            data[i][1] = phanQuyenBUS.getList().get(i).getTenNhomQuyen();
         }
 
-        tableModel = new DefaultTableModel(data, columns);
+        tableModel = new DefaultTableModel(data, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Disable editing
+            }
+        };
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
@@ -101,16 +105,9 @@ public class PhanQuyen extends JPanel {
         btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 PhanQuyenDialog dialog = new PhanQuyenDialog(((Frame) SwingUtilities.getWindowAncestor(PhanQuyen.this)),
-                        PhanQuyenDialog.Mode.ADD, null);
+                        PhanQuyenDialog.Mode.ADD, 0);
                 dialog.setVisible(true);
-                // if (dialog.isSaved()) {
-                // NCCDTO ncc = new NCCDTO(dialog.getMaNCC(), dialog.getTenNCC(),
-                // dialog.getSoDienThoai(),
-                // dialog.getEmail(), dialog.getDiaChi(), dialog.getTrangThai() == "Hoạt động" ?
-                // 1 : 0);
-                // nccBUS.add(ncc);
-                // updateData(nccBUS.getList());
-                // }
+                updateData(phanQuyenBUS.getList());
             }
         });
 
@@ -118,23 +115,15 @@ public class PhanQuyen extends JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
-                    String maNhomQuyen = (String) tableModel.getValueAt(selectedRow, 0);
+                    Integer maNhomQuyen = (Integer) tableModel.getValueAt(selectedRow, 0);
                     // NCCDTO ncc = new NCCDAO().selectById(maNCC);
                     PhanQuyenDialog dialog = new PhanQuyenDialog(
                             ((Frame) SwingUtilities.getWindowAncestor(PhanQuyen.this)),
                             PhanQuyenDialog.Mode.EDIT, maNhomQuyen);
                     dialog.setVisible(true);
-                    // if (dialog.isSaved()) {
-                    // ncc.setTenNCC(dialog.getTenNCC());
-                    // ncc.setSoDienThoai(dialog.getSoDienThoai());
-                    // ncc.setEmail(dialog.getEmail());
-                    // ncc.setDiaChi(dialog.getDiaChi());
-                    // ncc.setStatus(dialog.getTrangThai() == "Hoạt động" ? 1 : 0);
-                    // nccBUS.update(ncc);
-                    // updateData(nccBUS.getList());
-                    // }
+                    updateData(phanQuyenBUS.getList());
                 } else {
-                    JOptionPane.showMessageDialog(PhanQuyen.this, "Vui lòng chọn nhà cung cấp để sửa.");
+                    JOptionPane.showMessageDialog(PhanQuyen.this, "Vui lòng chọn nhóm quyền để sửa.");
                 }
             }
         });
@@ -143,16 +132,15 @@ public class PhanQuyen extends JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
-                    String maNhomQuyen = (String) tableModel.getValueAt(selectedRow, 0);
+                    Integer maNhomQuyen = (Integer) tableModel.getValueAt(selectedRow, 0);
                     int confirm = JOptionPane.showConfirmDialog(PhanQuyen.this,
                             "Bạn có chắc chắn muốn xóa nhà cung cấp này không?", "Xác nhận",
                             JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
-                        // nccBUS.delete();
-                        // updateData(nccBUS.getList());
+                        new NhomQuyenDAO().delete(maNhomQuyen);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(PhanQuyen.this, "Vui lòng chọn nhà cung cấp để xóa.");
+                    JOptionPane.showMessageDialog(PhanQuyen.this, "Vui lòng chọn nhóm quyền để xóa.");
                 }
             }
         });
@@ -161,13 +149,13 @@ public class PhanQuyen extends JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
-                    String maNhomQuyen = (String) tableModel.getValueAt(selectedRow, 0);
+                    Integer maNhomQuyen = (Integer) tableModel.getValueAt(selectedRow, 0);
                     PhanQuyenDialog dialog = new PhanQuyenDialog(
                             ((Frame) SwingUtilities.getWindowAncestor(PhanQuyen.this)),
                             PhanQuyenDialog.Mode.VIEW, maNhomQuyen);
                     dialog.setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(PhanQuyen.this, "Vui lòng chọn nhà cung cấp để xem chi tiết.");
+                    JOptionPane.showMessageDialog(PhanQuyen.this, "Vui lòng chọn nhóm quyền để xem chi tiết.");
                 }
             }
         });
@@ -175,7 +163,7 @@ public class PhanQuyen extends JPanel {
         btnLamMoi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtTimKiem.setText("");
-                updateData(nccBUS.getList());
+                updateData(phanQuyenBUS.getList());
             }
         });
         btnXuatExcel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -187,7 +175,7 @@ public class PhanQuyen extends JPanel {
                     if (!path.endsWith(".xlsx")) {
                         path += ".xlsx";
                     }
-                    ExcelExporter.exportToExcel(nccBUS.getList(), path);
+                    ExcelExporter.exportToExcel(phanQuyenBUS.getList(), path);
                     JOptionPane.showMessageDialog(PhanQuyen.this, "Xuất file thành công!", "Thông báo",
                             JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -200,16 +188,16 @@ public class PhanQuyen extends JPanel {
         String type = (String) this.cboFilter.getSelectedItem();
         String txt = this.txtTimKiem.getText().trim();
         System.out.println("Đang tìm kiếm: " + txt + " - Loại: " + type);
-        List<NCCDTO> result = nccBUS.search(txt, type);
+        List<NhomQuyenDTO> result = phanQuyenBUS.search(txt, type);
         updateData(result);
     }
 
-    private void updateData(List<NCCDTO> result) {
+    private void updateData(List<NhomQuyenDTO> result) {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
-        for (NCCDTO ncc : result) {
+        for (NhomQuyenDTO ncc : result) {
             Object[] row = new Object[6];
-            row[0] = ncc.getMaNCC();
-            row[1] = ncc.getTenNCC();
+            row[0] = ncc.getMaNhomQuyen();
+            row[1] = ncc.getTenNhomQuyen();
             tableModel.addRow(row);
         }
     }

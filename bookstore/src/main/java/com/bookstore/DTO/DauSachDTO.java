@@ -12,6 +12,7 @@ public class DauSachDTO {
     private int SoLuong;
     private int SoTrang;
     private List<TheLoaiDTO> listTheLoai;
+    private List<TacGiaDTO> listTacGia;
 
     public DauSachDTO(String maDauSach, String tenDauSach, String hinhAnh, String nhaXuatBan, int namXuatBan,
             String ngonNgu, int soLuong, int soTrang) {
@@ -117,4 +118,13 @@ public class DauSachDTO {
         return (getMaDauSach() != null ? getMaDauSach() : "") + " - " +
                 (getTenDauSach() != null ? getTenDauSach() : "");
     }
+
+    public List<TacGiaDTO> getListTacGia() {
+        return listTacGia;
+    }
+
+    public void setListTacGia(List<TacGiaDTO> listTacGia) {
+        this.listTacGia = listTacGia;
+    }
+
 }

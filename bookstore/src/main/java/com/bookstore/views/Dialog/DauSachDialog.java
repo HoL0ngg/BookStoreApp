@@ -2,10 +2,13 @@ package com.bookstore.views.Dialog;
 
 import javax.swing.*;
 
-import com.bookstore.BUS.DauSachBUS;
 import com.bookstore.DTO.DauSachDTO;
+import com.bookstore.DTO.SachDTO;
+import com.bookstore.DTO.TacGiaDTO;
+import com.bookstore.DTO.TheLoaiDTO;
 import com.bookstore.dao.DauSachDAO;
 import com.bookstore.dao.NCCDAO;
+import com.bookstore.dao.SachDAO;
 import com.bookstore.dao.TacGiaDAO;
 import com.bookstore.dao.TheLoaiDAO;
 
@@ -15,6 +18,10 @@ import java.util.*;
 import java.util.List;
 
 public class DauSachDialog extends JDialog {
+    public enum Mode {
+        ADD, EDIT, VIEW
+    }
+
     private JLabel lblHinhAnh;
     private JTextField txtTenDauSach, txtNamXuatBan;
     private JComboBox<String> cboNhaXuatBan, cboNgonNgu, cboTacGia, cboTheLoai;
@@ -25,9 +32,9 @@ public class DauSachDialog extends JDialog {
     private Map<String, String> mapTacGia; // tên -> id
     private Map<String, Integer> mapTheLoai; // tên -> id
 
-    public DauSachDialog(Frame parent) {
+    public DauSachDialog(Frame parent, Mode mode, DauSachDTO ds) {
         super(parent, "Thêm Đầu Sách", true);
-        setSize(700, 550);
+        setSize(950, 750);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
 
@@ -37,8 +44,17 @@ public class DauSachDialog extends JDialog {
         panelMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // === HÌNH ẢNH ===
-        lblHinhAnh = new JLabel("Chưa có ảnh", SwingConstants.CENTER);
-        lblHinhAnh.setPreferredSize(new Dimension(200, 250));
+        if (ds == null) {
+            duongDanHinh = "D:\\VSCode\\Lap trinh java\\BookStoreApp\\bookstore\\src\\main\\resources\\images\\default.png";
+        } else {
+            duongDanHinh = "D:\\VSCode\\Lap trinh java\\BookStoreApp\\bookstore\\src\\main\\resources\\images\\"
+                    + ds.getHinhAnh();
+        }
+        ImageIcon icon = new ImageIcon(
+                new ImageIcon(duongDanHinh).getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH));
+        System.out.println(duongDanHinh);
+        lblHinhAnh = new JLabel(icon, SwingConstants.CENTER);
+        lblHinhAnh.setPreferredSize(new Dimension(300, 250));
         lblHinhAnh.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
         btnChonHinh = new JButton("Chọn hình ảnh");
@@ -47,8 +63,10 @@ public class DauSachDialog extends JDialog {
         btnChonHinh.setFocusPainted(false);
 
         JPanel panelHinh = new JPanel(new BorderLayout(5, 5));
+        panelHinh.setPreferredSize(new Dimension(300, 250));
         panelHinh.add(lblHinhAnh, BorderLayout.CENTER);
-        panelHinh.add(btnChonHinh, BorderLayout.SOUTH);
+        if (mode != Mode.VIEW)
+            panelHinh.add(btnChonHinh, BorderLayout.SOUTH);
 
         // === THÔNG TIN ===
         JPanel panelThongTin = new JPanel(new GridBagLayout());
@@ -179,6 +197,48 @@ public class DauSachDialog extends JDialog {
         gbc.weighty = 1; // để tác giả có không gian dọc
         panelThongTin.add(panelTacGia, gbc);
 
+        if (mode == Mode.VIEW)
+            disableAll();
+
+        if (ds != null) {
+            txtTenDauSach.setText(ds.getTenDauSach());
+            txtNamXuatBan.setText(String.valueOf(ds.getNamXuatBan()));
+            cboNhaXuatBan.setSelectedItem(ds.getNhaXuatBan());
+            cboNgonNgu.setSelectedItem(ds.getNgonNgu());
+            for (TacGiaDTO tacgia : ds.getListTacGia()) {
+                String tenTacGia = tacgia.getTenTacGia();
+                listModelTacGia.addElement(tenTacGia);
+            }
+            for (TheLoaiDTO tl : ds.getListTheLoai()) {
+                String tenTheLoai = tl.getTenTheLoai();
+                listModelTheLoai.addElement(tenTheLoai);
+            }
+        }
+
+        // Lấy danh sách sách theo mã đầu sách
+        if (ds != null) {
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.setPreferredSize(new Dimension(0, 200));
+            panel.setBorder(BorderFactory.createTitledBorder("Danh sách sách thuộc đầu sách"));
+            List<SachDTO> danhSach = new SachDAO().selectByDauSach(ds.getMaDauSach());
+
+            // Tạo dữ liệu cho bảng
+            String[] columnNames = { "Mã sách", "Ngày nhập" };
+            Object[][] data = new Object[danhSach.size()][columnNames.length];
+
+            for (int i = 0; i < danhSach.size(); i++) {
+                SachDTO s = danhSach.get(i);
+                data[i][0] = s.getMaSach();
+                data[i][1] = s.getNgayNhap();
+            }
+
+            // Tạo JTable và thêm vào JScrollPane
+            JTable table = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(table);
+
+            panel.add(scrollPane, BorderLayout.CENTER);
+            panelMain.add(panel, BorderLayout.SOUTH);
+        }
         // === BOTTOM BUTTON ===
         btnLuu = new JButton("Lưu");
         btnHuy = new JButton("Hủy");
@@ -206,11 +266,12 @@ public class DauSachDialog extends JDialog {
             if (result == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
                 String duongDanHinhRill = file.getAbsolutePath();
+                System.out.println(duongDanHinhRill);
                 // File file2 = new File(duongDanHinh);
                 duongDanHinh = file.getName(); // Ví dụ: \img2.jpg
-                ImageIcon icon = new ImageIcon(
-                        new ImageIcon(duongDanHinhRill).getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH));
-                lblHinhAnh.setIcon(icon);
+                ImageIcon icon2 = new ImageIcon(
+                        new ImageIcon(duongDanHinhRill).getImage().getScaledInstance(300, 250, Image.SCALE_SMOOTH));
+                lblHinhAnh.setIcon(icon2);
                 lblHinhAnh.setText(null);
             }
         });
@@ -338,5 +399,19 @@ public class DauSachDialog extends JDialog {
         int count = new DauSachDAO().selectID(); // Ví dụ: trả về 1 nếu có 1 đầu sách
         int nextId = count + 1; // Tăng ID tiếp theo
         return String.format("DS%03d", nextId); // Format thành DS001, DS010, DS123,...
+    }
+
+    private void disableAll() {
+        txtTenDauSach.setEnabled(false);
+        txtNamXuatBan.setEnabled(false);
+        cboNhaXuatBan.setEnabled(false);
+        cboNgonNgu.setEnabled(false);
+        cboTacGia.setEnabled(false);
+        cboTheLoai.setEnabled(false);
+        btnChonHinh.setEnabled(false);
+        btnThemTacGia.setEnabled(false);
+        btnXoaTacGia.setEnabled(false);
+        btnThemTheLoai.setEnabled(false);
+        btnXoaTheLoai.setEnabled(false);
     }
 }

@@ -26,8 +26,10 @@ import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.BUS.TaiKhoanBUS;
 import com.bookstore.DTO.TaiKhoanDTO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.TaiKhoanDAO;
 import com.bookstore.utils.ExcelExporter;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Dialog.TaiKhoanDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.Frame;
@@ -114,6 +116,10 @@ public class TaiKhoan extends JPanel {
 
         btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 11, 2)) {
+                    JOptionPane.showMessageDialog(TaiKhoan.this, "Bạn không có quyền thêm tài khoản.");
+                    return;
+                }
                 TaiKhoanDialog dialog = new TaiKhoanDialog((Frame) SwingUtilities.getWindowAncestor(TaiKhoan.this),
                         TaiKhoanDialog.Mode.ADD, null);
                 dialog.setVisible(true);
@@ -132,6 +138,10 @@ public class TaiKhoan extends JPanel {
 
         btnSua.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 11, 3)) {
+                    JOptionPane.showMessageDialog(TaiKhoan.this, "Bạn không có quyền sửa tài khoản.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     String TenDangNhap = (String) tableModel.getValueAt(selectedRow, 0);
@@ -157,6 +167,10 @@ public class TaiKhoan extends JPanel {
 
         btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 11, 4)) {
+                    JOptionPane.showMessageDialog(TaiKhoan.this, "Bạn không có quyền xóa tài khoản.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     String TenDangNhap = (String) tableModel.getValueAt(selectedRow, 0);
@@ -175,6 +189,10 @@ public class TaiKhoan extends JPanel {
 
         btnChiTiet.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 11, 1)) {
+                    JOptionPane.showMessageDialog(TaiKhoan.this, "Bạn không có quyền xem chi tiết tài khoản.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     String TenDangNhap = (String) tableModel.getValueAt(selectedRow, 0);

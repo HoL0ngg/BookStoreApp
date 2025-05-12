@@ -59,6 +59,28 @@ public class TacGiaDAO implements IBaseDAO_T<TacGiaDTO> {
         return result;
     }
 
+    public List<TacGiaDTO> getTacGiaByMaSach(String maSach) {
+        List<TacGiaDTO> listTacGia = new ArrayList<>();
+        String query = "SELECT tg.* FROM tacgia tg " +
+                "JOIN tacgia_dausach tgs ON tg.MaTacGia = tgs.MaTacGia " +
+                "WHERE tgs.MaDauSach = ? AND tgs.Status = 1";
+
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, maSach);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    TacGiaDTO tacGia = new TacGiaDTO(rs.getString("MaTacGia"), rs.getString("TenTacGia"),
+                            rs.getInt("NamSinh"), rs.getString("QuocTich"));
+                    listTacGia.add(tacGia);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listTacGia;
+    }
     // @Override
     // public int delete(int id) {
     // int result = 0;
