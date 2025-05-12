@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
 import com.bookstore.controller.MainController;
-import com.bookstore.dao.PhanQuyenDAO;
+import com.bookstore.dao.NhomQuyenDAO;
 // import com.bookstore.service.SetLogoService;
 import com.bookstore.utils.NguoiDungDangNhap;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -129,10 +129,8 @@ public class MainFrame extends JFrame {
         TenNguoiDungLabel.setForeground(Color.black);
         TenNguoiDungLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         TenNguoiDungLabel.setBounds(100, 0, 200, 80);
-        String hihi = new PhanQuyenDAO().getTenNhomQuyen(NguoiDungDangNhap.getInstance().getMaNhomQuyen());
-        System.out.println(hihi);
         JLabel ChucVuLabel = new JLabel(
-                new PhanQuyenDAO().getTenNhomQuyen(NguoiDungDangNhap.getInstance().getMaNhomQuyen()), JLabel.LEADING);
+                new NhomQuyenDAO().getTenNhomQuyen(NguoiDungDangNhap.getInstance().getMaNhomQuyen()), JLabel.LEADING);
         ChucVuLabel.setForeground(Color.black);
         ChucVuLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         ChucVuLabel.setBounds(100, 20, 200, 90);

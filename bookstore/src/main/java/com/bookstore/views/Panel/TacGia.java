@@ -28,15 +28,15 @@ public class TacGia extends JPanel {
     }
 
     public void initComponent() {
-        this.removeAll();   
-        this.setBackground(new Color( 248, 249, 249 ));
+        this.removeAll();
+        this.setBackground(new Color(248, 249, 249));
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setPreferredSize(new Dimension(900, 600));
 
         Header header = new Header();
         header.setPreferredSize(new Dimension(900, 100));
         header.setMaximumSize(new Dimension(900, 100));
-        header.setBackground(new Color(  234, 237, 237));
+        header.setBackground(new Color(234, 237, 237));
         header.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         add(Box.createVerticalStrut(15));
@@ -66,7 +66,7 @@ public class TacGia extends JPanel {
                         JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     TacGiaDAO dao = new TacGiaDAO();
-                    int result = dao.delete(selectedTacGia.getMaTacGia()); 
+                    int result = dao.delete(selectedTacGia.getMaTacGia());
                     if (result > 0) {
                         JOptionPane.showMessageDialog(this, "Xóa thành công!");
                         loadData(currentSearchType, currentKeyword);
@@ -91,11 +91,9 @@ public class TacGia extends JPanel {
             if (selectedTacGia != null) {
                 new Detail_TacGia(null, selectedTacGia.getMaTacGia(), selectedTacGia.getTenTacGia()).setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(this,"Vui lòng chọn một tác giả để xem chi tiết.");
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một tác giả để xem chi tiết.");
             }
         });
-
-        
 
         // Tiêu đề
         JPanel titlePanel = new JPanel(new GridLayout(1, 4, 10, 0));
@@ -120,7 +118,7 @@ public class TacGia extends JPanel {
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBorder(null);
         scrollPane.setPreferredSize(new Dimension(900, 400));
-        
+
         scrollPane.getVerticalScrollBar().setUnitIncrement(16); // speed scroll
 
         add(scrollPane);
@@ -134,9 +132,9 @@ public class TacGia extends JPanel {
 
         if (!searchType.equals("Tất cả") && !keyword.isEmpty()) {
             list = filter(list, searchType, keyword);
-        }   // ??
+        } // ??
 
-        List<JPanel> rowPanels = new ArrayList<>();   
+        List<JPanel> rowPanels = new ArrayList<>();
         for (TacGiaDTO tg : list) {
             JPanel rowPanel = new JPanel(new GridLayout(1, 4, 10, 0));
             rowPanel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Change Mouse Hand
@@ -200,7 +198,8 @@ public class TacGia extends JPanel {
                 filteredList.add(tg);
             } else if (searchType.equals("Ngày sinh") && String.valueOf(tg.getNamSinh()).contains(keyword)) {
                 filteredList.add(tg);
-            } else if (searchType.equals("Quốc tịch") && tg.getQuocTich().toLowerCase().contains(keyword.toLowerCase())) {
+            } else if (searchType.equals("Quốc tịch")
+                    && tg.getQuocTich().toLowerCase().contains(keyword.toLowerCase())) {
                 filteredList.add(tg);
             }
         }
@@ -224,8 +223,5 @@ public class TacGia extends JPanel {
     }
 }
 
-
 // can edit lai color
 // kich thuoc add/edit can to ra them
-
-

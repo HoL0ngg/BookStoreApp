@@ -28,9 +28,10 @@ import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.BUS.DauSachBUS;
 import com.bookstore.DTO.DauSachDTO;
-import com.bookstore.controller.SachController;
 import com.bookstore.dao.DauSachDAO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.utils.ExcelExporter;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Dialog.DauSachDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.Frame;
@@ -141,6 +142,10 @@ public class Sach extends JPanel {
 
         btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 2)) {
+                    JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền thêm đầu sách.");
+                    return;
+                }
                 new DauSachDialog(((Frame) SwingUtilities.getWindowAncestor(Sach.this)),
                         DauSachDialog.Mode.ADD, null).setVisible(true);
             }
@@ -148,6 +153,10 @@ public class Sach extends JPanel {
 
         btnSua.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 3)) {
+                    JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền sửa đầu sách.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     String maDauSach = (String) tableModel.getValueAt(selectedRow, 0);
@@ -162,6 +171,10 @@ public class Sach extends JPanel {
 
         btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 4)) {
+                    JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền xóa đầu sách.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     String maDauSach = (String) tableModel.getValueAt(selectedRow, 0);
@@ -180,6 +193,10 @@ public class Sach extends JPanel {
 
         btnChiTiet.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 1)) {
+                    JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền xem chi tiết đầu sách.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     String maDauSach = (String) tableModel.getValueAt(selectedRow, 0);

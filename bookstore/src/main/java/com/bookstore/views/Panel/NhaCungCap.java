@@ -6,7 +6,9 @@ import javax.swing.table.DefaultTableModel;
 import com.bookstore.BUS.NCCBUS;
 import com.bookstore.DTO.NCCDTO;
 import com.bookstore.dao.NCCDAO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.utils.ExcelExporter;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Dialog.NCCDialog;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
@@ -99,13 +101,22 @@ public class NhaCungCap extends JPanel {
             data[i][5] = nccBUS.getList().get(i).getStatus() == 1 ? "Hoạt động" : "Ngừng hoạt động";
         }
 
-        tableModel = new DefaultTableModel(data, columns);
+        tableModel = new DefaultTableModel(data, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
         btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 2)) {
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền thêm nhà cung cấp.");
+                    return;
+                }
                 NCCDialog dialog = new NCCDialog(((Frame) SwingUtilities.getWindowAncestor(NhaCungCap.this)),
                         NCCDialog.Mode.ADD, null);
                 dialog.setVisible(true);
@@ -120,6 +131,10 @@ public class NhaCungCap extends JPanel {
 
         btnSua.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 3)) {
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền sửa nhà cung cấp.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     int maNCC = (int) tableModel.getValueAt(selectedRow, 0);
@@ -144,6 +159,10 @@ public class NhaCungCap extends JPanel {
 
         btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 4)) {
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền xóa nhà cung cấp.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     int maNCC = (int) tableModel.getValueAt(selectedRow, 0);
@@ -162,6 +181,10 @@ public class NhaCungCap extends JPanel {
 
         btnChiTiet.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 1)) {
+                    JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền xem chi tiết nhà cung cấp.");
+                    return;
+                }
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     int maNCC = (int) tableModel.getValueAt(selectedRow, 0);

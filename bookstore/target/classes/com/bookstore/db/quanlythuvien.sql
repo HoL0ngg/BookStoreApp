@@ -41,10 +41,17 @@ CREATE TABLE `chucnang` (
 --
 
 INSERT INTO `chucnang` (`MaChucNang`, `TenChucNang`, `Status`) VALUES
-(1, 'Xem', 1),
-(2, 'Them', 1),
-(3, 'Sua', 1),
-(4, 'Xoa', 1);
+(1, 'Quản lý sách', 1),
+(2, 'Quản lý tác giả', 1),
+(3, 'Quản lý độc giả', 1),
+(4, 'Quản lý nhà cung cấp', 1),
+(5, 'Quản lý phiếu nhập', 1),
+(6, 'Quản lý phiếu mượn', 1),
+(7, 'Quản lý phiếu trả', 1),
+(8, 'Quản lý phiếu huỷ', 1),
+(9, 'Quản lý phiếu phạt', 1),
+(10, 'Quản lý phân quyền', 1),
+(11, 'Quản lý tài khoản', 1);
 
 -- --------------------------------------------------------
 
@@ -400,9 +407,9 @@ CREATE TABLE `nhomquyen` (
 --
 
 INSERT INTO `nhomquyen` (`MaNhomQuyen`, `TenNhomQuyen`, `Status`) VALUES
-(1, 'QuanLy', 1),
-(2, 'NhanVien', 1),
-(3, 'DocGia', 1);
+(1, 'Admin', 1),
+(2, 'Nhân viên kho', 1),
+(3, 'Quản lý kho', 1);
 
 -- --------------------------------------------------------
 
@@ -413,6 +420,10 @@ INSERT INTO `nhomquyen` (`MaNhomQuyen`, `TenNhomQuyen`, `Status`) VALUES
 CREATE TABLE `nhomquyen_chucnang` (
   `MaNhomQuyen` int(11) NOT NULL,
   `MaChucNang` int(11) NOT NULL,
+  `Xem` boolean DEFAULT 0,
+  `Them` boolean DEFAULT 0,
+  `Sua` boolean DEFAULT 0,
+  `Xoa` boolean DEFAULT 0,
   `Status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -420,15 +431,40 @@ CREATE TABLE `nhomquyen_chucnang` (
 -- Đang đổ dữ liệu cho bảng `nhomquyen_chucnang`
 --
 
-INSERT INTO `nhomquyen_chucnang` (`MaNhomQuyen`, `MaChucNang`, `Status`) VALUES
-(1, 1, 1),
-(1, 2, 1),
-(1, 3, 1),
-(1, 4, 1),
-(2, 1, 1),
-(2, 2, 1),
-(2, 3, 1),
-(3, 1, 1);
+INSERT INTO `nhomquyen_chucnang` (`MaNhomQuyen`, `MaChucNang`, `Status`, `Xem`, `Them`, `Sua`, `Xoa`) VALUES
+(1, 1, 1, 1, 1, 1, 1),
+(1, 2, 1, 1, 1, 1, 1),
+(1, 3, 1, 1, 1, 1, 1),
+(1, 4, 1, 1, 1, 1, 1),
+(1, 5, 1, 1, 1, 1, 1),
+(1, 6, 1, 1, 1, 1, 1),
+(1, 7, 1, 1, 1, 1, 1),
+(1, 8, 1, 1, 1, 1, 1),
+(1, 9, 1, 1, 1, 1, 1),
+(1, 10, 1, 1, 1, 1, 1),
+(1, 11, 1, 1, 1, 1, 1),
+(2, 1, 0, 0, 0, 0, 0),
+(2, 2, 0, 0, 0, 0, 0),
+(2, 3, 0, 0, 0, 0, 0),
+(2, 4, 0, 0, 0, 0, 0),
+(2, 5, 0, 0, 0, 0, 0),
+(2, 6, 0, 0, 0, 0, 0),
+(2, 7, 0, 0, 0, 0, 0),
+(2, 8, 0, 0, 0, 0, 0),
+(2, 9, 0, 0, 0, 0, 0),
+(2, 10, 0, 0, 0, 0, 0),
+(2, 11, 0, 0, 0, 0, 0),
+(3, 1, 0, 0, 0, 0, 0),
+(3, 2, 0, 0, 0, 0, 0),
+(3, 3, 0, 0, 0, 0, 0),
+(3, 4, 0, 0, 0, 0, 0),
+(3, 5, 0, 0, 0, 0, 0),
+(3, 6, 0, 0, 0, 0, 0),
+(3, 7, 0, 0, 0, 0, 0),
+(3, 8, 0, 0, 0, 0, 0),
+(3, 9, 0, 0, 0, 0, 0),
+(3, 10, 0, 0, 0, 0, 0),
+(3, 11, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -833,26 +869,6 @@ CREATE TABLE `taikhoan` (
 -- Đang đổ dữ liệu cho bảng `taikhoan`
 
 INSERT INTO `taikhoan` (`TenDangNhap`, `MatKhau`, `TrangThai`, `Email`, `MaNhomQuyen`, `Status`) VALUES
-('DG001', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg001@email.com', 3, 1),
-('DG002', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg002@email.com', 3, 1),
-('DG003', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg003@email.com', 3, 1),
-('DG004', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg004@email.com', 3, 1),
-('DG005', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg005@email.com', 3, 1),
-('DG006', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg006@email.com', 3, 1),
-('DG007', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg007@email.com', 3, 1),
-('DG008', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg008@email.com', 3, 1),
-('DG009', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg009@email.com', 3, 1),
-('DG010', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg010@email.com', 3, 1),
-('DG011', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg011@email.com', 3, 1),
-('DG012', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg012@email.com', 3, 1),
-('DG013', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg013@email.com', 3, 1),
-('DG014', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg014@email.com', 3, 1),
-('DG015', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg015@email.com', 3, 1),
-('DG016', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg016@email.com', 3, 1),
-('DG017', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg017@email.com', 3, 1),
-('DG018', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg018@email.com', 3, 1),
-('DG019', 'e10adc3949ba59abbe56e057f20f883e', 1, 'dg019@email.com', 3, 1),
-('DG020', 'e10adc3949ba59abbe56e057f20f883e', 0, 'dg020@email.com', 3, 1),
 ('NV001', 'e10adc3949ba59abbe56e057f20f883e', 1, 'nv001@bookstore.com', 1, 1),
 ('NV002', 'e10adc3949ba59abbe56e057f20f883e', 1, 'nv002@bookstore.com', 1, 1),
 ('NV003', 'e10adc3949ba59abbe56e057f20f883e', 1, 'nv003@bookstore.com', 2, 1),
@@ -1160,7 +1176,7 @@ ALTER TABLE `ctphieutra`
 -- Các ràng buộc cho bảng `nhomquyen_chucnang`
 --
 ALTER TABLE `nhomquyen_chucnang`
-  ADD CONSTRAINT `nhomquyen_chucnang_ibfk_1` FOREIGN KEY (`MaNhomQuyen`) REFERENCES `nhomquyen` (`MaNhomQuyen`),
+  ADD CONSTRAINT `nhomquyen_chucnang_ibfk_1` FOREIGN KEY (`MaNhomQuyen`) REFERENCES `nhomquyen` (`MaNhomQuyen`) ON DELETE CASCADE,
   ADD CONSTRAINT `nhomquyen_chucnang_ibfk_2` FOREIGN KEY (`MaChucNang`) REFERENCES `chucnang` (`MaChucNang`);
 
 --
@@ -1209,7 +1225,7 @@ ALTER TABLE `tacgia_dausach`
 -- Các ràng buộc cho bảng `taikhoan`
 --
 ALTER TABLE `taikhoan`
-  ADD CONSTRAINT `taikhoan_ibfk_1` FOREIGN KEY (`MaNhomQuyen`) REFERENCES `nhomquyen` (`MaNhomQuyen`);
+  ADD CONSTRAINT `taikhoan_ibfk_1` FOREIGN KEY (`MaNhomQuyen`) REFERENCES `nhomquyen` (`MaNhomQuyen`) ON DELETE CASCADE;
 
 --
 -- Các ràng buộc cho bảng `theloaidausach`
