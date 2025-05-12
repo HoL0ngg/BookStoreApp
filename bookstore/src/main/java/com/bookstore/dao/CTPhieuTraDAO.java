@@ -43,6 +43,7 @@ public class CTPhieuTraDAO {
                 stmt.setString(3, ctpt.getMaSach());
                 stmt.setInt(4, 1);
                 stmt.addBatch();
+                new CTPhieuMuonDAO().suapm(ctpt.getMaSach());
             }
             stmt.executeBatch();
         } catch (SQLException e) {

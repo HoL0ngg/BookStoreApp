@@ -22,7 +22,8 @@ public class CTPhieuMuonDAO {
                 danhsach.add(new CTPhieuMuonDTO(
                         rs.getInt("MaPhieuMuon"),
                         rs.getString("MaSach"),
-                        rs.getBoolean("Status")));
+                        rs.getBoolean("Status"),
+                        rs.getInt("TrangThai")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -30,4 +31,14 @@ public class CTPhieuMuonDAO {
         return danhsach;
     }
 
+    public void suapm(String ms) {
+        String sql = "UPDATE CTPhieuMuon SET TrangThai = 1 WHERE MaSach = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, ms);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

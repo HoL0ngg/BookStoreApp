@@ -1084,14 +1084,14 @@ public class PhieuTraController implements ItemListener, ActionListener {
                     gbc.insets = new Insets(0, 5, 0, 5);
                     gbc.fill = GridBagConstraints.HORIZONTAL;
 
-                    JTextField txtMaSach = new JTextField(8); // Giảm từ 10 xuống 8 cột
+                    JTextField txtMaSach = new JTextField(8);
                     txtMaSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                     txtMaSach.setBorder(BorderFactory.createCompoundBorder(
                             BorderFactory.createLineBorder(new Color(180, 180, 180)),
                             BorderFactory.createEmptyBorder(5, 5, 5, 5)));
                     txtMaSach.setEditable(false);
 
-                    JTextField txtTenDauSach = new JTextField(15); // Giảm từ 20 xuống 15 cột
+                    JTextField txtTenDauSach = new JTextField(15);
                     txtTenDauSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                     txtTenDauSach.setBorder(BorderFactory.createCompoundBorder(
                             BorderFactory.createLineBorder(new Color(180, 180, 180)),
@@ -1100,8 +1100,16 @@ public class PhieuTraController implements ItemListener, ActionListener {
 
                     JCheckBox checkBox = new JCheckBox();
                     checkBox.setBackground(new Color(245, 245, 245));
-                    checkBox.setPreferredSize(new Dimension(20, checkBox.getPreferredSize().height)); // Giới hạn chiều
-                                                                                                      // rộng checkbox
+                    checkBox.setPreferredSize(new Dimension(20, checkBox.getPreferredSize().height));
+
+                    // Lấy trạng thái (giả định có phương thức getTrangThai() trong CTPhieuMuonDTO)
+                    int trangThai = ct.getTrangThai(); // 0: chưa trả, 1: đã trả
+                    if (trangThai == 1) {
+                        checkBox.setSelected(true); // Đánh dấu đã trả
+                        checkBox.setEnabled(false); // Không cho sửa
+                    } else {
+                        checkBox.setEnabled(true); // Cho phép sửa nếu chưa trả
+                    }
 
                     txtMaSach.setText(ct.getMaSach());
                     SachDTO sach = sachMap.get(ct.getMaSach());
@@ -1118,16 +1126,16 @@ public class PhieuTraController implements ItemListener, ActionListener {
 
                     // Cấu hình GridBagConstraints cho từng thành phần
                     gbc.gridx = 0;
-                    gbc.weightx = 0.25; // Giảm từ 0.3 xuống 0.25
+                    gbc.weightx = 0.25;
                     gbc.fill = GridBagConstraints.HORIZONTAL;
                     bookRow.add(txtMaSach, gbc);
 
                     gbc.gridx = 1;
-                    gbc.weightx = 0.6; // Giữ nguyên 0.6
+                    gbc.weightx = 0.6;
                     bookRow.add(txtTenDauSach, gbc);
 
                     gbc.gridx = 2;
-                    gbc.weightx = 0.15; // Tăng từ 0.1 lên 0.15 để checkbox có không gian hơn
+                    gbc.weightx = 0.15;
                     bookRow.add(checkBox, gbc);
 
                     booksInputPanel.add(bookRow);
@@ -1140,7 +1148,7 @@ public class PhieuTraController implements ItemListener, ActionListener {
         booksInputPanel.repaint();
         JScrollPane scrollPane = new JScrollPane(booksInputPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        scrollPane.setPreferredSize(new Dimension(400, 200)); // Giới hạn chiều rộng tối đa là 400px, chiều cao 200px
+        scrollPane.setPreferredSize(new Dimension(400, 200));
         return scrollPane;
     }
 

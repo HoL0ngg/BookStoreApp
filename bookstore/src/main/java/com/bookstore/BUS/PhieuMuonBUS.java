@@ -47,6 +47,7 @@ public class PhieuMuonBUS {
         new PhieuMuonDAO().themChiTietPhieuMuon(mpm, ms);
     }
 
+    // lấy chi tiết phiếu mượn -> get Trạng thái nếu xử lý phiếu trả
     public List<CTPhieuMuonDTO> getCTPhieuMuon(){
         return new CTPhieuMuonDAO().layDanhSachCTPhieuMuon();
     }

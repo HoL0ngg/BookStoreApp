@@ -4,12 +4,14 @@ public class CTPhieuMuonDTO {
     private int MaPhieuMuon;
     private String MaSach;
     private boolean Status;
+    private int TrangThai;
 
     // Constructor
-    public CTPhieuMuonDTO(int MaPhieuMuon, String MaSach, boolean Status){
+    public CTPhieuMuonDTO(int MaPhieuMuon, String MaSach, boolean Status, int TrangThai) {
         this.MaPhieuMuon = MaPhieuMuon;
         this.MaSach = MaSach;
         this.Status = Status;
+        this.TrangThai = TrangThai;
     }
 
     public int getMaPhieuMuon() {
@@ -36,5 +38,12 @@ public class CTPhieuMuonDTO {
         Status = status;
     }
 
-    
+    public int getTrangThai() {
+        return TrangThai;
+    }
+
+    public void setTrangThai(int trangThai) {
+        TrangThai = trangThai;
+    }
+
 }
