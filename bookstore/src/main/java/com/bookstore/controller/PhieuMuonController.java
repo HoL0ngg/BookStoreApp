@@ -8,9 +8,10 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Date;
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.TimerTask;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Comparator;
 import java.util.ArrayList;
@@ -20,17 +21,22 @@ import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
+import com.bookstore.BUS.DauSachBUS;
+import com.bookstore.BUS.DocGiaBUS;
 import com.bookstore.BUS.PhieuMuonBUS;
 import com.bookstore.DTO.CTPhieuMuonDTO;
 import com.bookstore.DTO.DauSachDTO;
+import com.bookstore.DTO.DocGiaDTO;
 import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.DTO.SachDTO;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.dao.CTPhieuMuonDAO;
 import com.bookstore.dao.PhieuMuonDAO;
+import com.bookstore.dao.SachDAO;
 import com.bookstore.views.Panel.PhieuMuon;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.formdev.flatlaf.json.ParseException;
 import com.bookstore.views.Panel.Sach;
 
 public class PhieuMuonController implements ItemListener, ActionListener {
@@ -45,9 +51,8 @@ public class PhieuMuonController implements ItemListener, ActionListener {
     private List<PhieuMuonDTO> mangtmp;
     private boolean isAscending = true;
     private CTPhieuMuonDAO ctpmdao = new CTPhieuMuonDAO();
-    private FlatSVGIcon add_icon = new FlatSVGIcon(getClass().getResource("/svg/add_2.svg")).derive(12, 12);
-    private FlatSVGIcon subtractIcon = new FlatSVGIcon(getClass().getResource("/svg/subtract.svg")).derive(25, 25);
     private Timer searchDG;
+
     public PhieuMuonController(PhieuMuon pm) {
         this.pm = pm;
         manggoc = pm.getListpm();
@@ -92,7 +97,168 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             isAscending = !isAscending;
             pm.updateTable(mangtmp);
         } else if (e.getSource() == pm.getBtnSua()) {
-            // tao Jdialog
+            int slt = pm.getTable().getSelectedRow();
+            if (slt == -1) {
+                JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn sửa", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Lấy MaPhieuMuon từ cột 0
+            String mpmStr = pm.getTable().getValueAt(slt, 0).toString();
+            int mpm;
+            try {
+                mpm = Integer.parseInt(mpmStr); // Chuyển String thành int
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Mã phiếu mượn không hợp lệ", "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Giả sử các cột trong bảng lần lượt là: MaPhieuMuon, NgayMuon, NgayTraDuKien,
+            // TrangThai, MaDocGia, MaNhanVien
+            String ngayMuon = pm.getTable().getValueAt(slt, 1).toString();
+            String ngayTraDuKien = pm.getTable().getValueAt(slt, 2).toString();
+            String maDocGia = pm.getTable().getValueAt(slt, 4).toString();
+            String maNhanVien = pm.getTable().getValueAt(slt, 5).toString();
+            String TrangThai = pm.getTable().getValueAt(slt, 3).toString();
+            int tmptrangthai = TrangThai.equals("Đã hoàn thành") ? 1 : 0;
+            int currentTrangThai = 1;
+            for (PhieuMuonDTO pmItem : pm.getListpm()) {
+                if (pmItem.getMaPhieuMuon() == mpm) { // So sánh int với int
+                    currentTrangThai = pmItem.getTrangThai();
+                    break;
+                }
+            }
+
+            // Kiểm tra nếu trạng thái là "Đã trả" (1)
+            if (currentTrangThai == 1) {
+                JOptionPane.showMessageDialog(null, "Phiếu đã trả không thể sửa!", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Tạo dialog chỉnh sửa
+            JDialog dialog = new JDialog((JFrame) null, "Sửa phiếu mượn", true);
+            dialog.setSize(400, 350);
+            dialog.setLayout(new BorderLayout());
+            dialog.setResizable(false);
+            dialog.setLocationRelativeTo(null);
+
+            // Panel chính
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Panel chứa các trường nhập liệu
+            JPanel inputPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+
+            // Các trường nhập liệu
+            JLabel lblMpm = new JLabel("Mã phiếu mượn:");
+            JTextField txtMpm = new JTextField(mpmStr);
+            txtMpm.setEditable(false); // Không cho sửa
+            JLabel lblNgayMuon = new JLabel("Ngày mượn (yyyy-MM-dd):");
+            JTextField txtNgayMuon = new JTextField(ngayMuon);
+            txtNgayMuon.setEditable(false); // Không cho sửa
+            JLabel lblNgayTraDuKien = new JLabel("Ngày trả dự kiến (yyyy-MM-dd):");
+            JTextField txtNgayTraDuKien = new JTextField(ngayTraDuKien);
+            txtNgayTraDuKien.setEditable(true); // Không cho sửa
+            JLabel lblMaDocGia = new JLabel("Mã độc giả:");
+            JTextField txtMaDocGia = new JTextField(maDocGia);
+            txtMaDocGia.setEditable(true); // Không cho sửa
+            JLabel lblMaNhanVien = new JLabel("Mã nhân viên:");
+            JTextField txtMaNhanVien = new JTextField(maNhanVien);
+            txtMaNhanVien.setEditable(true); // Không cho sửa
+            JLabel lblTrangThai = new JLabel("Trạng thái:");
+            JTextField txtTrangThai = new JTextField(TrangThai);
+            txtTrangThai.setEditable(false);
+
+            inputPanel.add(lblMpm);
+            inputPanel.add(txtMpm);
+            inputPanel.add(lblNgayMuon);
+            inputPanel.add(txtNgayMuon);
+            inputPanel.add(lblNgayTraDuKien);
+            inputPanel.add(txtNgayTraDuKien);
+            inputPanel.add(lblMaDocGia);
+            inputPanel.add(txtMaDocGia);
+            inputPanel.add(lblMaNhanVien);
+            inputPanel.add(txtMaNhanVien);
+            inputPanel.add(lblTrangThai);
+            inputPanel.add(txtTrangThai);
+
+            // Panel chứa nút
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+            JButton btnConfirm = new JButton("Xác nhận");
+            JButton btnCancel = new JButton("Hủy");
+
+            // Style cho nút
+            styleButton(btnConfirm, new Color(0, 120, 215));
+            styleButton(btnCancel, new Color(100, 100, 100));
+
+            buttonPanel.add(btnConfirm);
+            buttonPanel.add(btnCancel);
+
+            mainPanel.add(inputPanel, BorderLayout.CENTER);
+            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+            dialog.add(mainPanel);
+
+            // Xử lý nút Xác nhận
+            btnConfirm.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Lấy dữ liệu từ các trường
+                    String newMpmStr = txtMpm.getText();
+                    String newMaDocGia = txtMaDocGia.getText();
+                    String newMaNhanVien = txtMaNhanVien.getText();
+
+                    // Lấy dữ liệu ngày từ hàng được chọn và chuyển thành java.sql.Date
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    java.sql.Date ngayMuonDate = null;
+                    java.sql.Date ngayTraDuKienDate = null;
+                    try {
+                        java.util.Date utilDate = sdf.parse(pm.getTable().getValueAt(slt, 1).toString());
+                        ngayMuonDate = new java.sql.Date(utilDate.getTime());
+                        utilDate = sdf.parse(pm.getTable().getValueAt(slt, 2).toString());
+                        ngayTraDuKienDate = new java.sql.Date(utilDate.getTime());
+                    } catch (ParseException | java.text.ParseException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    // Chuyển đổi MaPhieuMuon thành int
+                    int newMpm;
+                    try {
+                        newMpm = Integer.parseInt(newMpmStr);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(dialog, "Mã phiếu mượn không hợp lệ", "Lỗi",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Tạo đối tượng PhieuMuonDTO để cập nhật
+                    PhieuMuonDTO updatePm = new PhieuMuonDTO(newMpm, ngayMuonDate,
+                            ngayTraDuKienDate, tmptrangthai, newMaDocGia, newMaNhanVien, true);
+                    boolean kq = pmbus.suaPhieuMuon(updatePm);
+                    if (kq) {
+                        JOptionPane.showMessageDialog(dialog, "Cập nhật thành công", "Thành công",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        pm.setListpm(pmbus.getList());
+                        pm.loadTableData();
+                        if (slt >= 0 && slt < pm.getTable().getRowCount()) {
+                            pm.getTable().setRowSelectionInterval(slt, slt);
+                        }
+                        manggoc = pm.getListpm();
+                        mangtmp = pm.getListpm();
+                    } else {
+                        JOptionPane.showMessageDialog(dialog, "Cập nhật thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                    dialog.dispose();
+                }
+            });
+
+            // Xử lý nút Hủy
+            btnCancel.addActionListener(e1 -> dialog.dispose());
+
+            dialog.setVisible(true);
+            System.out.println("Đã nhấn vào nút Sửa");
         } else if (e.getSource() == pm.getBtnXoa()) {
             if (pm.getTable().getSelectedRow() == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu mượn", "Phiếu mượn trống", 0);
@@ -288,42 +454,47 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             dgInputPanel.revalidate();
             dgInputPanel.repaint();
 
-            searchDG = new Timer();
+            // Khởi tạo Timer với delay và null listener (sẽ thêm sau)
+            searchDG = new Timer(300, null); // 300ms delay
+            searchDG.setRepeats(false); // Chỉ chạy một lần mỗi khi kích hoạt
+
             txtfSearchDG.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyReleased(KeyEvent e) {
-                    searchDG.cancel();
-                    searchDG.purge();
-                    searchDG = new Timer();
-                    searchDG.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            SwingUtilities.invokeLater(() -> {
-                                String searchText = txtfSearchDG.getText().trim().toLowerCase();
-                                DefaultListModel<DocGiaDTO> listModel = new DefaultListModel<>();
+                    searchDG.stop(); // Dừng Timer trước đó (nếu có)
 
-                                if (searchText.isEmpty()) {
-                                    for (DocGiaDTO dg : danhSachDG) {
-                                        listModel.addElement(dg);
-                                    }
-                                } else {
-                                    for (DocGiaDTO dg : danhSachDG) {
-                                        String maDG = String.valueOf(dg.getMaDocGia()).toLowerCase();
-                                        String tenDG = dg.getTenDocGia().toLowerCase();
-                                        if (maDG.contains(searchText) || tenDG.contains(searchText)) {
-                                            listModel.addElement(dg);
-                                        }
-                                    }
+                    // Xóa tất cả listener cũ
+                    for (ActionListener al : searchDG.getActionListeners()) {
+                        searchDG.removeActionListener(al);
+                    }
+
+                    // Thêm listener mới
+                    searchDG.addActionListener(evt -> {
+                        String searchText = txtfSearchDG.getText().trim().toLowerCase();
+                        DefaultListModel<DocGiaDTO> listModel = new DefaultListModel<>();
+
+                        if (searchText.isEmpty()) {
+                            for (DocGiaDTO dg : danhSachDG) {
+                                listModel.addElement(dg);
+                            }
+                        } else {
+                            for (DocGiaDTO dg : danhSachDG) {
+                                String maDG = String.valueOf(dg.getMaDocGia()).toLowerCase();
+                                String tenDG = dg.getTenDocGia().toLowerCase();
+                                if (maDG.contains(searchText) || tenDG.contains(searchText)) {
+                                    listModel.addElement(dg);
                                 }
-
-                                listDG.setModel(listModel);
-                                dgScrollPane.setVisible(!listModel.isEmpty());
-                                dgInputPanel.revalidate();
-                                dgInputPanel.repaint();
-                                System.out.println("Số độc giả tìm thấy: " + listModel.getSize());
-                            });
+                            }
                         }
-                    }, 300);
+
+                        listDG.setModel(listModel);
+                        dgScrollPane.setVisible(!listModel.isEmpty());
+                        dgInputPanel.revalidate();
+                        dgInputPanel.repaint();
+                        System.out.println("Số độc giả tìm thấy: " + listModel.getSize());
+                    });
+
+                    searchDG.restart(); // Khởi động lại Timer
                 }
             });
 
@@ -367,21 +538,100 @@ public class PhieuMuonController implements ItemListener, ActionListener {
 
             // Hàm thêm dòng nhập sách mới
             Runnable addBookRow = () -> {
-                JPanel bookRow = new JPanel(new GridBagLayout());
-                bookRow.setBackground(new Color(245, 245, 245));
-                bookRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+                // Tạo panel chính cho mỗi dòng sách
+                JPanel bookRowContainer = new JPanel(new BorderLayout());
+                bookRowContainer.setBackground(new Color(245, 245, 245));
+                bookRowContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
+                // Panel chứa ô nhập và nút xóa
+                JPanel Ainput = new JPanel(new GridBagLayout());
+                Ainput.setBackground(new Color(245, 245, 245));
+                Ainput.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.insets = new Insets(0, 5, 0, 5);
                 gbc.fill = GridBagConstraints.HORIZONTAL;
 
                 JTextField txtMaSach = new JTextField();
+                txtMaSach.setName("txtMaSach");
                 txtMaSach.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 txtMaSach.setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(new Color(180, 180, 180)),
                         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
                 txtMaSach.setPreferredSize(new Dimension(180, 30));
                 txtMaSach.setMaximumSize(new Dimension(180, 30));
+
+                // Panel chứa kết quả tìm kiếm (sẽ được thêm riêng)
+                JPanel resultPanel = new JPanel(new BorderLayout());
+                resultPanel.setBackground(new Color(245, 245, 245));
+                resultPanel.setVisible(false);
+                resultPanel.setPreferredSize(new Dimension(180, 100));
+
+                DefaultListModel<DauSachDTO> listModel = new DefaultListModel<>();
+                JList<DauSachDTO> resultList = new JList<>(listModel);
+                resultList.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+                resultList.setCellRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                            boolean isSelected, boolean cellHasFocus) {
+                        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                        if (value instanceof DauSachDTO) {
+                            DauSachDTO ds = (DauSachDTO) value;
+                            setText(ds.getMaDauSach() + " - " + ds.getTenDauSach());
+                        }
+                        return this;
+                    }
+                });
+
+                JScrollPane resultScrollPane = new JScrollPane(resultList);
+                resultPanel.add(resultScrollPane, BorderLayout.CENTER);
+
+                // Tạo Timer cho tìm kiếm
+                Timer searchTimer = new Timer(300, null);
+                searchTimer.setRepeats(false);
+
+                txtMaSach.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyReleased(KeyEvent e) {
+                        searchTimer.stop();
+                        for (ActionListener al : searchTimer.getActionListeners()) {
+                            searchTimer.removeActionListener(al);
+                        }
+
+                        searchTimer.addActionListener(evt -> {
+                            String searchText = txtMaSach.getText().trim().toLowerCase();
+                            listModel.clear();
+
+                            if (!searchText.isEmpty()) {
+                                List<DauSachDTO> allDauSach = new DauSachBUS().getListDauSach();
+
+                                for (DauSachDTO ds : allDauSach) {
+                                    if (ds.getMaDauSach().toLowerCase().contains(searchText) ||
+                                            ds.getTenDauSach().toLowerCase().contains(searchText)) {
+                                        listModel.addElement(ds);
+                                    }
+                                }
+
+                                resultPanel.setVisible(!listModel.isEmpty());
+                                bookRowContainer.revalidate();
+                                bookRowContainer.repaint();
+                            } else {
+                                resultPanel.setVisible(false);
+                            }
+                        });
+
+                        searchTimer.restart();
+                    }
+                });
+
+                resultList.addListSelectionListener(e1 -> {
+                    if (!e1.getValueIsAdjusting() && resultList.getSelectedValue() != null) {
+                        DauSachDTO selectedDS = resultList.getSelectedValue();
+                        txtMaSach.setText(selectedDS.getMaDauSach());
+                        resultPanel.setVisible(false);
+                    }
+                });
 
                 JButton btnRemove = new JButton("Xóa");
                 styleButton(btnRemove, new Color(200, 50, 50));
@@ -391,28 +641,31 @@ public class PhieuMuonController implements ItemListener, ActionListener {
 
                 gbc.gridx = 0;
                 gbc.weightx = 0.85;
-                bookRow.add(txtMaSach, gbc);
+                Ainput.add(txtMaSach, gbc);
 
                 gbc.gridx = 1;
                 gbc.weightx = 0.15;
-                bookRow.add(btnRemove, gbc);
+                Ainput.add(btnRemove, gbc);
 
-                booksInputPanel.add(bookRow);
-                booksInputPanel.add(Box.createVerticalStrut(5));
+                // Thêm các panel vào container chính
+                bookRowContainer.add(Ainput, BorderLayout.NORTH);
+                bookRowContainer.add(resultPanel, BorderLayout.CENTER);
 
                 btnRemove.addActionListener(e1 -> {
-                    booksInputPanel.remove(bookRow);
+                    booksInputPanel.remove(bookRowContainer);
                     booksInputPanel.remove(booksInputPanel.getComponentCount() - 1); // Xóa strut
                     booksInputPanel.revalidate();
                     booksInputPanel.repaint();
                 });
 
+                booksInputPanel.add(bookRowContainer);
+                booksInputPanel.add(Box.createVerticalStrut(5));
                 booksInputPanel.revalidate();
                 booksInputPanel.repaint();
             };
 
-            // Thêm 7 dòng mặc định
-            for (int i = 0; i < 7; i++) {
+            // Thêm 5 dòng mặc định
+            for (int i = 0; i < 5; i++) {
                 addBookRow.run();
             }
 
@@ -452,7 +705,6 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             dialog.add(mainContainer, BorderLayout.CENTER);
             dialog.add(buttonPanel, BorderLayout.SOUTH);
 
-            // Xử lý nút Xác nhận
             confirm.addActionListener(e2 -> {
                 DocGiaDTO selectedDG = listDG.getSelectedValue();
                 if (selectedDG == null) {
@@ -465,16 +717,15 @@ public class PhieuMuonController implements ItemListener, ActionListener {
                 List<String> maSachList = new ArrayList<>();
                 for (Component comp : booksInputPanel.getComponents()) {
                     if (comp instanceof JPanel) {
-                        JPanel row = (JPanel) comp;
-                        Component[] components = row.getComponents();
-                        if (components.length >= 2) {
-                            JTextField txtMaSach = (JTextField) components[0];
-                            if (!txtMaSach.getText().trim().isEmpty()) {
-                                maSachList.add(txtMaSach.getText().trim());
-                            }
+                        JTextField txt = findTextField((Container) comp);
+                        if (txt != null && !txt.getText().trim().isEmpty()) {
+                            maSachList.add(txt.getText().trim());
                         }
                     }
                 }
+
+                // Log để kiểm tra
+                System.out.println("maSachList: " + maSachList);
 
                 if (maSachList.isEmpty()) {
                     JOptionPane.showMessageDialog(dialog, "Vui lòng nhập ít nhất một mã sách", "Lỗi",
@@ -484,12 +735,12 @@ public class PhieuMuonController implements ItemListener, ActionListener {
 
                 java.sql.Date ngaymuon = java.sql.Date.valueOf(tmpday);
                 java.sql.Date ngaytradukien = java.sql.Date.valueOf(tmpday.plusDays(15));
-                PhieuMuonDTO newPM = new PhieuMuonDTO(mpm, ngaymuon, ngaytradukien, 0, selectedDG.getMaDocGia(),
-                        "nv001",
-                        true);
+                PhieuMuonDTO newPM = new PhieuMuonDTO(mpm, ngaymuon, ngaytradukien,
+                        0, selectedDG.getMaDocGia(), "NV001", true);
                 if (pmbus.themPhieuMuon(newPM)) {
-                    for (String maSach : maSachList) {
-                        pmbus.themChiTietPhieuMuon(newPM.getMaPhieuMuon(), maSach);
+                    for (String maDauSach : maSachList) {
+                        System.out.println("abcabcabc");
+                        pmbus.themChiTietPhieuMuon(newPM.getMaPhieuMuon(), maDauSach);
                     }
                     pm.setListpm(pmdao.layDanhSachPhieuMuon());
                     pm.loadTableData();
@@ -553,86 +804,156 @@ public class PhieuMuonController implements ItemListener, ActionListener {
         }
     }
 
-    public void hienthichitiettable(int maPhieuMuon) {
+    public void hienThiChiTietTable(String mpm) {
         JDialog dialog = new JDialog();
         dialog.setTitle("Chi tiết phiếu mượn");
-        dialog.setLayout(new GridLayout(1, 2, 10, 10));
-        dialog.setSize(new Dimension(600, 400));
+        dialog.setSize(600, 500);
+        dialog.setLayout(new BorderLayout());
+        dialog.setLocationRelativeTo(null);
 
-        JPanel panelthongtin = new JPanel();
-        panelthongtin.setLayout(new GridLayout(6, 1, 10, 10));
-
-        Date ngaymuon = null;
-        Date ngaytradukien = null;
-        int trangthai = -1;
-        String madocgia = "";
-        String manhanvien = "";
-
-        for (PhieuMuonDTO i : manggoc) {
-            if (i.getMaPhieuMuon() == maPhieuMuon) {
-                ngaymuon = i.getNgayMuon();
-                ngaytradukien = i.getNgayTraDuKien();
-                trangthai = i.getTrangThai();
-                madocgia = i.getMaDocGia();
-                manhanvien = i.getMaNhanVien();
+        PhieuMuonDTO phieuMuon = null;
+        for (PhieuMuonDTO pm : pmbus.getList()) {
+            if (pm.getMaPhieuMuon() == Integer.parseInt(mpm)) {
+                phieuMuon = pm;
                 break;
             }
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        JLabel lbmaphieumuon = new JLabel("Mã phiếu mượn: " + maPhieuMuon);
-        lbmaphieumuon.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        JLabel lbngaymuon = new JLabel("Ngày mượn " + sdf.format(ngaymuon));
-        lbngaymuon.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        JLabel lbngaytradukien = new JLabel("Ngày trả dự kiến: " + sdf.format(ngaytradukien));
-        lbngaytradukien.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        JLabel lbtrangthai;
-        if (trangthai == 1) {
-            lbtrangthai = new JLabel("Trạng thái: đã trả");
-        } else {
-            lbtrangthai = new JLabel("Trạng thái: chưa trả");
-        }
-        lbtrangthai.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        JLabel lbmadocgia = new JLabel("Mã độc giả: " + madocgia);
-        lbmadocgia.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        JLabel lbmanhanvien = new JLabel("Mã nhân viên: " + manhanvien);
-        lbmanhanvien.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        if (phieuMuon != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        panelthongtin.add(lbmaphieumuon);
-        panelthongtin.add(lbngaymuon);
-        panelthongtin.add(lbngaytradukien);
-        panelthongtin.add(lbtrangthai);
-        panelthongtin.add(lbmadocgia);
-        panelthongtin.add(lbmanhanvien);
+            // Panel chính
+            JPanel mainPanel = new JPanel(new BorderLayout(0, 10));
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            mainPanel.setBackground(new Color(245, 245, 245));
 
-        JPanel panelchitiet = new JPanel();
-        panelchitiet.setLayout(new GridLayout(6, 1, 10, 10));
-        int count = 0;
-        List<String> tongHopMaSach = new ArrayList<>();
-        List<CTPhieuMuonDTO> ctpmlist = ctpmdao.layDanhSachCTPhieuMuon();
-        for (CTPhieuMuonDTO i : ctpmlist) {
-            if (i.getMaPhieuMuon() == maPhieuMuon) {
-                tongHopMaSach.add(i.getMaSach());
-                count++;
+            // Panel thông tin phiếu mượn
+            JPanel infoPanel = new JPanel();
+            infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+            infoPanel.setBackground(new Color(245, 245, 245));
+            infoPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+                    "Thông tin phiếu mượn",
+                    TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION,
+                    new Font("Segoe UI", Font.BOLD, 14)));
+
+            // Thêm các trường thông tin
+            infoPanel.add(createInfoRow("Mã phiếu mượn:", String.valueOf(phieuMuon.getMaPhieuMuon())));
+            infoPanel.add(Box.createVerticalStrut(10));
+            String thoiGian = phieuMuon.getNgayMuon() != null ? sdf.format(phieuMuon.getNgayMuon())
+                    : "Không có thời gian";
+            infoPanel.add(createInfoRow("Thời gian:", thoiGian));
+            infoPanel.add(Box.createVerticalStrut(10));
+            infoPanel.add(
+                    createInfoRow("Mã nhân viên:",
+                            phieuMuon.getMaNhanVien() != null ? phieuMuon.getMaNhanVien() : "Không có"));
+            infoPanel.add(Box.createVerticalStrut(10));
+            infoPanel.add(createInfoRow("Mã độc giả:", String.valueOf(phieuMuon.getMaDocGia())));
+
+            // Panel danh sách chi tiết phiếu mượn
+            JPanel booksPanel = new JPanel(new BorderLayout());
+            booksPanel.setBackground(new Color(245, 245, 245));
+            booksPanel.setBorder(BorderFactory.createTitledBorder(
+                    BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+                    "Chi tiết phiếu mượn",
+                    TitledBorder.DEFAULT_JUSTIFICATION,
+                    TitledBorder.DEFAULT_POSITION,
+                    new Font("Segoe UI", Font.BOLD, 14)));
+
+            // Tạo JTable cho chi tiết phiếu mượn
+            DefaultTableModel booksModel = new DefaultTableModel(
+                    new Object[] { "Mã sách", "Tên sách" }, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+
+            // Tạo Map từ SachDTO và DauSachDTO để tra cứu nhanh
+            Map<String, SachDTO> sachMap = new HashMap<>();
+            for (SachDTO s : new SachDAO().selectAll()) {
+                sachMap.put(s.getMaSach(), s);
             }
+            Map<String, DauSachDTO> dauSachMap = new HashMap<>();
+            for (DauSachDTO ds : new DauSachBUS().getListDauSach()) {
+                dauSachMap.put(ds.getMaDauSach(), ds);
+            }
+
+            // Lấy danh sách chi tiết từ BUS
+            List<CTPhieuMuonDTO> chiTietList = pmbus.getCTPhieuMuon();
+            try {
+                int maPhieuMuon = Integer.parseInt(mpm);
+                for (CTPhieuMuonDTO ct : chiTietList) {
+                    String tendausach = "Không tìm thấy";
+                    if (ct.getMaPhieuMuon() == maPhieuMuon) {
+                        SachDTO sach = sachMap.get(ct.getMaSach());
+                        if (sach != null) {
+                            DauSachDTO dauSach = dauSachMap.get(sach.getMaDauSach());
+                            if (dauSach != null) {
+                                tendausach = dauSach.getTenDauSach();
+                            }
+                        }
+                        booksModel.addRow(new Object[] { ct.getMaSach(), tendausach });
+                    }
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Mã phiếu mượn không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                dialog.dispose();
+                return;
+            }
+
+            JTable booksTable = new JTable(booksModel);
+            booksTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+            booksTable.setRowHeight(25);
+            booksTable.setGridColor(new Color(200, 200, 200));
+            booksTable.setShowGrid(true);
+            booksTable.setBackground(new Color(245, 245, 245));
+            booksTable.setSelectionBackground(new Color(0, 120, 215));
+            booksTable.setSelectionForeground(Color.WHITE);
+
+            JScrollPane booksScrollPane = new JScrollPane(booksTable);
+            booksScrollPane.setBorder(BorderFactory.createEmptyBorder());
+            booksPanel.add(booksScrollPane, BorderLayout.CENTER);
+
+            // Thêm các panel vào mainPanel
+            mainPanel.add(infoPanel, BorderLayout.NORTH);
+            mainPanel.add(booksPanel, BorderLayout.CENTER);
+
+            // Panel chứa nút Đóng
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+            buttonPanel.setBackground(new Color(245, 245, 245));
+            JButton closeButton = new JButton("Đóng");
+            closeButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            closeButton.setBackground(new Color(0, 120, 215));
+            closeButton.setForeground(Color.WHITE);
+            closeButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+            closeButton.addActionListener(e -> dialog.dispose());
+            buttonPanel.add(closeButton);
+
+            // Thêm các panel vào dialog
+            dialog.add(mainPanel, BorderLayout.CENTER);
+            dialog.add(buttonPanel, BorderLayout.SOUTH);
+        } else {
+            JOptionPane.showMessageDialog(null, "Không tìm thấy chi tiết phiếu mượn", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            dialog.dispose();
         }
 
-        JLabel lbsoluong = new JLabel("Tổng số sách đã mượn: " + count);
-        panelchitiet.add(lbsoluong);
-        for (int i = 1; i <= count; i++) {
-            JPanel panelctsach = new JPanel();
-            panelctsach.setLayout(new GridLayout(1, 2));
-            JLabel tmpLabel = new JLabel("Mã sách " + i + ": ");
-            JLabel masachlabel = new JLabel(tongHopMaSach.get(i - 1));
-            panelctsach.add(tmpLabel);
-            panelctsach.add(masachlabel);
-            panelchitiet.add(panelctsach);
-        }
-
-        dialog.add(panelthongtin);
-        dialog.add(panelchitiet);
-        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
+    }
+
+    // Hàm hỗ trợ tạo hàng thông tin
+    private JPanel createInfoRow(String label, String value) {
+        JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        rowPanel.setBackground(new Color(245, 245, 245));
+        JLabel lbl = new JLabel(label);
+        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lbl.setPreferredSize(new Dimension(120, 25));
+        JLabel val = new JLabel(value);
+        val.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        rowPanel.add(lbl);
+        rowPanel.add(val);
+        return rowPanel;
     }
 
     private void styleButton(JButton button, Color color) {
@@ -647,6 +968,21 @@ public class PhieuMuonController implements ItemListener, ActionListener {
                 BorderFactory.createLineBorder(color.darker()),
                 BorderFactory.createEmptyBorder(5, 15, 5, 15)));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+
+    // Phương thức hỗ trợ
+    private JTextField findTextField(Container container) {
+        for (Component comp : container.getComponents()) {
+            if (comp instanceof JTextField && "txtMaSach".equals(comp.getName())) {
+                return (JTextField) comp;
+            }
+            if (comp instanceof Container) {
+                JTextField found = findTextField((Container) comp);
+                if (found != null)
+                    return found;
+            }
+        }
+        return null;
     }
 
     public void timMPM(String key) {
@@ -705,136 +1041,5 @@ public class PhieuMuonController implements ItemListener, ActionListener {
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         panel.add(component, BorderLayout.CENTER);
         return panel;
-    }
-
-    private void addBookRow(JPanel parentPanel, List<JPanel> bookRows, List<JTextField> bookFields,
-            List<JComboBox<SachDTO>> suggestionBoxes) {
-        if (bookRows.size() >= 5) {
-            JOptionPane.showMessageDialog(null, "Chỉ được thêm tối đa 5 sách", "Thông báo",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        JPanel rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.Y_AXIS));
-        rowPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        JPanel inputPanel = new JPanel(new BorderLayout(10, 0));
-        JLabel label = new JLabel("Mã sách " + (bookRows.size() + 1) + ": ");
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        label.setPreferredSize(new Dimension(80, 25));
-        JTextField textField = new JTextField();
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        textField.setPreferredSize(new Dimension(200, 28));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                BorderFactory.createEmptyBorder(3, 5, 3, 5)));
-        bookFields.add(textField);
-
-        JButton subtractButton = new JButton(subtractIcon);
-        subtractButton.setPreferredSize(new Dimension(30, 28));
-        subtractButton.setBorder(BorderFactory.createEmptyBorder());
-        subtractButton.setContentAreaFilled(false);
-        subtractButton.setToolTipText("Xóa dòng này");
-        subtractButton
-                .addActionListener(e -> removeBookRow(parentPanel, bookRows, bookFields, suggestionBoxes, rowPanel));
-
-        JPanel labelFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        labelFieldPanel.add(label);
-        labelFieldPanel.add(textField);
-        inputPanel.add(labelFieldPanel, BorderLayout.CENTER);
-        inputPanel.add(subtractButton, BorderLayout.EAST);
-
-        JComboBox<SachDTO> suggestionBox = new JComboBox<>();
-        suggestionBox.setPreferredSize(new Dimension(280, 28));
-        suggestionBox.setVisible(false);
-        suggestionBox.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-                    boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof SachDTO) {
-                    SachDTO sach = (SachDTO) value;
-                    setText(sach.getMaSach() + " - " + sach.getTrangThai());
-                }
-                return this;
-            }
-        });
-        suggestionBoxes.add(suggestionBox);
-
-        suggestionBox.addActionListener(e -> {
-            SachDTO selectedSach = (SachDTO) suggestionBox.getSelectedItem();
-            if (selectedSach != null) {
-                textField.setText(selectedSach.getMaSach());
-                suggestionBox.setVisible(false);
-            }
-        });
-
-        rowPanel.add(inputPanel);
-        rowPanel.add(suggestionBox);
-
-        if (!bookRows.isEmpty()) {
-            parentPanel.add(Box.createVerticalStrut(5));
-        }
-
-        bookRows.add(rowPanel);
-        parentPanel.add(rowPanel);
-        parentPanel.revalidate();
-        parentPanel.repaint();
-
-        textField.addKeyListener(new KeyAdapter() {
-            private javax.swing.Timer searchTimer = new javax.swing.Timer(300,
-                    e -> performSearch(textField, suggestionBox));
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                searchTimer.restart(); // Khởi động lại timer mỗi khi nhập
-            }
-        });
-    }
-
-    private void removeBookRow(JPanel parentPanel, List<JPanel> bookRows, List<JTextField> bookFields,
-            List<JComboBox<SachDTO>> suggestionBoxes, JPanel rowToRemove) {
-        int index = bookRows.indexOf(rowToRemove);
-        if (index >= 0) {
-            parentPanel.remove(rowToRemove);
-            bookRows.remove(rowToRemove);
-            bookFields.remove(index);
-            suggestionBoxes.remove(index);
-            for (int i = 0; i < bookRows.size(); i++) {
-                JPanel panel = bookRows.get(i);
-                JLabel label = (JLabel) ((JPanel) ((JPanel) panel.getComponent(0)).getComponent(0)).getComponent(0);
-                label.setText("Mã sách " + (i + 1) + ": ");
-            }
-            parentPanel.revalidate();
-            parentPanel.repaint();
-        }
-    }
-
-    private void performSearch(JTextField textField, JComboBox<SachDTO> suggestionBox) {
-        String keyword = textField.getText().trim();
-        Sach tmpSach = new Sach();
-        List<SachDTO> sachList = tmpSach.getListSach();
-        if (sachList == null) {
-            JOptionPane.showMessageDialog(null, "Danh sách sách không khả dụng", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            suggestionBox.setVisible(false);
-            return;
-        }
-
-        List<SachDTO> result = sachList.stream()
-                .filter(sach -> sach.getMaSach().toLowerCase().contains(keyword.toLowerCase()) ||
-                        sach.getTrangThai().toLowerCase().contains(keyword.toLowerCase()))
-                .collect(Collectors.toList());
-
-        suggestionBox.removeAllItems();
-        if (!keyword.isEmpty() && !result.isEmpty()) {
-            for (SachDTO sach : result) {
-                suggestionBox.addItem(sach);
-            }
-            suggestionBox.setVisible(true);
-            suggestionBox.showPopup();
-        } else {
-            suggestionBox.setVisible(false);
-        }
     }
 }

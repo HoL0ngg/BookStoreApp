@@ -171,7 +171,7 @@ public class PhieuMuon extends JPanel {
 
                 if (col == 6 && row >= 0) {
                     int maPhieuMuon = (int) table.getValueAt(row, 0);
-                    phieumuoncontroller.hienthichitiettable(maPhieuMuon);
+                    phieumuoncontroller.hienThiChiTietTable(String.valueOf(maPhieuMuon));
                 }
             }
         });
@@ -200,7 +200,7 @@ public class PhieuMuon extends JPanel {
                         pm.getMaPhieuMuon(),
                         sdf.format(pm.getNgayMuon()),
                         sdf.format(pm.getNgayTraDuKien()),
-                        pm.getTrangThai(),
+                        pm.getTrangThai() == 1 ? "Đã hoàn thành" : "Chưa hoàn thành",
                         pm.getMaDocGia(),
                         pm.getMaNhanVien(),
                         "Chi tiết"

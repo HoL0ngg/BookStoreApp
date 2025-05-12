@@ -8,20 +8,30 @@ public class PhieuTraDTO {
     private String MaNV;
     private String MaDocGia;
     private int MaPhieuMuon;
+    private int status;
 
     // Constructor
-    public PhieuTraDTO(int MaPhieuTra, Date NgayTra, String MaNV, String MaDocGia, int MaPhieuMuon){
+    public PhieuTraDTO(int MaPhieuTra, Date NgayTra, String MaNV, String MaDocGia, int MaPhieuMuon, int status) {
         this.MaPhieuTra = MaPhieuTra;
         this.NgayTra = NgayTra;
         this.MaNV = MaNV;
         this.MaDocGia = MaDocGia;
         this.MaPhieuMuon = MaPhieuMuon;
+        this.status = status;
     }
 
     // Getters Setters
 
     public PhieuTraDTO() {
-        //TODO Auto-generated constructor stub
+        // TODO Auto-generated constructor stub
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public int getMaPhieuTra() {
@@ -63,5 +73,5 @@ public class PhieuTraDTO {
     public void setMaPhieuMuon(int maPhieuMuon) {
         MaPhieuMuon = maPhieuMuon;
     }
-    
+
 }

@@ -27,7 +27,7 @@ import com.bookstore.controller.PhieuTraController;
 import com.bookstore.dao.PhieuTraDAO;
 
 public class PhieuTra extends JPanel {
-    
+
     private List<PhieuTraDTO> listpt = new PhieuTraDAO().layDanhSachPhieuTra();
     private JPanel search;
     private JTable table;
@@ -37,16 +37,16 @@ public class PhieuTra extends JPanel {
     private JComboBox<String> cbSapXep;
     private JTextField txtTimKiem;
     private PhieuTraController phieuTraController;
-    private JButton btnReverse, btnThem, btnSua, btnXoa, btnTimKiem;
+    private JButton btnReverse, btnThem, btnSua, btnXoa;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
-    
+
     // khởi tạo
-    public PhieuTra(){
+    public PhieuTra() {
         phieuTraController = new PhieuTraController(this);
         init();
     }
-    
+
     public void init() {
 
         // sau khi hoàn chỉnh -> bỏ -> trong mainFrame đã tồn tại
@@ -64,30 +64,27 @@ public class PhieuTra extends JPanel {
         search.setLayout(null);
 
         String[] LuaChonTimKiem = {
-            "Mã phiếu trả",
-            "Mã nhân viên",
-            "Mã độc giả",
-            "Mã phiếu mượn"
+                "Mã phiếu trả",
+                "Mã nhân viên",
+                "Mã độc giả",
+                "Mã phiếu mượn"
         };
 
         String[] LuaChonSapXep = {
-            "Tất cả",
-            "Mã phiếu trả",
-            "Ngày trả",
-            "Mã nhân viên",
-            "Mã độc giả",
-            "Mã phiếu mượn"
+                "Mã phiếu trả",
+                "Ngày trả",
+                "Mã nhân viên",
+                "Mã độc giả",
+                "Mã phiếu mượn"
         };
 
         // phần tìm kiếm
         cbLuaChonTK = new JComboBox<>(LuaChonTimKiem);
         txtTimKiem = new JTextField();
         JLabel lbtimkiem = new JLabel("Tìm kiếm theo ");
-        btnTimKiem = new JButton("Tìm");
         lbtimkiem.setBounds(20, 10, 100, 30);
-        cbLuaChonTK.setBounds(120,10, 150, 30);
+        cbLuaChonTK.setBounds(120, 10, 150, 30);
         txtTimKiem.setBounds(280, 10, 150, 30);
-        btnTimKiem.setBounds(440, 10, 80, 30);
 
         // phần sắp xếp
         cbSapXep = new JComboBox<>(LuaChonSapXep);
@@ -95,7 +92,6 @@ public class PhieuTra extends JPanel {
         lbSapXep.setBounds(590, 10, 100, 30);
         cbSapXep.setBounds(690, 10, 150, 30);
 
-        btnTimKiem.addActionListener(phieuTraController);
         cbSapXep.addItemListener(phieuTraController);
 
         // button đổi chiều
@@ -107,7 +103,6 @@ public class PhieuTra extends JPanel {
         search.add(lbtimkiem);
         search.add(cbLuaChonTK);
         search.add(txtTimKiem);
-        search.add(btnTimKiem);
 
         search.add(lbSapXep);
         search.add(cbSapXep);
@@ -115,30 +110,31 @@ public class PhieuTra extends JPanel {
         search.add(btnReverse);
 
         // Panel chứa dữ liệu
-        // thông tin + thao tác hiển thị chi tiết phiếu trả -> xuất các chi tiết phiếu trả
+        // thông tin + thao tác hiển thị chi tiết phiếu trả -> xuất các chi tiết phiếu
+        // trả
         JPanel tablePanel = new JPanel(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[] {
-            "Mã phiếu trả", "Ngày trả", "Mã nhân viên", "Mã độc giả", "Mã phiếu mượn", "Thao tác"
+                "Mã phiếu trả", "Ngày trả", "Mã nhân viên", "Mã độc giả", "Mã phiếu mượn", "Thao tác"
         }, 0);
-        
+
         // tạo table và sự kiện chi tiết
         table = new JTable(tableModel);
         table.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 int row = table.rowAtPoint(e.getPoint());
                 int col = table.columnAtPoint(e.getPoint());
 
-                if (col == 5 && row >= 0){
+                if (col == 5 && row >= 0) {
                     int maPhieuTra = (int) table.getValueAt(row, 0);
-                    phieuTraController.hienthichitiettable(maPhieuTra);
-                }   
+                    phieuTraController.hienThiChiTietTable(maPhieuTra);
+                }
             }
         });
 
         // thanh scroll
         JScrollPane scrollPane = new JScrollPane(table);
-        tablePanel.add(scrollPane, BorderLayout.CENTER);  
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         // panel chứa thêm sửa xóa,... có thể thêm ...
         JPanel topButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
@@ -173,23 +169,8 @@ public class PhieuTra extends JPanel {
 
         // Load dữ liệu vào bảng
         loadTableData();
-
-        // Bắt sự kiện khi click dòng trong bảng ... có thể không dùng
-        // table.addMouseListener(new MouseAdapter() {
-        //     @Override
-        //     public void mouseClicked(MouseEvent e) {
-        //         int row = table.getSelectedRow();
-        //         if (row != -1) {
-        //             txtMaPhieuTra.setText(tableModel.getValueAt(row, 0).toString());
-        //             txtNgayTra.setText(tableModel.getValueAt(row, 1).toString());
-        //             txtMaNV.setText(tableModel.getValueAt(row, 2).toString());
-        //             txtMaDocGia.setText(tableModel.getValueAt(row, 3).toString());
-        //             txtMaPhieuMuon.setText(tableModel.getValueAt(row, 4).toString());
-        //         }
-        //     }
-        // });
     }
-    
+
     // hàm tải dữ liệu lên bảng, dùng chung cho thêm sửa xóa ở PhieuTraController
     public void loadTableData() {
         tableModel.setRowCount(0);
@@ -197,35 +178,36 @@ public class PhieuTra extends JPanel {
         List<PhieuTraDTO> tmplist = new PhieuTraDAO().layDanhSachPhieuTra();
         setListpt(tmplist);
         for (PhieuTraDTO pt : tmplist) {
-            tableModel.addRow(new Object[] {
-                pt.getMaPhieuTra(),
-                sdf.format(pt.getNgayTra()),
-                pt.getMaNV(),
-                pt.getMaDocGia(),
-                pt.getMaPhieuMuon(),
-                ""
-            });
+            if (pt.getStatus() == 1) {
+                tableModel.addRow(new Object[] {
+                        pt.getMaPhieuTra(),
+                        sdf.format(pt.getNgayTra()),
+                        pt.getMaNV(),
+                        pt.getMaDocGia(),
+                        pt.getMaPhieuMuon(),
+                        "Chi tiết"
+                });
+            }
         }
     }
 
     // hàm cập nhật bảng dùng chung cho PhieuTraController
     public void updateTable(List<PhieuTraDTO> danhsach) {
-        tableModel.setRowCount(0); 
-    
+        tableModel.setRowCount(0);
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    
+
         for (PhieuTraDTO pt : danhsach) {
             tableModel.addRow(new Object[] {
-                pt.getMaPhieuTra(),
-                dateFormat.format(pt.getNgayTra()),
-                pt.getMaNV(),
-                pt.getMaDocGia(),
-                pt.getMaPhieuMuon(),
-                ""
+                    pt.getMaPhieuTra(),
+                    dateFormat.format(pt.getNgayTra()),
+                    pt.getMaNV(),
+                    pt.getMaDocGia(),
+                    pt.getMaPhieuMuon(),
+                    "Chi tiết"
             });
         }
     }
-
 
     // Getter Setter
     public List<PhieuTraDTO> getListpt() {
@@ -240,61 +222,39 @@ public class PhieuTra extends JPanel {
         return table;
     }
 
-
-
     public JTextField getTxtMaPhieuTra() {
         return txtMaPhieuTra;
     }
-
-
 
     public JTextField getTxtNgayTra() {
         return txtNgayTra;
     }
 
-
-
     public JTextField getTxtMaNV() {
         return txtMaNV;
     }
-
-
 
     public JTextField getTxtMaDocGia() {
         return txtMaDocGia;
     }
 
-
-
     public JTextField getTxtMaPhieuMuon() {
         return txtMaPhieuMuon;
     }
-
-
-
-    public JButton getBtnTimKiem() {
-        return btnTimKiem;
-    }
-
-
 
     public JComboBox<String> getCbLuaChonTK() {
         return cbLuaChonTK;
     }
 
-
-
     public JComboBox<String> getCbSapXep() {
         return cbSapXep;
     }
-
-
 
     public JTextField getTxtTimKiem() {
         return txtTimKiem;
     }
 
-    public JButton getBtnReverse(){
+    public JButton getBtnReverse() {
         return btnReverse;
     }
 
@@ -302,15 +262,11 @@ public class PhieuTra extends JPanel {
         return btnThem;
     }
 
-
-
     public JButton getBtnSua() {
         return btnSua;
     }
 
-
-
     public JButton getBtnXoa() {
         return btnXoa;
     }
-}    
+}

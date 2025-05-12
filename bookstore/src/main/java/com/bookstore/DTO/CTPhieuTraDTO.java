@@ -1,28 +1,28 @@
 package com.bookstore.DTO;
 
 public class CTPhieuTraDTO {
-    private int MaCTPhieuTra;
     private int TrangThai;
     private int MaPhieuTra;
     private String MaSach;
+    private int status;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     // Constructor
-    public CTPhieuTraDTO(int MaCTPhieuTra, int TrangThai, int MaPhieuTra, String MaSach){
-        this.MaCTPhieuTra = MaCTPhieuTra;
+    public CTPhieuTraDTO(int TrangThai, int MaPhieuTra, String MaSach, int status){
         this.TrangThai = TrangThai;
         this.MaPhieuTra = MaPhieuTra;
         this.MaSach = MaSach;
+        this.status = status;
     }
 
     // Getters Setters
-    public int getMaCTPhieuTra() {
-        return MaCTPhieuTra;
-    }
-
-    public void setMaCTPhieuTra(int maCTPhieuTra) {
-        MaCTPhieuTra = maCTPhieuTra;
-    }
-
     public int getTrangThai() {
         return TrangThai;
     }

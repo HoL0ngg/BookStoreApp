@@ -14,15 +14,14 @@ public class PhieuMuonDTO {
     private Boolean Status;
 
     public PhieuMuonDTO(int MaPhieuMuon, Date NgayMuon, Date NgayTraDuKien, int TrangThai,
-                    String MaDocGia, String MaNhanVien, Boolean Status){
+                    String MaDocGia, String MaNhanVien, Boolean status){
         this.MaPhieuMuon = MaPhieuMuon;
         this.NgayMuon = NgayMuon;
         this.NgayTraDuKien = NgayTraDuKien;
         this.TrangThai = TrangThai;
         this.MaDocGia = MaDocGia;
         this.MaNhanVien = MaNhanVien;
-        this.Status = Status;
-
+        this.Status = status;
     }
 
     public int getMaPhieuMuon() {

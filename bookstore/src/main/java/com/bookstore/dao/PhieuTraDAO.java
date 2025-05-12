@@ -7,14 +7,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bookstore.DTO.CTPhieuTraDTO;
 import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class PhieuTraDAO {
 
     //Thêm phiếu trả
-    public boolean themPhieuTra(PhieuTraDTO phieuTra) {
-        String sql = "INSERT INTO PhieuTra (MaPhieuTra, NgayTra, MaNhanVien, MaDocGia, MaPhieuMuon) VALUES (?, ?, ?, ?, ?)";
+    public boolean themPhieuTra(PhieuTraDTO phieuTra, List<CTPhieuTraDTO> tmplist) {
+        String sql = "INSERT INTO PhieuTra (MaPhieuTra, NgayTra, MaNhanVien, MaDocGia, MaPhieuMuon, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, phieuTra.getMaPhieuTra());
@@ -22,7 +23,10 @@ public class PhieuTraDAO {
             stmt.setString(3, phieuTra.getMaNV());
             stmt.setString(4, phieuTra.getMaDocGia());
             stmt.setInt(5, phieuTra.getMaPhieuMuon());
-            return stmt.executeUpdate() > 0;
+            stmt.setInt(6, 1);
+            stmt.executeUpdate();
+            new CTPhieuTraDAO().themctpt(tmplist);
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -48,7 +52,7 @@ public class PhieuTraDAO {
 
     // Xóa phiếu trả
     public boolean xoaPhieuTra(int maPhieuTra) {
-        String sql = "DELETE FROM PhieuTra WHERE MaPhieuTra = ?";
+        String sql = "UPDATE PhieuTra SET status = 0 WHERE MaPhieuTra = ?";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, maPhieuTra);
@@ -72,69 +76,13 @@ public class PhieuTraDAO {
                     rs.getDate("NgayTra"),
                     rs.getString("MaNhanVien"),
                     rs.getString("MaDocGia"),
-                    rs.getInt("MaPhieuMuon")
+                    rs.getInt("MaPhieuMuon"),
+                    rs.getInt("status")
                 ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return danhSach;
-    }
-
-    // Tìm phiếu trả theo mã
-    public PhieuTraDTO timPhieuTra(String maPhieuTra) {
-        String sql = "SELECT * FROM PhieuTra WHERE MaPhieuTra = ?";
-        try (Connection conn = DatabaseUtils.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, maPhieuTra);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new PhieuTraDTO(
-                        rs.getInt("MaPhieuTra"),
-                        rs.getDate("NgayTra"),
-                        rs.getString("MaNV"),
-                        rs.getString("MaDocGia"),
-                        rs.getInt("MaPhieuMuon")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ArrayList<PhieuTraDTO> selectByMaPhieuTra(List<PhieuTraDTO> danhsach) {
-        ArrayList<PhieuTraDTO> list = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DatabaseUtils.getConnection();
-            String sql = "SELECT * FROM PhieuTra WHERE maPhieuTra LIKE ?";
-            stmt = conn.prepareStatement(sql);
-            stmt.setString(1, "%" + danhsach + "%");
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                PhieuTraDTO pt = new PhieuTraDTO();
-                pt.setMaPhieuTra(rs.getInt("MaPhieuTra"));
-                pt.setMaNV(rs.getString("MaNhanVien"));
-                pt.setMaDocGia(rs.getString("maDocGia"));
-                pt.setMaPhieuMuon(rs.getInt("MaPhieuMuon"));
-                pt.setNgayTra(rs.getDate("ngayTra"));
-
-                list.add(pt);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try { if (rs != null) rs.close(); } catch (Exception e) {}
-            try { if (stmt != null) stmt.close(); } catch (Exception e) {}
-            try { if (conn != null) conn.close(); } catch (Exception e) {}
-        }
-
-        return list;
     }
 }
