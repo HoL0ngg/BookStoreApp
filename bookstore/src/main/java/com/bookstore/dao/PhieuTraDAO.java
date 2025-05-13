@@ -126,4 +126,7 @@ public class PhieuTraDAO {
         pmDao.suaPhieuMuon(pm);
     }
 
+    public boolean ktrapp(PhieuTraDTO pt, PhieuMuonDTO pm){
+        
+    }
 }
