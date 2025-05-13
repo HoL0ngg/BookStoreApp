@@ -27,6 +27,10 @@ SET time_zone = "+00:00";
 -- Cấu trúc bảng cho bảng `chucnang`
 --
 
+Drop Database if exists quanlythuvien;
+create database quanlythuvien;
+use quanlythuvien;
+
 CREATE TABLE `chucnang` (
   `MaChucNang` int(11) NOT NULL,
   `TenChucNang` varchar(50) NOT NULL,
@@ -45,7 +49,7 @@ INSERT INTO `chucnang` (`MaChucNang`, `TenChucNang`, `Status`) VALUES
 (5, 'Quản lý phiếu nhập', 1),
 (6, 'Quản lý phiếu mượn', 1),
 (7, 'Quản lý phiếu trả', 1),
-(8, 'Quản lý phiếu huỷ', 1),
+(8, 'Quản lý phiếu hủy', 1),
 (9, 'Quản lý phiếu phạt', 1),
 (10, 'Quản lý phân quyền', 1),
 (11, 'Quản lý tài khoản', 1);

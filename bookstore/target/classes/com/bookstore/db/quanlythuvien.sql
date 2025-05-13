@@ -540,31 +540,31 @@ CREATE TABLE `phieunhap` (
   `ThoiGian` date NOT NULL,
   `MaNhanVien` varchar(10) NOT NULL,
   `MaNCC` int(11) NOT NULL,
-  `TrangThai` DEFAULT 1
-  `Status` tinyint(1) DEFAULT 1
-) ;
-
+  `Status` tinyint(1) DEFAULT 1,
+  `TrangThai` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 --
 -- Đang đổ dữ liệu cho bảng `phieunhap`
 --
 
-INSERT INTO `phieunhap` (`MaPhieuNhap`, `ThoiGian`, `MaNhanVien`, `MaNCC`, `Status`) VALUES
-('PN001', '2023-01-15', 'NV001', 1, 1),
-('PN002', '2023-01-20', 'NV002', 2, 1),
-('PN003', '2023-02-05', 'NV003', 3, 1),
-('PN004', '2023-02-10', 'NV001', 4, 1),
-('PN005', '2023-03-01', 'NV004', 5, 1),
-('PN006', '2023-03-15', 'NV005', 6, 1),
-('PN007', '2023-04-02', 'NV002', 7, 1),
-('PN008', '2023-04-18', 'NV003', 8, 1),
-('PN009', '2023-05-05', 'NV001', 9, 1),
-('PN010', '2023-05-20', 'NV004', 10, 1),
-('PN011', '2023-06-10', 'NV005', 1, 1),
-('PN012', '2023-06-25', 'NV002', 2, 1),
-('PN013', '2023-07-05', 'NV003', 3, 1),
-('PN014', '2023-07-20', 'NV004', 4, 1),
-('PN015', '2023-08-01', 'NV005', 5, 1);
-
+INSERT INTO `phieunhap` (`MaPhieuNhap`, `ThoiGian`, `MaNhanVien`, `MaNCC`, `Status`, `TrangThai`) VALUES
+('PN001', '2023-01-15', 'NV001', 1, 1, 1),
+('PN002', '2023-01-20', 'NV002', 2, 1, 1),
+('PN003', '2023-02-05', 'NV003', 3, 1, 1),
+('PN004', '2023-02-10', 'NV001', 4, 1, 1),
+('PN005', '2023-03-01', 'NV004', 5, 1, 1),
+('PN006', '2023-03-15', 'NV005', 6, 1, 1),
+('PN007', '2023-04-02', 'NV002', 7, 1, 1),
+('PN008', '2023-04-18', 'NV003', 8, 1, 1),
+('PN009', '2023-05-05', 'NV001', 9, 1, 1),
+('PN010', '2023-05-20', 'NV004', 10, 1, 1),
+('PN011', '2023-06-10', 'NV005', 1, 1, 1),
+('PN012', '2023-06-25', 'NV002', 2, 1, 1),
+('PN013', '2023-07-05', 'NV003', 3, 1, 1),
+('PN014', '2023-07-20', 'NV004', 4, 1, 1),
+('PN015', '2023-08-01', 'NV005', 5, 1, 2),
+('PN016', '2025-05-13', 'NV002', 1, 1, 2),
+('PN017', '2025-05-13', 'NV001', 1, 0, 1);
 -- --------------------------------------------------------
 
 --
@@ -580,6 +580,41 @@ CREATE TABLE `phieuphat` (
   `MaCTPhieuTra` int(11) DEFAULT NULL,
   `Status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE ctphieunhap (
+  MaPhieuNhap varchar(10) NOT NULL,
+  MaDauSach varchar(10) NOT NULL,
+  SoLuong int(11) NOT NULL,
+  status tinyint(1) NOT NULL,
+  PRIMARY KEY (MaPhieuNhap,`MaDauSach`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+INSERT INTO `ctphieunhap` (`MaPhieuNhap`, `MaDauSach`, `SoLuong`, `status`) VALUES
+('PN001', 'DS001', 10, 1),
+('PN002', 'DS002', 15, 1),
+('PN003', 'DS003', 20, 1),
+('PN004', 'DS004', 12, 1),
+('PN005', 'DS005', 18, 1),
+('PN006', 'DS006', 22, 1),
+('PN007', 'DS007', 14, 1),
+('PN008', 'DS008', 16, 1),
+('PN009', 'DS009', 19, 1),
+('PN010', 'DS010', 21, 1),
+('PN011', 'DS011', 13, 1),
+('PN012', 'DS012', 17, 1),
+('PN013', 'DS013', 23, 1),
+('PN014', 'DS014', 11, 1),
+('PN015', 'DS015', 24, 1),
+('PN016', 'DS016', 25, 1),
+('PN017', 'DS017', 10, 0),
+('PN017', 'DS025', 7, 0),
+('PN018', 'DS018', 15, 1),
+('PN019', 'DS019', 20, 1),
+('PN020', 'DS020', 12, 1),
+('PN021', 'DS021', 18, 1),
+('PN022', 'DS022', 22, 1),
+('PN023', 'DS023', 14, 1),
+('PN024', 'DS024', 16, 1);
 
 --
 -- Đang đổ dữ liệu cho bảng `phieuphat`

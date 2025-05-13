@@ -7,7 +7,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Date;
 import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -33,8 +32,10 @@ import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.DTO.SachDTO;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.dao.CTPhieuMuonDAO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuMuonDAO;
 import com.bookstore.dao.SachDAO;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Panel.PhieuMuon;
 import com.formdev.flatlaf.json.ParseException;
 
@@ -71,6 +72,11 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             isAscending = !isAscending;
             pm.updateTable(mangtmp);
         } else if (e.getSource() == pm.getBtnSua()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 6, 3)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền sửa phiếu mượn", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             int slt = pm.getTable().getSelectedRow();
             if (slt == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn sửa", "Thông báo",
@@ -233,6 +239,11 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             dialog.setVisible(true);
             System.out.println("Đã nhấn vào nút Sửa");
         } else if (e.getSource() == pm.getBtnXoa()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 6, 4)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền xóa phiếu mượn", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             if (pm.getTable().getSelectedRow() == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu mượn", "Phiếu mượn trống", 0);
                 return;
@@ -289,6 +300,11 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
         } else if (e.getSource() == pm.getBtnThem()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 6, 2)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền thêm phiếu mượn", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             SachDAO sdao = new SachDAO();
             List<SachDTO> s = sdao.selectAll();
             if (s == null) {

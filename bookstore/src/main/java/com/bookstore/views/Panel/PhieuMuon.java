@@ -21,12 +21,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
 import java.text.SimpleDateFormat;
-
-import mdlaf.MaterialLookAndFeel;
 
 import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.controller.PhieuMuonController;
@@ -55,14 +52,6 @@ public class PhieuMuon extends JPanel {
 
     @SuppressWarnings("unused")
     public void init() {
-
-        // sau khi hoàn chỉnh -> xóa
-        try {
-            UIManager.setLookAndFeel(new MaterialLookAndFeel());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         this.setLayout(new BorderLayout());
 
         // panel tìm kiếm và sắp xếp

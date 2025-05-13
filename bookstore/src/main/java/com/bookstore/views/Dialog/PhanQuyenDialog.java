@@ -8,7 +8,6 @@ import com.bookstore.dao.ChucNangDAO;
 import com.bookstore.dao.NhomQuyenDAO;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ public class PhanQuyenDialog extends JDialog {
 
     public PhanQuyenDialog(Frame parent, Mode mode, int maNhomQuyen) {
         super(parent, "Phân quyền nhân viên", true);
-        setSize(600, 400);
+        setSize(600, 440);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 

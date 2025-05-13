@@ -16,7 +16,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import java.awt.event.KeyAdapter;
@@ -25,7 +24,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import java.text.SimpleDateFormat;
-import mdlaf.MaterialLookAndFeel;
 import com.bookstore.DTO.PhieuNhapDTO;
 import com.bookstore.controller.PhieuNhapController;
 import com.bookstore.dao.PhieuNhapDAO;
@@ -53,13 +51,6 @@ public class PhieuNhap extends JPanel {
     }
 
     public void init() {
-        // Cấu hình Look and Feel (bỏ trong ứng dụng thực tế nếu đã có trong MainFrame)
-        try {
-            UIManager.setLookAndFeel(new MaterialLookAndFeel());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         this.setLayout(new BorderLayout());
 
         // Panel tìm kiếm và sắp xếp

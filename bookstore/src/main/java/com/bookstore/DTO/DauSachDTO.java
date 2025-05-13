@@ -110,7 +110,7 @@ public class DauSachDTO {
     }
 
     public void setSoLuong(int soLuong) {
-        soLuong = SoLuong;
+        this.SoLuong = soLuong;
     }
 
     @Override

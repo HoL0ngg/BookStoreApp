@@ -13,8 +13,9 @@ import javax.swing.*;
 
 import com.bookstore.BUS.TacGiaBUS;
 import com.bookstore.DTO.TacGiaDTO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.TacGiaDAO;
-import com.bookstore.utils.ExcelExporter;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Component.Header;
 
 public class TacGia extends JPanel {
@@ -48,12 +49,20 @@ public class TacGia extends JPanel {
 
         // Nút Thêm
         header.getBtnAdd().addActionListener(e -> {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 2, 2)) {
+                JOptionPane.showMessageDialog(this, "Bạn không có quyền thêm tác giả.");
+                return;
+            }
             new AddEditTacGiaDialog(null).setVisible(true); // Show Dialog
             loadData(currentSearchType, currentKeyword);
         });
 
         // Nút Sửa
         header.getBtnEdit().addActionListener(e -> {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 2, 3)) {
+                JOptionPane.showMessageDialog(this, "Bạn không có quyền sửa tác giả.");
+                return;
+            }
             if (selectedTacGia != null) {
                 new AddEditTacGiaDialog(selectedTacGia).setVisible(true);
                 loadData(currentSearchType, currentKeyword);
@@ -64,6 +73,10 @@ public class TacGia extends JPanel {
 
         // Nút Xóa
         header.getBtnDelete().addActionListener(e -> {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 2, 4)) {
+                JOptionPane.showMessageDialog(this, "Bạn không có quyền xóa tác giả.");
+                return;
+            }
             if (selectedTacGia != null) {
                 int confirm = JOptionPane.showConfirmDialog(this,
                         "Bạn có chắc chắn muốn xóa tác giả này?", "Xác nhận",
@@ -90,6 +103,10 @@ public class TacGia extends JPanel {
         });
 
         header.getBtnDetail().addActionListener(e -> {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 2, 1)) {
+                JOptionPane.showMessageDialog(this, "Bạn không có quyền xem chi tiết tác giả.");
+                return;
+            }
             if (selectedTacGia != null) {
                 new Detail_TacGia(null, selectedTacGia.getMaTacGia(), selectedTacGia.getTenTacGia()).setVisible(true);
             } else {

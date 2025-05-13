@@ -38,8 +38,10 @@ import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.DTO.SachDTO;
 import com.bookstore.views.Panel.PhieuTra;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuTraDAO;
 import com.bookstore.dao.SachDAO;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.DTO.CTPhieuMuonDTO;
 import com.bookstore.DTO.CTPhieuTraDTO;
@@ -78,6 +80,11 @@ public class PhieuTraController implements ItemListener, ActionListener {
             isAscending = !isAscending;
             pt.updateTable(mangtmp);
         } else if (e.getSource() == pt.getBtnSua()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 7, 3)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền sửa phiếu trả", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             int slt = pt.getTable().getSelectedRow();
             if (slt == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn sửa", "Thông báo",
@@ -309,6 +316,11 @@ public class PhieuTraController implements ItemListener, ActionListener {
             dialog.setVisible(true);
             System.out.println("Đã nhấn vào nút Sửa");
         } else if (e.getSource() == pt.getBtnThem()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 7, 2)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền thêm phiếu trả", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             System.out.println("Đã nhấn vào nút Thêm");
             JDialog dialog = new JDialog((JFrame) null, "Thêm Phiếu Trả", true);
             dialog.setSize(900, 600);
@@ -684,6 +696,11 @@ public class PhieuTraController implements ItemListener, ActionListener {
             dialog.setVisible(true);
 
         } else if (e.getSource() == pt.getBtnXoa()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 7, 4)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền xóa phiếu trả", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             int slt = pt.getTable().getSelectedRow();
             if (slt == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn xóa", "Thông báo",

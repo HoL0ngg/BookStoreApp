@@ -56,6 +56,7 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
                 kh.setMaDauSach(rs.getString("MaDauSach"));
                 kh.setTenDauSach(rs.getString("TenDauSach"));
                 kh.setHinhAnh(rs.getString("HinhAnh"));
+                kh.setSoLuong(rs.getInt("SoLuong"));
                 kh.setNhaXuatBan(rs.getString("NhaXuatBan"));
                 kh.setNamXuatBan(rs.getInt("NamXuatBan"));
                 kh.setNgonNgu(rs.getString("NgonNgu"));

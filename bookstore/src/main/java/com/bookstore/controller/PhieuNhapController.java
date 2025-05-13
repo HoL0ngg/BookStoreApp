@@ -33,7 +33,11 @@ import com.bookstore.BUS.PhieuNhapBUS;
 import com.bookstore.DTO.NCCDTO;
 import com.bookstore.DTO.PhieuNhapDTO;
 import com.bookstore.views.Panel.PhieuNhap;
+import com.bookstore.dao.NCCDAO;
+import com.bookstore.dao.NhanVienDAO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuNhapDAO;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.DTO.CTPhieuNhapDTO;
 import com.bookstore.DTO.DauSachDTO;
@@ -71,6 +75,11 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             isAscending = !isAscending;
             pn.updateTable(mangtmp);
         } else if (e.getSource() == pn.getBtnSua()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 5, 3)) {
+                JOptionPane.showMessageDialog(null,
+                        "Bạn không có quyền sửa phiếu nhập", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             int slt = pn.getTable().getSelectedRow();
             if (slt == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn sửa", "Thông báo",
@@ -123,9 +132,17 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             JLabel lblThoigian = new JLabel("Thời gian (yyyy-MM-dd):");
             JTextField txtThoigian = new JTextField(strThoigian);
             JLabel lblMnv = new JLabel("Mã nhân viên:");
-            JTextField txtMnv = new JTextField(mnv);
+            JComboBox<String> cboMaNV = new JComboBox<>();
+            List<String> dsMaNV = new NhanVienDAO().selectAll();
+            for (String maNV : dsMaNV) {
+                cboMaNV.addItem(maNV);
+            }
             JLabel lblMncc = new JLabel("Mã nhà cung cấp:");
-            JTextField txtMncc = new JTextField(mncc);
+            JComboBox<String> cboNCC = new JComboBox<>();
+            List<NCCDTO> dsNCC = new NCCDAO().selectAll();
+            for (NCCDTO ncc : dsNCC) {
+                cboNCC.addItem(ncc.getMaNCC() + " - " + ncc.getTenNCC());
+            }
             JLabel lbTrangThai = new JLabel("Trạng thái");
             String[] TT = {
                     "Đang xử lý",
@@ -138,9 +155,9 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             inputPanel.add(lblThoigian);
             inputPanel.add(txtThoigian);
             inputPanel.add(lblMnv);
-            inputPanel.add(txtMnv);
+            inputPanel.add(cboMaNV);
             inputPanel.add(lblMncc);
-            inputPanel.add(txtMncc);
+            inputPanel.add(cboNCC);
             inputPanel.add(lbTrangThai);
             inputPanel.add(cbtrangthai);
 
@@ -167,8 +184,8 @@ public class PhieuNhapController implements ItemListener, ActionListener {
                     // Lấy dữ liệu từ các trường nhập liệu
                     String newMpn = txtMpn.getText();
                     String newThoigianStr = txtThoigian.getText();
-                    String newMnv = txtMnv.getText();
-                    String newMnccStr = txtMncc.getText();
+                    String newMnv = cboMaNV.getSelectedItem().toString().split(" - ")[0];
+                    String newMnccStr = cboNCC.getSelectedItem().toString().split(" - ")[0];
 
                     // Kiểm tra và chuyển đổi thời gian
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -219,6 +236,11 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             dialog.setVisible(true);
             System.out.println("Đã nhấn vào nút Sửa");
         } else if (e.getSource() == pn.getBtnThem()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 5, 2)) {
+                JOptionPane.showMessageDialog(null,
+                        "Bạn không có quyền thêm phiếu nhập", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             System.out.println("Đã nhấn vào nút Thêm");
             JDialog dialog = new JDialog((JFrame) null, "Thêm Phiếu Nhập", true);
             dialog.setSize(900, 600);
@@ -700,6 +722,11 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             cancel.addActionListener(e1 -> dialog.dispose());
             dialog.setVisible(true);
         } else if (e.getSource() == pn.getBtnXoa()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 5, 4)) {
+                JOptionPane.showMessageDialog(null,
+                        "Bạn không có quyền xóa phiếu nhập", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             int slt = pn.getTable().getSelectedRow();
             if (slt == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu muốn xóa", "Thông báo",

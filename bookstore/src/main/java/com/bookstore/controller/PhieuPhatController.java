@@ -13,11 +13,12 @@ import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
 
 import com.bookstore.BUS.PhieuPhatBUS;
 import com.bookstore.DTO.PhieuPhatDTO;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuPhatDAO;
+import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Panel.PhieuPhat;
 
 public class PhieuPhatController implements ActionListener, ItemListener {
@@ -49,6 +50,11 @@ public class PhieuPhatController implements ActionListener, ItemListener {
             isAscending = !isAscending;
             pp.updateTable(mangtmp);
         } else if (e.getSource() == pp.getBtnSua()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 9, 3)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền sửa phiếu phạt", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             int slt = pp.getTable().getSelectedRow();
             if (slt == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu phạt muốn sửa", "Thông báo",
@@ -181,6 +187,11 @@ public class PhieuPhatController implements ActionListener, ItemListener {
             btnCancel.addActionListener(e1 -> dialog.dispose());
             dialog.setVisible(true);
         } else if (e.getSource() == pp.getBtnXoa()) {
+            if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 9, 4)) {
+                JOptionPane.showMessageDialog(null, "Bạn không có quyền xóa phiếu phạt", "Thông báo",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
             if (pp.getTable().getSelectedRow() == -1) {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn phiếu phạt", "Thông báo",
                         JOptionPane.WARNING_MESSAGE);
