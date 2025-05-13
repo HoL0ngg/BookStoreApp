@@ -113,7 +113,7 @@ public class NhaCungCap extends JPanel {
 
         btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 2)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 2)) {
                     JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền thêm nhà cung cấp.");
                     return;
                 }
@@ -131,7 +131,7 @@ public class NhaCungCap extends JPanel {
 
         btnSua.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 3)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 3)) {
                     JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền sửa nhà cung cấp.");
                     return;
                 }
@@ -159,7 +159,7 @@ public class NhaCungCap extends JPanel {
 
         btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 4)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 4)) {
                     JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền xóa nhà cung cấp.");
                     return;
                 }
@@ -181,7 +181,7 @@ public class NhaCungCap extends JPanel {
 
         btnChiTiet.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 1)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 4, 1)) {
                     JOptionPane.showMessageDialog(NhaCungCap.this, "Bạn không có quyền xem chi tiết nhà cung cấp.");
                     return;
                 }

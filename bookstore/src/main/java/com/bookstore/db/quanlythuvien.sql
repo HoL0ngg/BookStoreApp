@@ -48,7 +48,7 @@ INSERT INTO `chucnang` (`MaChucNang`, `TenChucNang`, `Status`) VALUES
 (5, 'Quản lý phiếu nhập', 1),
 (6, 'Quản lý phiếu mượn', 1),
 (7, 'Quản lý phiếu trả', 1),
-(8, 'Quản lý phiếu huỷ', 1),
+(8, 'Quản lý phiếu hủy', 1),
 (9, 'Quản lý phiếu phạt', 1),
 (10, 'Quản lý phân quyền', 1),
 (11, 'Quản lý tài khoản', 1);
@@ -62,6 +62,7 @@ INSERT INTO `chucnang` (`MaChucNang`, `TenChucNang`, `Status`) VALUES
 CREATE TABLE `ctphieumuon` (
   `MaPhieuMuon` int(11) NOT NULL,
   `MaSach` varchar(10) NOT NULL,
+  `TrangThai` tinyint(1) DEFAULT 0,
   `Status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -539,6 +540,7 @@ CREATE TABLE `phieunhap` (
   `ThoiGian` date NOT NULL,
   `MaNhanVien` varchar(10) NOT NULL,
   `MaNCC` int(11) NOT NULL,
+  `TrangThai` DEFAULT 1
   `Status` tinyint(1) DEFAULT 1
 ) ;
 

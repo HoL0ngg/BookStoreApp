@@ -142,7 +142,7 @@ public class Sach extends JPanel {
 
         btnThem.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 2)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 2)) {
                     JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền thêm đầu sách.");
                     return;
                 }
@@ -153,7 +153,7 @@ public class Sach extends JPanel {
 
         btnSua.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 3)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 3)) {
                     JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền sửa đầu sách.");
                     return;
                 }
@@ -171,7 +171,7 @@ public class Sach extends JPanel {
 
         btnXoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 4)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 4)) {
                     JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền xóa đầu sách.");
                     return;
                 }
@@ -193,7 +193,8 @@ public class Sach extends JPanel {
 
         btnChiTiet.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 1, 1)) {
+                if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(),
+                        1, 1)) {
                     JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền xem chi tiết đầu sách.");
                     return;
                 }

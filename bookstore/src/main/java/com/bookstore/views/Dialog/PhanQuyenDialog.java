@@ -33,6 +33,7 @@ public class PhanQuyenDialog extends JDialog {
                 { "Quản lý sách", false, false, false, false },
                 { "Quản lý tác giả", false, false, false, false },
                 { "Quản lý độc giả", false, false, false, false },
+                { "Quản lý nhà cung cấp", false, false, false, false },
                 { "Quản lý phiếu nhập", false, false, false, false },
                 { "Quản lý phiếu mượn", false, false, false, false },
                 { "Quản lý phiếu trả", false, false, false, false },

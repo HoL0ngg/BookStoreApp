@@ -69,7 +69,7 @@ public class ThongKePanel extends JPanel {
     }
 
     private JPanel createThongKeSoLieuPanel(int tongSach, int tongDocGia, int tongLuotMuon) {
-        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel.setBackground(Color.WHITE);
 

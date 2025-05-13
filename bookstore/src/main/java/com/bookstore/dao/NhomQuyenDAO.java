@@ -167,6 +167,7 @@ public class NhomQuyenDAO implements IBaseDAO<NhomQuyenDTO> {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 result = rs.getBoolean(chucNang + 2);
+                System.out.println(result);
             }
         } catch (SQLException e) {
             e.printStackTrace();
