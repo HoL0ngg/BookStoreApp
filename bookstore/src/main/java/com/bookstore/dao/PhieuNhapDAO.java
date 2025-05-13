@@ -87,11 +87,14 @@ public class PhieuNhapDAO {
                 for (int soluong = 1; soluong <= ct.getSoLuong(); soluong++) {
                     String sql1 = "INSERT INTO Sach (TrangThai, MaDauSach, NgayNhap, MaSach) VALUES (?, ?, ?, ?)";
                     try (PreparedStatement stmt1 = conn.prepareStatement(sql1)) {
-                        stmt1.setInt(1, 0);
-                        stmt1.setString(2, list.get(soluong - 1).getMaDauSach());
+                        stmt1.setInt(1, 0); // Trạng thái mặc định (Bình thường)
+                        stmt1.setString(2, list.get(0).getMaDauSach()); // Sử dụng MaDauSach từ phần tử đầu tiên
                         stmt1.setDate(3, new java.sql.Date(System.currentTimeMillis()));
-                        stmt1.setString(4, "S" + (new SachDAO().getSoluong()));
+                        stmt1.setString(4, "S" + (new SachDAO().getSoluong() + soluong)); // Tăng mã sách để tránh trùng
                         stmt1.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        throw new SQLException("Lỗi khi thêm sách: " + e.getMessage());
                     }
                 }
             }
