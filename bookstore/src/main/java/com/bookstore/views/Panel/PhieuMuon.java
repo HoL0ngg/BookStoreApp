@@ -21,7 +21,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.text.SimpleDateFormat;
@@ -200,6 +202,11 @@ public class PhieuMuon extends JPanel {
         // JScrollPane scrollPane = new JScrollPane(table);
         // tablePanel.add(scrollPane, BorderLayout.CENTER);
 
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+                for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
         // add thanh header + bảng
         this.add(headerPanel, BorderLayout.NORTH);
         this.add(new JScrollPane(table), BorderLayout.CENTER);
