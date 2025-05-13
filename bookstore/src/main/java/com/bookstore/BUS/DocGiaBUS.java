@@ -9,7 +9,7 @@ public class DocGiaBUS {
     List<DocGiaDTO> listtmp;
 
     public DocGiaBUS() {
-        listtmp = new DocGiaDAO().layDanhSachPhieuNhap();
+        listtmp = new DocGiaDAO().getAllDocGia();
     }
 
     public List<DocGiaDTO> getList() {

@@ -1,68 +1,79 @@
 package com.bookstore.DTO;
 
 public class DocGiaDTO {
-    private String MaDocGia;
+    private String maDocGia;
     private String TenDocGia;
-    private String DiaChi;
+    private String diachi;
     private String SDT;
-    private int TrangThai;
-    private int status;
+    private String TrangThai;
+    private String Status;
 
-    public DocGiaDTO(String MaDocGia, String TenDocGia, String DiaChi, String SDT, int TrangThai, int status) {
-        this.MaDocGia = MaDocGia;
+    public DocGiaDTO(String maDocGia, String TenDocGia, String diachi, String SDT, String TrangThai, String Status) {
+        this.maDocGia = maDocGia;
         this.TenDocGia = TenDocGia;
-        this.DiaChi = DiaChi;
+        this.diachi = diachi;
         this.SDT = SDT;
         this.TrangThai = TrangThai;
-        this.status = status;
+        this.Status = Status;
     }
 
     public String getMaDocGia() {
-        return MaDocGia;
-    }
-
-    public void setMaDocGia(String maDocGia) {
-        MaDocGia = maDocGia;
+        return maDocGia;
     }
 
     public String getTenDocGia() {
         return TenDocGia;
     }
 
-    public void setTenDocGia(String tenDocGia) {
-        TenDocGia = tenDocGia;
-    }
-
-    public String getDiaChi() {
-        return DiaChi;
-    }
-
-    public void setDiaChi(String diaChi) {
-        DiaChi = diaChi;
+    public String getdiachi() {
+        return diachi;
     }
 
     public String getSDT() {
         return SDT;
     }
 
-    public void setSDT(String sDT) {
-        SDT = sDT;
-    }
-
-    public int getTrangThai() {
+    public String getTrangThai() {
         return TrangThai;
     }
 
-    public void setTrangThai(int trangThai) {
-        TrangThai = trangThai;
+    public String getStatus() {
+        return Status;
     }
 
-    public int getStatus() {
-        return status;
+    public void setMaDocGia(String maDocGia) {
+        this.maDocGia = maDocGia;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setTenDocGia(String TenDocGia) {
+        this.TenDocGia = TenDocGia;
     }
 
+    public void setdiaChi(String diachi) {
+        this.diachi = diachi;
+    }
+
+    public void setSDT(String SDT) {
+        this.SDT = SDT;
+    }
+
+    public void settrangthai(String trangthai) {
+        this.TrangThai = trangthai;
+    }
+
+    public void setStatus(String status) {
+        this.Status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "DocGiaDTO{" +
+                "maDocGia='" + maDocGia + '\'' +
+                ", TenDocGia='" + TenDocGia + '\'' +
+                ", diachi='" + diachi + '\'' +
+                ", SDT='" + SDT + '\'' +
+                ", TrangThai='" + TrangThai + '\'' +
+                ", Status='" + Status + '\'' +
+                '}';
+    }
 }
