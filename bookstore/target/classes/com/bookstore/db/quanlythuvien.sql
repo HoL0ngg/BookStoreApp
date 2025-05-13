@@ -620,6 +620,31 @@ INSERT INTO `ctphieunhap` (`MaPhieuNhap`, `MaDauSach`, `SoLuong`, `status`) VALU
 -- Đang đổ dữ liệu cho bảng `phieuphat`
 --
 
+CREATE TABLE `phieuhuy` (
+  `MaPhieuHuy` varchar(20) NOT NULL,
+  `NgayTao` date DEFAULT NULL,
+  `MaNhanVien` varchar(20) DEFAULT NULL,
+  `TrangThai` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `phieuhuy`
+--
+
+INSERT INTO `phieuhuy` (`MaPhieuHuy`, `NgayTao`, `MaNhanVien`, `TrangThai`) VALUES
+('PH001', '2025-05-10', 'NV001', 0),
+('PH002', '2025-05-10', 'NV001', 0),
+('PH003', '2025-05-10', 'NV001', 0),
+('PH004', '2025-05-10', 'NV001', 0),
+('PH005', '2025-05-11', 'NV001', 0);
+
+
+CREATE TABLE `chitietphieuhuy` (
+  `MaPhieuHuy` varchar(20) NOT NULL,
+  `MaSach` varchar(20) NOT NULL,
+  `GhiChu` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 INSERT INTO `phieuphat` (`MaPhieuPhat`, `TienPhat`, `NgayPhat`, `TrangThai`, `MaDocGia`, `MaCTPhieuTra`, `Status`) VALUES
 (1, 0, '2024-01-10', 0, 'DG001', 1, 1),
 (2, 75000, '2024-02-15', 1, 'DG002', 2, 1),

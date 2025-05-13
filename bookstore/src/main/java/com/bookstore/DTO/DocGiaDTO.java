@@ -6,9 +6,9 @@ public class DocGiaDTO {
     private String diachi;
     private String SDT;
     private String TrangThai;
-    private String Status;
+    private int Status;
 
-    public DocGiaDTO(String maDocGia, String TenDocGia, String diachi, String SDT, String TrangThai, String Status) {
+    public DocGiaDTO(String maDocGia, String TenDocGia, String diachi, String SDT, String TrangThai, int Status) {
         this.maDocGia = maDocGia;
         this.TenDocGia = TenDocGia;
         this.diachi = diachi;
@@ -37,7 +37,7 @@ public class DocGiaDTO {
         return TrangThai;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return Status;
     }
 
@@ -61,7 +61,7 @@ public class DocGiaDTO {
         this.TrangThai = trangthai;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.Status = status;
     }
 

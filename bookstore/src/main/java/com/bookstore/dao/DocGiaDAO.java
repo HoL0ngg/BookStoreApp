@@ -32,7 +32,7 @@ public class DocGiaDAO {
                         rs.getString("DiaChi"),
                         rs.getString("SDT"),
                         rs.getString("TrangThai"),
-                        rs.getString("Status") // Added the missing sixth argument
+                        rs.getInt("Status") // Added the missing sixth argument
                 ));
             }
 
@@ -54,7 +54,7 @@ public class DocGiaDAO {
             stmt.setString(3, docGia.getdiachi());
             stmt.setString(4, docGia.getSDT());
             stmt.setString(5, docGia.getTrangThai());
-            stmt.setString(6, docGia.getStatus());
+            stmt.setInt(6, docGia.getStatus());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -72,7 +72,7 @@ public class DocGiaDAO {
             stmt.setString(2, docGia.getdiachi());
             stmt.setString(3, docGia.getSDT());
             stmt.setString(4, docGia.getTrangThai());
-            stmt.setString(5, docGia.getStatus());
+            stmt.setInt(5, docGia.getStatus());
             stmt.setString(6, docGia.getMaDocGia());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -84,11 +84,10 @@ public class DocGiaDAO {
 
     public boolean deleteDocGia(String maDocGia) {
         try {
-            String sql = "DELETE FROM DocGia WHERE MaDocGia=?";
+            String sql = "UPDATE DocGia SET Status = 0 WHERE MaDocGia = ?";
             Connection conn = DatabaseUtils.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, maDocGia);
-
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
