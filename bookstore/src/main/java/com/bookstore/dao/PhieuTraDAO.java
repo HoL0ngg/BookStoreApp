@@ -29,7 +29,7 @@ public class PhieuTraDAO {
             stmt.setInt(5, phieuTra.getMaPhieuMuon());
             stmt.setInt(6, 1);
             stmt.executeUpdate();
-            new CTPhieuTraDAO().themctpt(tmplist);
+            new CTPhieuTraDAO().themctpt(tmplist, phieuTra);
             ktrapp(mpm, phieuTra.getMaPhieuTra());
             if (kiemTraTatCaSachDaTra(phieuTra.getMaPhieuMuon())) {
                 capNhatTrangThaiPhieuMuon(phieuTra.getMaPhieuMuon());;

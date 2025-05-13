@@ -2,6 +2,8 @@ package com.bookstore.DTO;
 
 import java.util.Date;
 
+import com.bookstore.views.Panel.PhieuPhat;
+
 public class PhieuPhatDTO {
     private int MaPhieuPhat;
     private int TienPhat;
@@ -14,6 +16,16 @@ public class PhieuPhatDTO {
     public PhieuPhatDTO(int MaPhieuPhat, int TienPhat, Date NgayPhat, int TrangThai, String MaDocGia,
             int MaCTPhieuTra, int status) {
         this.MaPhieuPhat = MaPhieuPhat;
+        this.TienPhat = TienPhat;
+        this.NgayPhat = NgayPhat;
+        this.TrangThai = TrangThai;
+        this.MaDocGia = MaDocGia;
+        this.MaCTPhieuTra = MaCTPhieuTra;
+        this.status = status;
+    }
+
+    public PhieuPhatDTO(int TienPhat, Date NgayPhat, int TrangThai, String MaDocGia,
+            int MaCTPhieuTra, int status) {
         this.TienPhat = TienPhat;
         this.NgayPhat = NgayPhat;
         this.TrangThai = TrangThai;

@@ -637,16 +637,78 @@ public class PhieuTraController implements ItemListener, ActionListener {
                             JPanel row = (JPanel) comp;
                             Component[] rowComponents = row.getComponents();
                             System.out.println("Số thành phần trong row: " + rowComponents.length); // Debug
-                            if (rowComponents.length >= 3 &&
-                                    rowComponents[0] instanceof JTextField &&
-                                    rowComponents[2] instanceof JCheckBox) {
-                                JTextField txtMaSach = (JTextField) rowComponents[0];
-                                JCheckBox checkBox = (JCheckBox) rowComponents[2];
-                                System.out.println("Mã sách: " + txtMaSach.getText() + ", Checkbox selected: "
-                                        + checkBox.isSelected()); // Debug
-                                if (checkBox.isSelected() && !txtMaSach.getText().trim().isEmpty()) {
-                                    chiTietList.add(new CTPhieuTraDTO(0, maPhieuTra, txtMaSach.getText().trim(), 0));
+
+                            JTextField txtMaSach = null;
+                            JCheckBox checkBox = null;
+                            JComboBox cbb = null;
+
+                            // Duyệt qua tất cả thành phần để tìm JTextField, JCheckBox và JComboBox
+                            for (Component rowComp : rowComponents) {
+                                if (rowComp instanceof JTextField) {
+                                    // Lấy JTextField đầu tiên làm mã sách
+                                    if (txtMaSach == null) {
+                                        txtMaSach = (JTextField) rowComp;
+                                    }
+                                } else if (rowComp instanceof JCheckBox) {
+                                    checkBox = (JCheckBox) rowComp;
+                                } else if (rowComp instanceof JComboBox) {
+                                    cbb = (JComboBox) rowComp;
                                 }
+                            }
+
+                            // Kiểm tra và thêm vào chiTietList
+                            if (txtMaSach != null && checkBox != null && cbb != null) {
+                                System.out.println("Mã sách: " + txtMaSach.getText() + ", Checkbox selected: "
+                                        + checkBox.isSelected());
+                                if (checkBox.isSelected() && !txtMaSach.getText().trim().isEmpty()) {
+                                    int tt = 0;
+                                    switch (cbb.getSelectedItem().toString()) {
+                                        case "Bình thường":
+                                            tt = 0;
+                                            break;
+                                        case "Hư hỏng":
+                                            tt = 1;
+                                            break;
+                                        case "Mất":
+                                            tt = 2;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+
+                                    boolean addToList = true;
+
+                                    // Hiển thị dialog xác nhận nếu sách hư hỏng hoặc mất
+                                    if (tt == 1 || tt == 2) {
+                                        String trangThaiText = tt == 1 ? "Hư hỏng" : "Mất";
+                                        int soTien = tt == 1 ? 50000 : 100000;
+                                        String message = String.format(
+                                                "Sách mã %s ở trạng thái %s.\n" +
+                                                        "Tạo phiếu phạt với số tiền: %,d VNĐ?\n" +
+                                                        "Nhấn Có để xác nhận, Không để hủy.",
+                                                txtMaSach.getText(), trangThaiText, soTien);
+
+                                        int response = JOptionPane.showConfirmDialog(
+                                                dialog,
+                                                message,
+                                                "Xác nhận tạo phiếu phạt",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.WARNING_MESSAGE);
+
+                                        if (response != JOptionPane.YES_OPTION) {
+                                            addToList = false; // Không thêm vào chiTietList nếu người dùng chọn Không
+                                        }
+                                    }
+
+                                    if (addToList) {
+                                        chiTietList
+                                                .add(new CTPhieuTraDTO(0, maPhieuTra, txtMaSach.getText().trim(), tt));
+                                        System.out.println("Thêm vào chiTietList: MaSach=" + txtMaSach.getText()
+                                                + ", TrangThai=" + tt);
+                                    }
+                                }
+                            } else {
+                                System.out.println("Không tìm thấy JTextField, JCheckBox hoặc JComboBox trong row");
                             }
                         }
                     }
@@ -1154,7 +1216,7 @@ public class PhieuTraController implements ItemListener, ActionListener {
                         checkBox.setSelected(true);
                         checkBox.setEnabled(false);
                         cbTrangThaiSach.setVisible(true);
-                        cbTrangThaiSach.setSelectedIndex(ct.getTrangThai()); // Giả sử có field này
+                        cbTrangThaiSach.setSelectedIndex(ct.getTrangThai());
                     }
 
                     checkBox.addActionListener(e -> {
