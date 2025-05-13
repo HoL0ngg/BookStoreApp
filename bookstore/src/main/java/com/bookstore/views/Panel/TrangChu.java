@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
 import com.bookstore.dao.DauSachDAO;
+import com.bookstore.dao.NCCDAO;
 import com.bookstore.views.Component.RoundedPanel;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
@@ -42,7 +43,7 @@ public class TrangChu extends JPanel {
         RoundedPanel SoDocGiaPanel = CreatePanel("ĐỘC GIẢ", "reader", 69);
         ThongKePanel.add(SoDocGiaPanel);
 
-        RoundedPanel SoTuyenDuongPanel = CreatePanel("NHÀ CUNG CẤP", "book2", 10);
+        RoundedPanel SoTuyenDuongPanel = CreatePanel("NHÀ CUNG CẤP", "supplier", new NCCDAO().selectAll().size());
         ThongKePanel.add(SoTuyenDuongPanel);
     }
 

@@ -25,8 +25,6 @@ public class LoginController implements MouseInputListener {
                     "Thông báo", 1);
             loginFrame.dispose();
             new MainFrame();
-        } else if (e.getSource() == loginFrame.getTaoTaiKhoan()) {
-            loginFrame.HienTaoTaiKhoan();
         } else if (e.getSource() == loginFrame.getExitButton()) {
             loginFrame.dispose();
         } else if (e.getSource() == loginFrame.getMinimizeButton()) {

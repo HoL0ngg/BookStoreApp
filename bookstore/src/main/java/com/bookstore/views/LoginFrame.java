@@ -166,11 +166,11 @@ public class LoginFrame extends JFrame {
         DangNhapButton.addMouseListener(controller);
         rightContent.add(DangNhapButton);
 
-        TaoTaiKhoan = new JLabel("<html><u><i>Chưa có tài khoản ?</i></u></html>");
-        TaoTaiKhoan.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        TaoTaiKhoan.setBounds(265, 415, 120, 20);
-        TaoTaiKhoan.addMouseListener(controller);
-        rightContent.add(TaoTaiKhoan);
+        // TaoTaiKhoan = new JLabel("<html><u><i>Chưa có tài khoản ?</i></u></html>");
+        // TaoTaiKhoan.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        // TaoTaiKhoan.setBounds(265, 415, 120, 20);
+        // TaoTaiKhoan.addMouseListener(controller);
+        // rightContent.add(TaoTaiKhoan);
 
         this.add(leftContent);
         this.add(rightContent);
@@ -450,10 +450,6 @@ public class LoginFrame extends JFrame {
 
     public JLabel getTaoTaiKhoan() {
         return TaoTaiKhoan;
-    }
-
-    public void HienTaoTaiKhoan() {
-        new TaoTaiKhoanDialog(this).setVisible(true);
     }
 
     public JPanel getExitButton() {

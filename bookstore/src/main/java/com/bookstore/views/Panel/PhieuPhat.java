@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,6 +31,8 @@ import mdlaf.MaterialLookAndFeel;
 import com.bookstore.BUS.PhieuPhatBUS;
 import com.bookstore.DTO.PhieuPhatDTO;
 import com.bookstore.controller.PhieuPhatController;
+import com.bookstore.dao.NhomQuyenDAO;
+import com.bookstore.utils.NguoiDungDangNhap;
 
 public class PhieuPhat extends JPanel {
 
@@ -143,6 +146,12 @@ public class PhieuPhat extends JPanel {
                 int col = table.columnAtPoint(e.getPoint());
 
                 if (col == 6 && row >= 0) {
+                    if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 9, 1)) {
+                        JOptionPane.showMessageDialog(null,
+                                "Bạn không có quyền truy cập chức năng này!", "Thông báo",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
                     int maPhieuPhat = (int) table.getValueAt(row, 0);
                     phieuPhatController.hienThiChiTietTable(maPhieuPhat);
                 }

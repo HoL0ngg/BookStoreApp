@@ -16,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -27,7 +28,9 @@ import java.text.SimpleDateFormat;
 
 import com.bookstore.DTO.PhieuMuonDTO;
 import com.bookstore.controller.PhieuMuonController;
+import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuMuonDAO;
+import com.bookstore.utils.NguoiDungDangNhap;
 
 public class PhieuMuon extends JPanel {
 
@@ -181,6 +184,12 @@ public class PhieuMuon extends JPanel {
                 int col = table.columnAtPoint(e.getPoint());
 
                 if (col == 6 && row >= 0) {
+                    if (!new NhomQuyenDAO().isAccessable(NguoiDungDangNhap.getInstance().getMaNhomQuyen(), 6, 1)) {
+                        JOptionPane.showMessageDialog(null,
+                                "Bạn không có quyền truy cập chức năng này!", "Thông báo",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
                     int maPhieuMuon = (int) table.getValueAt(row, 0);
                     phieumuoncontroller.hienThiChiTietTable(String.valueOf(maPhieuMuon));
                 }
