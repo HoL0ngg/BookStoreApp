@@ -42,7 +42,7 @@ public class PhieuTra extends JPanel {
     private JComboBox<String> cbSapXep;
     private JTextField txtTimKiem;
     private PhieuTraController phieuTraController;
-    private JButton btnReverse, btnThem, btnSua, btnXoa;
+    private JButton btnReverse, btnThem, btnSua, btnXoa, btnXuatExcel;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
     private Timer searchTimer;
@@ -171,14 +171,19 @@ public class PhieuTra extends JPanel {
         btnXoa = new JButton("Xóa");
         btnXoa.setPreferredSize(new Dimension(100, 30));
 
+        btnXuatExcel = new JButton("Xuất Excel");
+        btnXuatExcel.setPreferredSize(new Dimension(100, 30));
+
         // add .
         topButtonPanel.add(btnThem);
         topButtonPanel.add(btnSua);
         topButtonPanel.add(btnXoa);
+        topButtonPanel.add(btnXuatExcel);
 
         btnThem.addActionListener(phieuTraController);
         btnSua.addActionListener(phieuTraController);
         btnXoa.addActionListener(phieuTraController);
+        btnXuatExcel.addActionListener(phieuTraController);
 
         // panel chứa thanh tìm kiếm và các button chức năng sử dụng borderlayout
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -282,6 +287,10 @@ public class PhieuTra extends JPanel {
 
     public JButton getBtnThem() {
         return btnThem;
+    }
+
+    public JButton getBtnXuatExcel() {
+        return btnXuatExcel;
     }
 
     public JButton getBtnSua() {

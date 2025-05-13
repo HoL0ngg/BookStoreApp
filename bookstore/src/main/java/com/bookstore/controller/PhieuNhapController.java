@@ -33,10 +33,12 @@ import com.bookstore.BUS.PhieuNhapBUS;
 import com.bookstore.DTO.NCCDTO;
 import com.bookstore.DTO.PhieuNhapDTO;
 import com.bookstore.views.Panel.PhieuNhap;
+import com.bookstore.views.Panel.Sach;
 import com.bookstore.dao.NCCDAO;
 import com.bookstore.dao.NhanVienDAO;
 import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuNhapDAO;
+import com.bookstore.utils.ExcelExporter;
 import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.DTO.CTPhieuNhapDTO;
@@ -794,6 +796,18 @@ public class PhieuNhapController implements ItemListener, ActionListener {
             cancelButton.addActionListener(e1 -> dialog.dispose());
 
             dialog.setVisible(true);
+        } else if (e.getSource() == pn.geButtontBtnXuatExcel()) {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showSaveDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                String path = fileChooser.getSelectedFile().getAbsolutePath();
+                if (!path.endsWith(".xlsx")) {
+                    path += ".xlsx";
+                }
+                ExcelExporter.exportToExcel(manggoc, path);
+                JOptionPane.showMessageDialog(pn, "Xuất file thành công!", "Thông báo",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 

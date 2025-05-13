@@ -42,7 +42,7 @@ public class TrangChu extends JPanel {
         RoundedPanel SoDocGiaPanel = CreatePanel("ĐỘC GIẢ", "reader", 69);
         ThongKePanel.add(SoDocGiaPanel);
 
-        RoundedPanel SoTuyenDuongPanel = CreatePanel("CHƯA BÍC", "book2", 10);
+        RoundedPanel SoTuyenDuongPanel = CreatePanel("NHÀ CUNG CẤP", "book2", 10);
         ThongKePanel.add(SoTuyenDuongPanel);
     }
 

@@ -41,6 +41,7 @@ import com.bookstore.views.Panel.PhieuTra;
 import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuTraDAO;
 import com.bookstore.dao.SachDAO;
+import com.bookstore.utils.ExcelExporter;
 import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.DTO.TaiKhoanDTO;
 import com.bookstore.DTO.CTPhieuMuonDTO;
@@ -768,6 +769,18 @@ public class PhieuTraController implements ItemListener, ActionListener {
             cancelButton.addActionListener(e1 -> dialog.dispose());
 
             dialog.setVisible(true);
+        } else if (e.getSource() == pt.getBtnXuatExcel()) {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showSaveDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                String path = fileChooser.getSelectedFile().getAbsolutePath();
+                if (!path.endsWith(".xlsx")) {
+                    path += ".xlsx";
+                }
+                ExcelExporter.exportToExcel(manggoc, path);
+                JOptionPane.showMessageDialog(pt, "Xuất file thành công!", "Thông báo",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 

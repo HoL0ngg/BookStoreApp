@@ -40,7 +40,7 @@ public class PhieuMuon extends JPanel {
     private JComboBox<String> cbLuaChonTK;
     private JComboBox<String> cbSapXep;
     private PhieuMuonController phieumuoncontroller;
-    private JButton btnReverse, btnThem, btnSua, btnXoa;
+    private JButton btnReverse, btnThem, btnSua, btnXoa, btnXuatExcel;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
     private Timer searchTimer;
@@ -141,14 +141,19 @@ public class PhieuMuon extends JPanel {
         btnXoa = new JButton("Xóa");
         btnXoa.setPreferredSize(new Dimension(100, 30));
 
+        btnXuatExcel = new JButton("Xuất Excel");
+        btnXuatExcel.setPreferredSize(new Dimension(100, 30));
+
         // add .
         topButtonPanel.add(btnThem);
         topButtonPanel.add(btnSua);
         topButtonPanel.add(btnXoa);
+        topButtonPanel.add(btnXuatExcel);
 
         btnThem.addActionListener(phieumuoncontroller);
         btnSua.addActionListener(phieumuoncontroller);
         btnXoa.addActionListener(phieumuoncontroller);
+        btnXuatExcel.addActionListener(phieumuoncontroller);
 
         // panel chứa thanh tìm kiếm và các button chức năng sử dụng borderlayout
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -315,6 +320,10 @@ public class PhieuMuon extends JPanel {
 
     public JButton getBtnReverse() {
         return btnReverse;
+    }
+
+    public JButton getBtnXuatExcel() {
+        return btnXuatExcel;
     }
 
     public void setBtnReverse(JButton btnReverse) {

@@ -39,7 +39,7 @@ public class PhieuNhap extends JPanel {
     private JComboBox<String> cbSapXep;
     private JTextField txtTimKiem;
     private PhieuNhapController phieuNhapController;
-    private JButton btnReverse, btnThem, btnSua, btnXoa;
+    private JButton btnReverse, btnThem, btnSua, btnXoa, btnXuatExcel;
     public FlatSVGIcon upIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_up.svg")).derive(25, 25);
     public FlatSVGIcon downIcon = new FlatSVGIcon(getClass().getResource("/svg/arrow_down.svg")).derive(25, 25);
     private Timer searchTimer;
@@ -161,14 +161,19 @@ public class PhieuNhap extends JPanel {
         btnXoa = new JButton("Xóa");
         btnXoa.setPreferredSize(new Dimension(100, 30));
 
+        btnXuatExcel = new JButton("Xuất Excel");
+        btnXuatExcel.setPreferredSize(new Dimension(100, 30));
+
         // Thêm các nút vào panel
         topButtonPanel.add(btnThem);
         topButtonPanel.add(btnSua);
         topButtonPanel.add(btnXoa);
+        topButtonPanel.add(btnXuatExcel);
 
         btnThem.addActionListener(phieuNhapController);
         btnSua.addActionListener(phieuNhapController);
         btnXoa.addActionListener(phieuNhapController);
+        btnXuatExcel.addActionListener(phieuNhapController);
 
         // Panel chứa thanh tìm kiếm và các nút chức năng
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -334,6 +339,10 @@ public class PhieuNhap extends JPanel {
 
     public JTextComponent getTxtMaNCC() {
         return txtMaNCC;
+    }
+
+    public JButton geButtontBtnXuatExcel() {
+        return btnXuatExcel;
     }
 
 }

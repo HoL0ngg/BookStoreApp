@@ -59,10 +59,10 @@ public class MenuTaskbar extends JPanel {
         pnCenter.add(listItem[0]);
         System.out.println(getSt.length);
         for (int i = 1; i < getSt.length - 1; i++) {
-            // if (!nhomQuyenDAO.isVisible(NguoiDungDangNhap.getInstance().getMaNhomQuyen(),
-            // i)) {
-            // continue;
-            // }
+            if (!nhomQuyenDAO.isVisible(NguoiDungDangNhap.getInstance().getMaNhomQuyen(),
+                    i)) {
+                continue;
+            }
             listItem[i] = new itemTaskbar(getSt[i][1], getSt[i][0]);
             listItem[i].setVisible(true);
             pnCenter.add(listItem[i]);

@@ -35,6 +35,7 @@ import com.bookstore.dao.CTPhieuMuonDAO;
 import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.PhieuMuonDAO;
 import com.bookstore.dao.SachDAO;
+import com.bookstore.utils.ExcelExporter;
 import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Panel.PhieuMuon;
 import com.formdev.flatlaf.json.ParseException;
@@ -747,6 +748,18 @@ public class PhieuMuonController implements ItemListener, ActionListener {
             cancel.addActionListener(e3 -> dialog.dispose());
 
             dialog.setVisible(true);
+        } else if (e.getSource() == pm.getBtnXuatExcel()) {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showSaveDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                String path = fileChooser.getSelectedFile().getAbsolutePath();
+                if (!path.endsWith(".xlsx")) {
+                    path += ".xlsx";
+                }
+                ExcelExporter.exportToExcel(manggoc, path);
+                JOptionPane.showMessageDialog(pm, "Xuất file thành công!", "Thông báo",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 
