@@ -14,7 +14,7 @@ public class DauSachBUS {
     }
 
     public List<DauSachDTO> getList() {
-        return this.listDauSach;
+        return listDauSach;
     }
 
     public List<DauSachDTO> searchDauSach(String txt, String filter) {
@@ -90,6 +90,14 @@ public class DauSachBUS {
             }
         }
         return false;
+    }
+
+    public int insert(DauSachDTO ds) {
+        int result = new DauSachDAO().insert(ds);
+        if (result > 0) {
+            listDauSach.add(ds);
+        }
+        return result;
     }
 
     public List<DauSachDTO> getListDauSach() {

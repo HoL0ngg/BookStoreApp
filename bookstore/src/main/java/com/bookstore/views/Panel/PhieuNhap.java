@@ -133,11 +133,11 @@ public class PhieuNhap extends JPanel {
                 return false; // Không cho phép chỉnh sửa bất kỳ ô nào
             }
         };
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
+        // DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        // centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        // for (int i = 0; i < table.getColumnCount(); i++) {
+        // table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        // }
         // Tạo bảng và sự kiện chi tiết
         table = new JTable(tableModel);
         table.addMouseListener(new MouseAdapter() {

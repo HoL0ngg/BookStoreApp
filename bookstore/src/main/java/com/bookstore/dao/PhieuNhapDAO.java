@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.bookstore.DTO.CTPhieuNhapDTO;
 import com.bookstore.DTO.PhieuNhapDTO;
+import com.bookstore.DTO.SachDTO;
 import com.bookstore.utils.DatabaseUtils;
 import com.bookstore.dao.CTPhieuNhapDAO;
 

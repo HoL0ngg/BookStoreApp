@@ -14,6 +14,16 @@ public class SachDAO implements IBaseDAO<SachDTO> {
 
     @Override
     public int insert(SachDTO t) {
+        String sql = "INSERT INTO sach (MaSach, TrangThai, MaDauSach) VALUES (?, ?, ?)";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, t.getMaSach());
+            stmt.setString(2, t.getTrangThai());
+            stmt.setString(3, t.getMaDauSach());
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 

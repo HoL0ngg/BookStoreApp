@@ -146,8 +146,11 @@ public class Sach extends JPanel {
                     JOptionPane.showMessageDialog(Sach.this, "Bạn không có quyền thêm đầu sách.");
                     return;
                 }
-                new DauSachDialog(((Frame) SwingUtilities.getWindowAncestor(Sach.this)),
-                        DauSachDialog.Mode.ADD, null).setVisible(true);
+                DauSachDialog hihi = new DauSachDialog(((Frame) SwingUtilities.getWindowAncestor(Sach.this)),
+                        DauSachDialog.Mode.ADD, null);
+                hihi.setVisible(true);
+                if (hihi.isSaved())
+                    updateData(new DauSachDAO().selectAll());
             }
         });
 
@@ -161,8 +164,13 @@ public class Sach extends JPanel {
                 if (selectedRow != -1) {
                     String maDauSach = (String) tableModel.getValueAt(selectedRow, 0);
                     DauSachDTO sach = new DauSachDAO().selectById(maDauSach);
-                    new DauSachDialog(((Frame) SwingUtilities.getWindowAncestor(Sach.this)),
-                            DauSachDialog.Mode.EDIT, sach).setVisible(true);
+                    DauSachDialog hihi = new DauSachDialog(((Frame) SwingUtilities.getWindowAncestor(Sach.this)),
+                            DauSachDialog.Mode.EDIT, sach);
+                    hihi.setVisible(true);
+                    System.out.println(hihi.isSaved);
+                    if (hihi.isSaved()) {
+                        updateData(new DauSachDAO().selectAll());
+                    }
                 } else {
                     JOptionPane.showMessageDialog(Sach.this, "Vui lòng chọn đầu sách để sửa.");
                 }
@@ -183,7 +191,7 @@ public class Sach extends JPanel {
                             JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         dauSachBUS.delete(maDauSach);
-                        updateData(dauSachBUS.getList());
+                        updateData(new DauSachDAO().selectAll());
                     }
                 } else {
                     JOptionPane.showMessageDialog(Sach.this, "Vui lòng chọn đầu sách để xóa.");

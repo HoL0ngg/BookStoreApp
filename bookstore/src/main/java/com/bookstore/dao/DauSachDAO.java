@@ -34,7 +34,22 @@ public class DauSachDAO implements IBaseDAO<DauSachDTO> {
 
     @Override
     public int update(DauSachDTO t) {
-        return 0;
+        int res = 0;
+        try (Connection conn = DatabaseUtils.getConnection()) {
+            String sql = "UPDATE dausach SET TenDauSach = ?, HinhAnh = ?, NhaXuatBan = ?, NamXuatBan = ?, NgonNgu = ? WHERE MaDauSach = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, t.getTenDauSach());
+            stmt.setString(2, t.getHinhAnh());
+            stmt.setString(3, t.getNhaXuatBan());
+            stmt.setInt(4, t.getNamXuatBan());
+            stmt.setString(5, t.getNgonNgu());
+            stmt.setString(6, t.getMaDauSach());
+            res = stmt.executeUpdate();
+            System.out.println(res + " hidsahdisahdiashi");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     @Override
