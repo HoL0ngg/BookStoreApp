@@ -5,17 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 
 import com.bookstore.DTO.CTPhieuTraDTO;
 import com.bookstore.DTO.PhieuMuonDTO;
+import com.bookstore.DTO.PhieuPhatDTO;
 import com.bookstore.DTO.PhieuTraDTO;
 import com.bookstore.utils.DatabaseUtils;
 
 public class PhieuTraDAO {
 
     // Thêm phiếu trả
-    public boolean themPhieuTra(PhieuTraDTO phieuTra, List<CTPhieuTraDTO> tmplist) {
+    public boolean themPhieuTra(PhieuTraDTO phieuTra, List<CTPhieuTraDTO> tmplist, int mpm) {
         String sql = "INSERT INTO PhieuTra (MaPhieuTra, NgayTra, MaNhanVien, MaDocGia, MaPhieuMuon, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -27,6 +30,7 @@ public class PhieuTraDAO {
             stmt.setInt(6, 1);
             stmt.executeUpdate();
             new CTPhieuTraDAO().themctpt(tmplist);
+            ktrapp(mpm, phieuTra.getMaPhieuTra());
             if (kiemTraTatCaSachDaTra(phieuTra.getMaPhieuMuon())) {
                 capNhatTrangThaiPhieuMuon(phieuTra.getMaPhieuMuon());;
             }
@@ -126,7 +130,35 @@ public class PhieuTraDAO {
         pmDao.suaPhieuMuon(pm);
     }
 
-    public boolean ktrapp(PhieuTraDTO pt, PhieuMuonDTO pm){
-        
+    public boolean ktrapp(int mpm, int mpt){
+        List<PhieuMuonDTO> pm = new PhieuMuonDAO().layDanhSachPhieuMuon();
+        List<PhieuTraDTO> pt = layDanhSachPhieuTra();
+        PhieuMuonDTO ntdk = null;
+        for (PhieuMuonDTO pmdto : pm){
+            if (pmdto.getMaPhieuMuon() == mpm){
+                ntdk = pmdto;
+            }
+        }
+        PhieuTraDTO ntht = null;
+        for (PhieuTraDTO ptdto : pt){
+            if (ptdto.getMaPhieuTra() == mpt){
+                ntht = ptdto;
+            }
+        }
+        List<CTPhieuTraDTO> ctptdto = new CTPhieuTraDAO().getList();
+        CTPhieuTraDTO mctpt = null;
+        for (CTPhieuTraDTO tmp : ctptdto){
+            if (tmp.getMaPhieuTra() == ntht.getMaPhieuTra()){
+                mctpt = tmp;
+            }
+        }
+        Date ntdkd = ntdk.getNgayTraDuKien();
+        Date nthtd = ntht.getNgayTra();
+
+        if (ntdkd.before(nthtd)){
+            new PhieuPhatDAO().thempp(new PhieuPhatDTO(0, 50000, nthtd, 0, ntht.getMaDocGia(), mctpt.getMaCTPhieuTra(), 1));
+            return true;
+        }
+        return false;
     }
 }

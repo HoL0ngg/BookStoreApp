@@ -19,9 +19,9 @@ public class PhieuTraBUS {
         return listpt;
     }
 
-    public boolean thempt(PhieuTraDTO pt, List<CTPhieuTraDTO> tmplist) {
+    public boolean thempt(PhieuTraDTO pt, List<CTPhieuTraDTO> tmplist, int mpm) {
         listpt.add(pt);
-        if (new PhieuTraDAO().themPhieuTra(pt, tmplist)) {
+        if (new PhieuTraDAO().themPhieuTra(pt, tmplist, mpm)) {
             return true;
         }
         return false;

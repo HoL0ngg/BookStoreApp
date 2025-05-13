@@ -39,16 +39,15 @@ public class PhieuPhatDAO {
 
     // thêm pp
     public boolean thempp(PhieuPhatDTO pp) {
-        String sql = "INSERT INTO PhieuPhat (MaPhieuPhat, TienPhat, NgayPhat, TrangThai, MaDocGia, MaCTPhieuTra, status) VALUES (?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO PhieuPhat (TienPhat, NgayPhat, TrangThai, MaDocGia, MaCTPhieuTra, status) VALUES (?,?,?,?,?,?)";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, pp.getMaPhieuPhat());
-            stmt.setInt(2, pp.getTienPhat());
-            stmt.setDate(3, (Date) pp.getNgayPhat());
-            stmt.setInt(4, pp.getTrangThai());
-            stmt.setString(5, pp.getMaDocGia());
-            stmt.setInt(6, pp.getMaCTPhieuTra());
-            stmt.setInt(7, 1);
+            stmt.setInt(1, pp.getTienPhat());
+            stmt.setDate(2, (Date) pp.getNgayPhat());
+            stmt.setInt(3, pp.getTrangThai());
+            stmt.setString(4, pp.getMaDocGia());
+            stmt.setInt(5, pp.getMaCTPhieuTra());
+            stmt.setInt(6, 1);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

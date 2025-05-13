@@ -677,7 +677,7 @@ public class PhieuTraController implements ItemListener, ActionListener {
                             selectedPhieuMuon.getMaPhieuMuon(),
                             1); // Trạng thái mặc định là 1 (Đang xử lý)
 
-                    if (ptbus.thempt(insertPT, chiTietList)) {
+                    if (ptbus.thempt(insertPT, chiTietList, selectedPhieuMuon.getMaPhieuMuon())) {
                         pt.setListpt(ptdao.layDanhSachPhieuTra());
                         pt.loadTableData();
                         JOptionPane.showMessageDialog(dialog, "Thêm phiếu trả thành công", "Thành công",

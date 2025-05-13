@@ -1,6 +1,16 @@
 package com.bookstore.DTO;
 
 public class CTPhieuTraDTO {
+    private int MaCTPhieuTra;
+
+    public int getMaCTPhieuTra() {
+        return MaCTPhieuTra;
+    }
+
+    public void setMaCTPhieuTra(int maCTPhieuTra) {
+        MaCTPhieuTra = maCTPhieuTra;
+    }
+
     private int TrangThai;
     private int MaPhieuTra;
     private String MaSach;
@@ -15,7 +25,16 @@ public class CTPhieuTraDTO {
     }
 
     // Constructor
-    public CTPhieuTraDTO(int TrangThai, int MaPhieuTra, String MaSach, int status){
+    public CTPhieuTraDTO(int TrangThai, int MaPhieuTra, String MaSach, int status) {
+        this.TrangThai = TrangThai;
+        this.MaPhieuTra = MaPhieuTra;
+        this.MaSach = MaSach;
+        this.status = status;
+    }
+
+    // Constructor
+    public CTPhieuTraDTO(int MaCTPhieuTra, int TrangThai, int MaPhieuTra, String MaSach, int status) {
+        this.MaCTPhieuTra = MaCTPhieuTra;
         this.TrangThai = TrangThai;
         this.MaPhieuTra = MaPhieuTra;
         this.MaSach = MaSach;
