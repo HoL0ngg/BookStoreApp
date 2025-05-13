@@ -142,7 +142,12 @@ public class PhieuTra extends JPanel {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tableModel = new DefaultTableModel(new Object[] {
                 "Mã phiếu trả", "Ngày trả", "Mã nhân viên", "Mã độc giả", "Mã phiếu mượn", "Thao tác"
-        }, 0);
+        }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // không cho phép chỉnh sửa
+            }
+        };
 
         // tạo table và sự kiện chi tiết
         table = new JTable(tableModel);

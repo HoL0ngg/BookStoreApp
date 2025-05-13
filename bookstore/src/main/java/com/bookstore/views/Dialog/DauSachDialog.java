@@ -2,6 +2,7 @@ package com.bookstore.views.Dialog;
 
 import javax.swing.*;
 
+import com.bookstore.BUS.DauSachBUS;
 import com.bookstore.DTO.DauSachDTO;
 import com.bookstore.DTO.SachDTO;
 import com.bookstore.DTO.TacGiaDTO;
@@ -31,6 +32,8 @@ public class DauSachDialog extends JDialog {
     private String duongDanHinh;
     private Map<String, String> mapTacGia; // tên -> id
     private Map<String, Integer> mapTheLoai; // tên -> id
+    // private DauSachBUS dauSachBUS = new DauSachBUS();
+    public boolean isSaved = false;
 
     public DauSachDialog(Frame parent, Mode mode, DauSachDTO ds) {
         super(parent, "Thêm Đầu Sách", true);
@@ -319,11 +322,19 @@ public class DauSachDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "Nhập đúng định dạng năm");
                 return;
             }
+            if (namxuatban < 1900 || namxuatban > Calendar.getInstance().get(Calendar.YEAR)) {
+                JOptionPane.showMessageDialog(this, "Năm xuất bản không hợp lệ.");
+                return;
+            }
 
             List<String> dsIDTacGia = new ArrayList<>();
             for (int i = 0; i < listModelTacGia.size(); i++) {
                 String tenTacGia = listModelTacGia.getElementAt(i);
                 dsIDTacGia.add(mapTacGia.get(tenTacGia));
+            }
+            if (dsIDTacGia.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng thêm tác giả.");
+                return;
             }
 
             List<Integer> dsIDTheLoai = new ArrayList<>();
@@ -331,12 +342,21 @@ public class DauSachDialog extends JDialog {
                 String tenTheLoai = listModelTheLoai.getElementAt(i);
                 dsIDTheLoai.add(mapTheLoai.get(tenTheLoai));
             }
+            if (dsIDTheLoai.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng thêm thể loại.");
+                return;
+            }
+
+            isSaved = true;
 
             // In ra kiểm tra (thay thế bằng truyền cho BUS/DAO)
             System.out.println("Tên sách: " + ten);
             System.out.println("Năm: " + nam);
             System.out.println("Hình ảnh: " + duongDanHinh);
             System.out.println("Tác giả ID: " + dsIDTacGia);
+            if (duongDanHinh == "D:\\VSCode\\Lap trinh java\\BookStoreApp\\bookstore\\src\\main\\resources\\images\\default.png") {
+                duongDanHinh = "default.png";
+            }
             DauSachDTO dauSach = new DauSachDTO();
             dauSach.setHinhAnh(duongDanHinh);
             dauSach.setMaDauSach(MaDauSach);
@@ -344,12 +364,17 @@ public class DauSachDialog extends JDialog {
             dauSach.setNamXuatBan(namxuatban);
             dauSach.setNgonNgu(ngonngu);
             dauSach.setNhaXuatBan(NXB);
-            new DauSachDAO().insert(dauSach);
-            for (String idTacGia : dsIDTacGia) {
-                new TacGiaDAO().insertDauSach(MaDauSach, idTacGia);
-            }
-            for (int idTheLoai : dsIDTheLoai) {
-                new TheLoaiDAO().insertDauSach(MaDauSach, idTheLoai);
+            if (mode == Mode.EDIT) {
+                dauSach.setMaDauSach(ds.getMaDauSach());
+                new DauSachDAO().update(dauSach);
+            } else {
+                new DauSachDAO().insert(dauSach);
+                for (String idTacGia : dsIDTacGia) {
+                    new TacGiaDAO().insertDauSach(MaDauSach, idTacGia);
+                }
+                for (int idTheLoai : dsIDTheLoai) {
+                    new TheLoaiDAO().insertDauSach(MaDauSach, idTheLoai);
+                }
             }
 
             JOptionPane.showMessageDialog(this, "Lưu thành công!");
@@ -393,6 +418,10 @@ public class DauSachDialog extends JDialog {
             }
         });
 
+    }
+
+    public boolean isSaved() {
+        return isSaved;
     }
 
     private String generateMaDauSach() {

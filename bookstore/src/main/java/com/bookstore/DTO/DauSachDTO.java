@@ -41,6 +41,20 @@ public class DauSachDTO {
     public DauSachDTO() {
     }
 
+    @Override
+    public String toString() {
+        return (getMaDauSach() != null ? getMaDauSach() : "") + " - " +
+                (getTenDauSach() != null ? getTenDauSach() : "");
+    }
+
+    public List<TacGiaDTO> getListTacGia() {
+        return listTacGia;
+    }
+
+    public void setListTacGia(List<TacGiaDTO> listTacGia) {
+        this.listTacGia = listTacGia;
+    }
+
     public String getMaDauSach() {
         return MaDauSach;
     }
@@ -89,6 +103,14 @@ public class DauSachDTO {
         NgonNgu = ngonNgu;
     }
 
+    public int getSoLuong() {
+        return SoLuong;
+    }
+
+    public void setSoLuong(int soLuong) {
+        SoLuong = soLuong;
+    }
+
     public int getSoTrang() {
         return SoTrang;
     }
@@ -103,28 +125,6 @@ public class DauSachDTO {
 
     public void setListTheLoai(List<TheLoaiDTO> listTheLoai) {
         this.listTheLoai = listTheLoai;
-    }
-
-    public int getSoLuong() {
-        return SoLuong;
-    }
-
-    public void setSoLuong(int soLuong) {
-        this.SoLuong = soLuong;
-    }
-
-    @Override
-    public String toString() {
-        return (getMaDauSach() != null ? getMaDauSach() : "") + " - " +
-                (getTenDauSach() != null ? getTenDauSach() : "");
-    }
-
-    public List<TacGiaDTO> getListTacGia() {
-        return listTacGia;
-    }
-
-    public void setListTacGia(List<TacGiaDTO> listTacGia) {
-        this.listTacGia = listTacGia;
     }
 
 }

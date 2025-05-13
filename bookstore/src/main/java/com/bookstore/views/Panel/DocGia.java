@@ -37,7 +37,12 @@ public class DocGia extends JPanel {
 
         // Table
         tableModel = new DefaultTableModel(
-                new String[] { "Mã độc giả", "Tên độc giả", "Đỉa chỉ", "SĐT", "Trạng thái", "Status" }, 0);
+                new String[] { "Mã độc giả", "Tên độc giả", "Đỉa chỉ", "SĐT", "Trạng thái", "Status" }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
@@ -105,6 +110,8 @@ public class DocGia extends JPanel {
         tableModel.setRowCount(0);
         ArrayList<DocGiaDTO> list = docGiaDAO.getAllDocGia();
         for (DocGiaDTO dg : list) {
+            if (dg.getStatus() == 0)
+                continue;
             tableModel.addRow(new Object[] {
                     dg.getMaDocGia(),
                     dg.getTenDocGia(),
@@ -123,7 +130,7 @@ public class DocGia extends JPanel {
                 txtDiachi.getText(),
                 txtSĐT.getText(),
                 txtTrangThai.getText(),
-                txtStatus.getText());
+                Integer.parseInt(txtStatus.getText()));
 
         if (docGiaDAO.insertDocGia(dg)) {
             JOptionPane.showMessageDialog(this, "Thêm thành công!");
@@ -140,7 +147,7 @@ public class DocGia extends JPanel {
                 txtDiachi.getText(),
                 txtSĐT.getText(),
                 txtTrangThai.getText(),
-                txtStatus.getText());
+                Integer.parseInt(txtStatus.getText()));
 
         if (docGiaDAO.updateDocGia(dg)) {
             JOptionPane.showMessageDialog(this, "Cập nhật thành công!");

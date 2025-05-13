@@ -15,6 +15,7 @@ import com.bookstore.BUS.TacGiaBUS;
 import com.bookstore.DTO.TacGiaDTO;
 import com.bookstore.dao.NhomQuyenDAO;
 import com.bookstore.dao.TacGiaDAO;
+import com.bookstore.utils.ExcelExporter;
 import com.bookstore.utils.NguoiDungDangNhap;
 import com.bookstore.views.Component.Header;
 
@@ -90,6 +91,23 @@ public class TacGia extends JPanel {
                     } else {
                         JOptionPane.showMessageDialog(this, "Xóa thất bại!");
                     }
+                }
+            }
+        });
+
+        header.getBtnExport().addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JFileChooser fileChooser = new JFileChooser();
+                int result = fileChooser.showSaveDialog(null);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String path = fileChooser.getSelectedFile().getAbsolutePath();
+                    if (!path.endsWith(".xlsx")) {
+                        path += ".xlsx";
+                    }
+                    ExcelExporter.exportToExcel(bus.getAllTacGia(), path);
+                    JOptionPane.showMessageDialog(TacGia.this, "Xuất file thành công!", "Thông báo",
+                            JOptionPane.INFORMATION_MESSAGE);
+
                 }
             }
         });

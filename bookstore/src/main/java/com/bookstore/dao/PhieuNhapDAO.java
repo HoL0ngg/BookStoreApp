@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.bookstore.DTO.CTPhieuNhapDTO;
 import com.bookstore.DTO.PhieuNhapDTO;
+import com.bookstore.DTO.SachDTO;
 import com.bookstore.utils.DatabaseUtils;
 import com.bookstore.dao.CTPhieuNhapDAO;
 
@@ -83,6 +84,16 @@ public class PhieuNhapDAO {
                 stmt.setInt(3, ct.getSoLuong());
                 stmt.setInt(4, 1);
                 stmt.executeUpdate();
+                for (int soluong = 1; soluong <= ct.getSoLuong(); soluong++) {
+                    String sql1 = "INSERT INTO Sach (TrangThai, MaDauSach, NgayNhap, MaSach) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement stmt1 = conn.prepareStatement(sql1)) {
+                        stmt1.setInt(1, 0);
+                        stmt1.setString(2, list.get(soluong - 1).getMaDauSach());
+                        stmt1.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+                        stmt1.setString(4, "S" + (new SachDAO().getSoluong()));
+                        stmt1.executeUpdate();
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

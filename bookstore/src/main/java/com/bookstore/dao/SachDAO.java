@@ -12,8 +12,33 @@ import com.bookstore.utils.DatabaseUtils;
 
 public class SachDAO implements IBaseDAO<SachDTO> {
 
+    public int getSoluong() {
+        int soluong = 0;
+        String sql = "SELECT COUNT(*) AS Soluong FROM sach";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                soluong = rs.getInt("Soluong") + 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return soluong;
+    }
+
     @Override
     public int insert(SachDTO t) {
+        String sql = "INSERT INTO sach (MaSach, TrangThai, MaDauSach) VALUES (?, ?, ?)";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, t.getMaSach());
+            stmt.setString(2, t.getTrangThai());
+            stmt.setString(3, t.getMaDauSach());
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 
