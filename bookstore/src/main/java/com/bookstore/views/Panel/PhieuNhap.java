@@ -16,7 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import java.awt.event.KeyAdapter;
@@ -131,7 +133,11 @@ public class PhieuNhap extends JPanel {
                 return false; // Không cho phép chỉnh sửa bất kỳ ô nào
             }
         };
-
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
         // Tạo bảng và sự kiện chi tiết
         table = new JTable(tableModel);
         table.addMouseListener(new MouseAdapter() {
